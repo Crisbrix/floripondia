@@ -1,0 +1,179 @@
+import { Component, afterNextRender } from '@angular/core';
+
+@Component({
+  selector: 'app-home',
+  imports: [],
+  template: `
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Floripondía</h1>
+        <p>ropa con esencia pastel</p>
+      </div>
+    </section>
+
+    @for (cat of categories; track cat.name; let i = $index) {
+      <section class="poster" #poster>
+        <div class="poster-inner" [class.reverse]="i % 2 !== 0">
+          <div class="poster-visual" [style.background]="'url(' + cat.image + '), ' + cat.color" [style.backgroundSize]="'cover'" [style.backgroundPosition]="'center'" [style.backgroundBlendMode]="'overlay'">
+          </div>
+          <div class="poster-info">
+            <h2>{{ cat.name }}</h2>
+            <p>{{ cat.desc }}</p>
+            <a href="#" class="poster-btn">Ver todo</a>
+          </div>
+        </div>
+      </section>
+    }
+  `,
+  styles: `
+    .hero {
+      text-align: center;
+      padding: 100px 20px 60px;
+    }
+    .hero h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 4.5rem;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #F48FB1, #CE93D8, #90CAF9, #FFF176, #F48FB1);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: rainbow 4s ease infinite;
+    }
+    @keyframes rainbow {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #999;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .poster {
+      padding: 40px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .poster.reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .poster-inner {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .poster-inner:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    }
+
+    .poster-visual {
+      flex: 1;
+      min-height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .poster-inner:hover .poster-visual {
+      transform: scale(1.04);
+    }
+
+    .poster-info {
+      flex: 1;
+      padding: 40px 40px 40px 0;
+    }
+    .reverse .poster-info {
+      padding: 40px 0 40px 40px;
+    }
+    .poster-info h2 {
+      font-family: 'Pacifico', cursive;
+      font-size: 2.8rem;
+      color: #444;
+      margin-bottom: 10px;
+    }
+    .poster-info p {
+      font-size: 1.05rem;
+      color: #888;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      max-width: 300px;
+    }
+    .poster-btn {
+      display: inline-block;
+      padding: 10px 28px;
+      border: 2px solid #eee;
+      border-radius: 30px;
+      color: #666;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    .poster-btn:hover {
+      border-color: #ccc;
+      background: #fafafa;
+      transform: translateY(-2px);
+    }
+
+    .reverse {
+      flex-direction: row-reverse;
+    }
+
+    @media (max-width: 700px) {
+      .poster-inner, .reverse {
+        flex-direction: column;
+      }
+      .poster-visual {
+        width: 100%;
+        min-height: 200px;
+      }
+      .poster-info {
+        padding: 0 24px 24px !important;
+        text-align: center;
+      }
+      .poster-info p { max-width: none; }
+    }
+  `
+})
+export class HomeComponent {
+  categories = [
+    { name: 'Chaquetas', desc: 'Abriga tu estilo con colores que alegran el día', image: 'assets/images/chaquetas/1.jpg', color: '#FFF9C4' },
+    { name: 'Pantalones', desc: 'Comodidad que se ve, desde el primer paso', image: 'assets/images/pantalones/1.jpg', color: '#BBDEFB' },
+    { name: 'Básicas', desc: 'El lienzo perfecto para tu día a día', image: 'assets/images/basicas/1.jpg', color: '#FFFFFF' },
+    { name: 'Blusas', desc: 'Femeninas, frescas y con personalidad', image: 'assets/images/blusas/1.jpg', color: '#F8BBD0' },
+    { name: 'Zapatos', desc: 'El paso perfecto para cualquier ocasión', image: 'assets/images/zapatos/1.jpg', color: '#E1BEE7' },
+    { name: 'Vestidos', desc: 'Gira, baila, vive — con el estilo que te mereces', image: 'assets/images/vestidos/1.jpg', color: '#FFF9C4' },
+  ];
+
+  constructor() {
+    afterNextRender(() => {
+      const posters = document.querySelectorAll<HTMLElement>('.poster');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              (entry.target as HTMLElement).classList.add('reveal');
+            }
+          }
+        },
+        { threshold: 0.2 }
+      );
+      posters.forEach(p => observer.observe(p));
+    });
+  }
+}

@@ -1,0 +1,30 @@
+:root {
+  --yellow: #FFF9C4;
+  --yellow-soft: #FFFBEA;
+  --blue: #BBDEFB;
+  --blue-soft: #E3F2FD;
+  --violet: #E1BEE7;
+  --violet-soft: #F3E5F5;
+  --pink: #F8BBD0;
+  --pink-soft: #FCE4EC;
+  --white: #FFFFFF;
+  --text: #555;
+  --text-light: #999;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+a { text-decoration: none; color: inherit; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
