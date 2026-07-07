@@ -8,7 +8,7 @@ import { Component } from '@angular/core';
       <div class="container footer-content">
         <div class="footer-brand">
           <h3>Floripondía</h3>
-          <p>Ropa con esencia pastel</p>
+          <p>Grandiosamente Floripondia</p>
         </div>
         <div class="footer-links">
           <h4>Enlaces</h4>
@@ -23,7 +23,7 @@ import { Component } from '@angular/core';
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2025 Floripondía &mdash; Todos los derechos reservados</p>
+        <p>&copy; 2026 Floripondía &mdash; Todos los derechos reservados</p>
       </div>
     </footer>
   `,
