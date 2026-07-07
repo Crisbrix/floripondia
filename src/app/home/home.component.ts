@@ -7,7 +7,7 @@ import { Component, afterNextRender } from '@angular/core';
     <section class="hero">
       <div class="hero-content">
         <h1>Floripondía</h1>
-        <p>ropa con esencia pastel</p>
+        <p>boutique</p>
       </div>
     </section>
 
@@ -34,6 +34,8 @@ import { Component, afterNextRender } from '@angular/core';
       font-family: 'Pacifico', cursive;
       font-size: 4.5rem;
       letter-spacing: 2px;
+      line-height: 1.2;
+      padding: 0 10px;
       background: linear-gradient(90deg, #F48FB1, #CE93D8, #90CAF9, #FFF176, #F48FB1);
       background-size: 200% auto;
       -webkit-background-clip: text;
@@ -54,7 +56,7 @@ import { Component, afterNextRender } from '@angular/core';
     }
 
     .poster {
-      padding: 40px 20px;
+      padding: 30px 16px;
       max-width: 1100px;
       margin: 0 auto;
       opacity: 0;
@@ -135,18 +137,28 @@ import { Component, afterNextRender } from '@angular/core';
     }
 
     @media (max-width: 700px) {
+      .hero { padding: 70px 16px 40px; }
+      .hero h1 { font-size: 2.8rem; line-height: 1.15; }
+      .hero p { font-size: 0.85rem; letter-spacing: 3px; }
+
+      .poster { padding: 16px 12px; }
+
       .poster-inner, .reverse {
         flex-direction: column;
+        gap: 0;
+        border-radius: 16px;
       }
       .poster-visual {
         width: 100%;
         min-height: 200px;
       }
       .poster-info {
-        padding: 0 24px 24px !important;
+        padding: 20px 20px 24px !important;
         text-align: center;
       }
-      .poster-info p { max-width: none; }
+      .poster-info h2 { font-size: 2rem; }
+      .poster-info p { max-width: none; font-size: 0.95rem; }
+      .poster-btn { font-size: 0.85rem; padding: 8px 24px; }
     }
   `
 })

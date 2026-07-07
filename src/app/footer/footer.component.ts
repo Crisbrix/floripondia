@@ -65,6 +65,15 @@ import { Component } from '@angular/core';
       font-size: 0.85rem;
       color: var(--text-light);
     }
+
+    @media (max-width: 600px) {
+      footer { margin-top: 40px; padding: 30px 0 0; }
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        text-align: center;
+      }
+    }
   `
 })
 export class FooterComponent {}
