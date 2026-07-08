@@ -3,9 +3,9 @@
     <a routerLink="/" class="logo">Floripondía</a>
     <div class="links">
       <a routerLink="/">Inicio</a>
-      <a href="#">Catálogo</a>
-      <a href="#">Nosotras</a>
-      <a href="#">Contacto</a>
+      <a routerLink="/catalogo">Catálogo</a>
+      <a routerLink="/nosotras">Nosotras</a>
+      <a routerLink="/contacto">Contacto</a>
     </div>
     <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
       <span></span><span></span><span></span>
@@ -18,9 +18,9 @@
     <div class="overlay-menu" (click)="$event.stopPropagation()">
       <button class="close-btn" (click)="menuOpen = false">✕</button>
       <a routerLink="/" (click)="menuOpen = false">Inicio</a>
-      <a href="#" (click)="menuOpen = false">Catálogo</a>
-      <a href="#" (click)="menuOpen = false">Nosotras</a>
-      <a href="#" (click)="menuOpen = false">Contacto</a>
+      <a routerLink="/catalogo" (click)="menuOpen = false">Catálogo</a>
+      <a routerLink="/nosotras" (click)="menuOpen = false">Nosotras</a>
+      <a routerLink="/contacto" (click)="menuOpen = false">Contacto</a>
     </div>
   </div>
 }

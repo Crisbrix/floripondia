@@ -1,0 +1,132 @@
+.cata-header {
+  text-align: center;
+  padding: 60px 20px 30px;
+}
+.cata-header h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 2.8rem;
+  color: #555;
+}
+.cata-header p {
+  color: #999;
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+.cata-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  display: flex;
+  gap: 40px;
+}
+
+.sidebar {
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sidebar h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #bbb;
+  margin-bottom: 8px;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #888;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.filter-btn:hover {
+  background: #f8f8f8;
+  color: #555;
+}
+.filter-btn.active {
+  background: #f5f5f5;
+  color: #444;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+.card-img {
+  height: 240px;
+  transition: transform 0.4s;
+}
+.card:hover .card-img {
+  transform: scale(1.05);
+}
+
+.card-body {
+  padding: 16px;
+}
+.card-body h4 {
+  font-size: 1rem;
+  color: #444;
+}
+
+@media (max-width: 700px) {
+  .cata-body {
+    flex-direction: column;
+    padding: 0 12px 40px;
+  }
+  .sidebar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: auto;
+  }
+  .sidebar h3 {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  .filter-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 20px;
+    background: #f9f9f9;
+  }
+  .filter-btn.active {
+    background: #eee;
+  }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .card-img { height: 180px; }
+}
