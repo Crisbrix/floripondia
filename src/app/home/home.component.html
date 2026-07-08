@@ -1,0 +1,20 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>Floripondía</h1>
+    <p>boutique</p>
+  </div>
+</section>
+
+@for (cat of categories; track cat.name; let i = $index) {
+  <section class="poster" #poster>
+    <div class="poster-inner" [class.reverse]="i % 2 !== 0">
+      <div class="poster-visual" [style.background]="'url(' + cat.image + '), ' + cat.color" [style.backgroundSize]="'cover'" [style.backgroundPosition]="'center'" [style.backgroundBlendMode]="'overlay'">
+      </div>
+      <div class="poster-info">
+        <h2>{{ cat.name }}</h2>
+        <p>{{ cat.desc }}</p>
+        <a href="#" class="poster-btn">Ver todo</a>
+      </div>
+    </div>
+  </section>
+}

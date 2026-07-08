@@ -1,0 +1,26 @@
+<nav>
+  <div class="container nav-content">
+    <a routerLink="/" class="logo">Floripondía</a>
+    <div class="links">
+      <a routerLink="/">Inicio</a>
+      <a href="#">Catálogo</a>
+      <a href="#">Nosotras</a>
+      <a href="#">Contacto</a>
+    </div>
+    <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+@if (menuOpen) {
+  <div class="overlay" (click)="menuOpen = false">
+    <div class="overlay-menu" (click)="$event.stopPropagation()">
+      <button class="close-btn" (click)="menuOpen = false">✕</button>
+      <a routerLink="/" (click)="menuOpen = false">Inicio</a>
+      <a href="#" (click)="menuOpen = false">Catálogo</a>
+      <a href="#" (click)="menuOpen = false">Nosotras</a>
+      <a href="#" (click)="menuOpen = false">Contacto</a>
+    </div>
+  </div>
+}
