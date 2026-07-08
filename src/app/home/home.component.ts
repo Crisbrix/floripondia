@@ -28,24 +28,24 @@ import { Component, afterNextRender } from '@angular/core';
   styles: `
     .hero {
       text-align: center;
-      padding: 100px 20px 60px;
+      padding: 110px 20px 80px;
     }
     .hero h1 {
       font-family: 'Pacifico', cursive;
       font-size: 4.5rem;
       letter-spacing: 2px;
-      line-height: 1.2;
-      padding: 0 10px;
+      line-height: 1.5;
+      padding: 10px 20px;
       background: linear-gradient(90deg, #F48FB1, #CE93D8, #90CAF9, #FFF176, #F48FB1);
-      background-size: 200% auto;
+      background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: rainbow 4s ease infinite;
     }
     @keyframes rainbow {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
     .hero p {
       font-size: 1.1rem;
@@ -137,8 +137,8 @@ import { Component, afterNextRender } from '@angular/core';
     }
 
     @media (max-width: 700px) {
-      .hero { padding: 70px 16px 40px; }
-      .hero h1 { font-size: 2.8rem; line-height: 1.15; }
+      .hero { padding: 70px 16px 50px; }
+      .hero h1 { font-size: 2.8rem; line-height: 1.4; }
       .hero p { font-size: 0.85rem; letter-spacing: 3px; }
 
       .poster { padding: 16px 12px; }

@@ -8,6 +8,12 @@ import { RouterLink } from '@angular/router';
     <nav>
       <div class="container nav-content">
         <a routerLink="/" class="logo">Floripondía</a>
+        <div class="links">
+          <a routerLink="/">Inicio</a>
+          <a href="#">Catálogo</a>
+          <a href="#">Nosotras</a>
+          <a href="#">Contacto</a>
+        </div>
         <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
           <span></span><span></span><span></span>
         </button>
@@ -46,6 +52,15 @@ import { RouterLink } from '@angular/router';
       color: #555;
       letter-spacing: 1px;
     }
+
+    .links { display: flex; gap: 28px; }
+    .links a {
+      color: #999;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .links a:hover { color: #555; }
 
     .hamburger {
       display: none;
@@ -122,6 +137,7 @@ import { RouterLink } from '@angular/router';
 
     @media (max-width: 600px) {
       .logo { font-size: 1.4rem; }
+      .links { display: none; }
       .hamburger { display: flex; }
     }
   `
