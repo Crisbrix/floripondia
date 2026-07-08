@@ -9,7 +9,7 @@ import { Component, afterNextRender } from '@angular/core';
 })
 export class HomeComponent {
   categories = [
-    { name: 'Chaquetas', desc: 'Abriga tu estilo con colores que alegran el día', image: 'assets/images/chaquetas/1.jpg', color: '#FFF9C4' },
+    { name: 'Chaquetas', desc: 'Abriga tu estilo con colores que alegran el día', image: 'assets/images/chaquetas/1.jpeg', color: '#FFF9C4' },
     { name: 'Pantalones', desc: 'Comodidad que se ve, desde el primer paso', image: 'assets/images/pantalones/1.jpg', color: '#BBDEFB' },
     { name: 'Básicas', desc: 'El lienzo perfecto para tu día a día', image: 'assets/images/basicas/1.jpg', color: '#FFFFFF' },
     { name: 'Blusas', desc: 'Femeninas, frescas y con personalidad', image: 'assets/images/blusas/1.jpg', color: '#F8BBD0' },
