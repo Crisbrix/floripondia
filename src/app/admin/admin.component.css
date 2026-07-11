@@ -831,6 +831,30 @@
   color: #555;
 }
 
+.pv-sub-opts {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.pv-sub-opts button {
+  flex: 1;
+  padding: 8px 6px;
+  border: 2px solid #f0f0f0;
+  border-radius: 10px;
+  background: #fff;
+  color: #bbb;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pv-sub-opts button:hover { border-color: #ddd; color: #999; }
+.pv-sub-opts button.act {
+  border-color: #E1BEE7;
+  background: #fdf5ff;
+  color: #555;
+}
+
 .pv-finalizar {
   display: flex;
   align-items: center;

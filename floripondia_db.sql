@@ -53,7 +53,7 @@ CREATE TABLE ventas (
   total        DECIMAL(12,0) NOT NULL DEFAULT 0,
   recibido     DECIMAL(12,0) NOT NULL DEFAULT 0,
   cambio       DECIMAL(12,0) NOT NULL DEFAULT 0,
-  metodo_pago  ENUM('efectivo','tarjeta','transaccion') NOT NULL DEFAULT 'efectivo',
+  metodo_pago  VARCHAR(20) NOT NULL DEFAULT 'efectivo',
   fecha        DATE        NOT NULL DEFAULT (CURRENT_DATE),
   vendedor_id  INT         NOT NULL,
   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
@@ -124,11 +124,5 @@ INSERT INTO productos (nombre, categoria, imagen, color) VALUES
   ('Pulseras',        'Pulseras',        '', '#F3E5F5'),
   ('Correas',         'Correas',         '', '#FFF9C4');
 
--- Ventas de ejemplo (asumiendo que admin tiene id = 1)
-INSERT INTO ventas (producto, cliente, cantidad, total, recibido, cambio, metodo_pago, fecha, vendedor_id) VALUES
-  ('Vestido Girasol',   'María López',   2, 129800, 130000,   200, 'efectivo', '2026-06-28', 1),
-  ('Blusa Flores',      'Carla Mejía',   1,  38900,  40000,  1100, 'tarjeta',  '2026-06-27', 1),
-  ('Zapatillas Pastel', 'Ana Torres',    1,  67900,  67900,     0, 'efectivo', '2026-06-26', 1),
-  ('Pantalón Cargo',    'Sofía Ruiz',    2, 124000, 150000, 26000, 'transaccion', '2026-06-25', 1),
-  ('Chaqueta Otoño',    'Valentina Paz', 1,  89900,  90000,   100, 'efectivo', '2026-06-24', 1),
-  ('Vestido Vuelo',     'Laura Gil',     1,  59000,  60000,  1000, 'tarjeta',  '2026-06-23', 1);
+-- Migración para bases existentes
+ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';

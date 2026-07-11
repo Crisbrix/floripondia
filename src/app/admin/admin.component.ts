@@ -98,7 +98,7 @@ export class AdminComponent {
       }
     };
 
-    const colores: Record<string, string> = { efectivo: '#C8E6C9', tarjeta: '#BBDEFB', transaccion: '#E1BEE7' };
+    const colores: Record<string, string> = { efectivo: '#C8E6C9', tarjeta: '#BBDEFB', nequi: '#E1BEE7', daviplata: '#FFF9C4', addi: '#F8BBD0' };
     const dias = s.ventasDia.slice().reverse();
 
     createChart('chart-ventas', {
@@ -241,7 +241,7 @@ export class AdminComponent {
   vMsg = '';
   vErr = '';
   cart: { name: string; quantity: number; color: string }[] = [];
-  paymentMethod: 'efectivo' | 'tarjeta' | 'transaccion' = 'efectivo';
+  paymentMethod: string = 'efectivo';
   vTotal = 0;
   vRecibido = 0;
 
@@ -251,6 +251,13 @@ export class AdminComponent {
 
   get vCambio() {
     return this.vRecibido - this.vTotal;
+  }
+  get esTransferencia() {
+    return ['nequi', 'daviplata', 'addi'].includes(this.paymentMethod);
+  }
+
+  seleccionarMetodo(m: string) {
+    this.paymentMethod = m;
   }
 
   agregarAlCarrito(itemName: string) {
@@ -291,16 +298,19 @@ export class AdminComponent {
     if (this.vTotal <= 0) {
       this.vErr = 'Ingresa el total de la venta'; return;
     }
-    if (this.vRecibido <= 0) {
-      this.vErr = 'Ingresa cuánto pagaron'; return;
-    }
-    if (this.vRecibido < this.vTotal) {
-      this.vErr = 'El pago no cubre el total'; return;
+    if (!this.esTransferencia) {
+      if (this.vRecibido <= 0) {
+        this.vErr = 'Ingresa cuánto pagaron'; return;
+      }
+      if (this.vRecibido < this.vTotal) {
+        this.vErr = 'El pago no cubre el total'; return;
+      }
     }
     const items = this.cart.map(i => ({ name: i.name, quantity: i.quantity }));
-    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, this.vRecibido);
+    const recibido = this.esTransferencia ? this.vTotal : this.vRecibido;
+    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, recibido);
     if (ok) {
-      this.vMsg = `Venta finalizada — ${this.cartTotal} artículo(s), cambio $${this.vCambio.toLocaleString()}`;
+      this.vMsg = `Venta finalizada — ${this.cartTotal} artículo(s)`;
       this.vErr = '';
       this.cart = [];
       this.vTotal = 0;
