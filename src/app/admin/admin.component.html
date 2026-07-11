@@ -1,4 +1,10 @@
 <div class="admin-layout">
+  <button class="mobile-toggle" (click)="sidebarOpen = !sidebarOpen">
+    <span></span><span></span><span></span>
+  </button>
+  @if (sidebarOpen) {
+    <div class="sidebar-overlay" (click)="sidebarOpen = false"></div>
+  }
   <aside class="sidebar" [class.closed]="!sidebarOpen">
     <div class="sidebar-header">
       @if (sidebarOpen) {
@@ -247,9 +253,15 @@
                   </div>
                   @if (esTransferencia) {
                     <div class="pv-sub-opts">
-                      <button [class.act]="paymentMethod === 'nequi'" (click)="paymentMethod = 'nequi'">Nequi</button>
-                      <button [class.act]="paymentMethod === 'daviplata'" (click)="paymentMethod = 'daviplata'">Daviplata</button>
-                      <button [class.act]="paymentMethod === 'addi'" (click)="paymentMethod = 'addi'">Addi</button>
+                      <label class="pv-radio" [class.act]="paymentMethod === 'nequi'">
+                        <input type="radio" name="transf" value="nequi" [(ngModel)]="paymentMethod"> Nequi
+                      </label>
+                      <label class="pv-radio" [class.act]="paymentMethod === 'daviplata'">
+                        <input type="radio" name="transf" value="daviplata" [(ngModel)]="paymentMethod"> Daviplata
+                      </label>
+                      <label class="pv-radio" [class.act]="paymentMethod === 'addi'">
+                        <input type="radio" name="transf" value="addi" [(ngModel)]="paymentMethod"> Addi
+                      </label>
                     </div>
                   }
                 </div>

@@ -836,8 +836,12 @@
   gap: 6px;
   margin-top: 8px;
 }
-.pv-sub-opts button {
+.pv-radio {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   padding: 8px 6px;
   border: 2px solid #f0f0f0;
   border-radius: 10px;
@@ -848,12 +852,13 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.pv-sub-opts button:hover { border-color: #ddd; color: #999; }
-.pv-sub-opts button.act {
+.pv-radio:hover { border-color: #ddd; color: #999; }
+.pv-radio.act {
   border-color: #E1BEE7;
   background: #fdf5ff;
   color: #555;
 }
+.pv-radio input { accent-color: #E1BEE7; }
 
 .pv-finalizar {
   display: flex;
@@ -950,10 +955,131 @@
 }
 .perfil-btn:hover { background: #444; }
 
-@media (max-width: 700px) {
-  .sidebar { width: 60px; }
-  .sidebar.closed { width: 0; overflow: hidden; }
-  .admin-main { padding: 20px 12px; }
-  .stats { grid-template-columns: repeat(2, 1fr); }
-  .item-name { min-width: auto; }
+/* Mobile toggle (outside sidebar) */
+.mobile-toggle {
+  display: none;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.mobile-toggle span {
+  display: block;
+  width: 20px;
+  height: 2.5px;
+  background: #888;
+  border-radius: 2px;
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 998;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .mobile-toggle { display: flex; }
+  .sidebar-overlay { display: block; }
+
+  .admin-layout { flex-direction: column; }
+  .admin-layout { flex-direction: column; }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 999;
+    width: 220px;
+    transform: translateX(0);
+    transition: transform 0.25s ease, width 0.25s ease;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+  }
+  .sidebar.closed {
+    transform: translateX(-100%);
+    width: 220px;
+  }
+  .sidebar-toggle { display: flex; }
+
+  .admin-main {
+    margin-left: 0;
+    padding: 60px 12px 24px;
+    width: 100%;
+  }
+
+  /* POS */
+  .pv-layout { flex-direction: column; }
+  .pv-right {
+    width: 100%;
+    position: static;
+  }
+  .pv-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .pv-card { padding: 16px 8px 12px; }
+  .pv-dot { width: 32px; height: 32px; }
+  .pv-name { font-size: 0.8rem; }
+  .pv-stock { font-size: 1.1rem; }
+
+  .pv-cart-items { max-height: 260px; }
+  .pv-row { padding: 10px 8px; }
+  .pv-qty-btn { width: 40px; height: 40px; font-size: 1.3rem; }
+
+  .pv-metodo-opts { gap: 4px; }
+  .pv-metodo-btn { font-size: 0.7rem; padding: 10px 4px; }
+  .pv-sub-opts { gap: 4px; }
+  .pv-radio { font-size: 0.7rem; padding: 8px 4px; }
+
+  .pv-finalizar { padding: 14px; font-size: 1rem; }
+
+  /* Reportes */
+  .rep-charts { grid-template-columns: 1fr; }
+  .rep-chart-wrap { height: 200px; }
+  .rep-resumen {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .rep-card { padding: 14px 8px; }
+  .rep-card .rep-num { font-size: 1.1rem; }
+
+  /* Stats antiguas */
+  .stats { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stat-card { padding: 14px 8px; }
+
+  /* Productos */
+  .prod-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .prod-card-top { height: 70px; }
+
+  /* Tablas / listas */
+  .item { flex-direction: column; gap: 4px; padding: 12px; }
+  .item-col.right { text-align: left; }
+
+  /* Modal */
+  .modal-card { width: 95vw; padding: 20px; margin: 10px; }
+
+  /* Perfil */
+  .perfil-card { padding: 20px; }
+
+}
+
+@media (max-width: 480px) {
+  .pv-grid { grid-template-columns: repeat(2, 1fr); }
+  .rep-resumen { grid-template-columns: repeat(2, 1fr); }
+  .prod-grid { grid-template-columns: repeat(2, 1fr); }
+  .pv-metodo-btn { font-size: 0.65rem; padding: 8px 2px; }
+  .pv-cash-field input { font-size: 0.9rem; }
 }
