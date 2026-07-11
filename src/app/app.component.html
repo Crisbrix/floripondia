@@ -1,5 +1,9 @@
-<app-navbar />
+@if (router.url !== '/admin') {
+  <app-navbar />
+}
 <main>
   <router-outlet />
 </main>
-<app-footer />
+@if (router.url !== '/admin') {
+  <app-footer />
+}

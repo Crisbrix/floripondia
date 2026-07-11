@@ -1,12 +1,26 @@
 <nav>
   <div class="container nav-content">
     <a routerLink="/" class="logo">Floripondía</a>
+
     <div class="links">
       <a routerLink="/">Inicio</a>
       <a routerLink="/catalogo">Catálogo</a>
       <a routerLink="/nosotras">Nosotras</a>
       <a routerLink="/contacto">Contacto</a>
+      @if (user?.role === 'admin' || user?.role === 'vendedor') {
+        <a routerLink="/admin">Admin</a>
+      }
     </div>
+
+    <div class="auth-section">
+      @if (user) {
+        <span class="user-name">{{ user.nombre }}</span>
+        <button class="logout-btn" (click)="logout()">Salir</button>
+      } @else {
+        <a routerLink="/login" class="login-btn">Iniciar sesión</a>
+      }
+    </div>
+
     <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
       <span></span><span></span><span></span>
     </button>
@@ -21,6 +35,16 @@
       <a routerLink="/catalogo" (click)="menuOpen = false">Catálogo</a>
       <a routerLink="/nosotras" (click)="menuOpen = false">Nosotras</a>
       <a routerLink="/contacto" (click)="menuOpen = false">Contacto</a>
+      @if (user?.role === 'admin' || user?.role === 'vendedor') {
+        <a routerLink="/admin" (click)="menuOpen = false">Admin</a>
+      }
+      <hr class="menu-divider" />
+      @if (user) {
+        <span class="menu-user">{{ user.nombre }}</span>
+        <a (click)="logout()" class="menu-logout">Cerrar sesión</a>
+      } @else {
+        <a routerLink="/login" (click)="menuOpen = false">Iniciar sesión</a>
+      }
     </div>
   </div>
 }

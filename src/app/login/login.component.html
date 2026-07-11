@@ -1,0 +1,20 @@
+<section class="auth-page">
+  <div class="auth-card">
+    <h1>Iniciar sesión</h1>
+    <p>Ingresa con tu correo y contraseña</p>
+
+    @if (error) {
+      <div class="auth-error">{{ error }}</div>
+    }
+
+    <div class="auth-form">
+      <input type="email" placeholder="Correo electrónico" [(ngModel)]="email" />
+      <input type="password" placeholder="Contraseña" [(ngModel)]="password" (keyup.enter)="ingresar()" />
+      <button (click)="ingresar()">Entrar</button>
+    </div>
+
+    <p class="auth-footer">
+      ¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a>
+    </p>
+  </div>
+</section>
