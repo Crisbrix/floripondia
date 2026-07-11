@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://floriback-83hf.vercel.app/api',
+  apiUrl: 'https://floriback.vercel.app/api',
 };
