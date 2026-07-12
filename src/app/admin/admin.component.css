@@ -1000,6 +1000,22 @@
 }
 .pv-comentario textarea:focus { border-color: #E1BEE7; }
 
+.pv-row-coment {
+  width: 100%;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  color: #888;
+  outline: none;
+  background: #fff;
+  font-family: inherit;
+  box-sizing: border-box;
+  margin-top: 4px;
+  transition: border-color 0.15s;
+}
+.pv-row-coment:focus { border-color: #E1BEE7; }
+
 .pv-finalizar {
   display: flex;
   align-items: center;

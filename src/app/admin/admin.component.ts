@@ -260,7 +260,6 @@ export class AdminComponent {
   vMsg = '';
   vErr = '';
   cartOpen = false;
-  vComentario = '';
   selectedVendor = '';
   vendorSales: any[] = [];
   get vendorTotal() { return this.vendorSales.reduce((s, v) => s + v.total, 0); }
@@ -277,7 +276,7 @@ export class AdminComponent {
     }
     return [...map.values()];
   }
-  cart: { name: string; quantity: number; color: string }[] = [];
+  cart: { name: string; quantity: number; color: string; comentario: string }[] = [];
   paymentMethod: string = 'efectivo';
   vTotal = 0;
   vRecibido = 0;
@@ -342,7 +341,7 @@ export class AdminComponent {
         this.vErr = `Stock insuficiente de ${itemName}`; return;
       }
     } else {
-      this.cart.push({ name: itemName, quantity: 1, color: inv.color });
+      this.cart.push({ name: itemName, quantity: 1, color: inv.color, comentario: '' });
     }
     this.cartOpen = true;
     this.vMsg = `${itemName} +1`;
@@ -375,16 +374,15 @@ export class AdminComponent {
         this.vErr = 'El pago no cubre el total'; return;
       }
     }
-    const items = this.cart.map(i => ({ name: i.name, quantity: i.quantity }));
+    const items = this.cart.map(i => ({ name: i.name, quantity: i.quantity, comentario: i.comentario }));
     const recibido = this.esTransferencia ? this.vTotal : this.vRecibido;
-    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, recibido, this.vComentario);
+    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, recibido);
     if (ok) {
       this.vMsg = `Venta finalizada — ${this.cartTotal} artículo(s)`;
       this.vErr = '';
       this.cart = [];
       this.vTotal = 0;
       this.vRecibido = 0;
-      this.vComentario = '';
     } else {
       this.vErr = 'Error al procesar la venta: ' + this.productSvc.lastError;
       this.vMsg = '';

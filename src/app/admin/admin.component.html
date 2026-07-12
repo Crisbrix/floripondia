@@ -232,6 +232,7 @@
                   <div class="pv-row-info">
                     <span class="pv-row-name">{{ item.name }}</span>
                     <span class="pv-row-precio">x{{ item.quantity }}</span>
+                    <input class="pv-row-coment" type="text" [(ngModel)]="item.comentario" placeholder="Comentario..." />
                   </div>
                   <div class="pv-row-qty">
                     <button class="pv-qty-btn" (click)="quitarDelCarrito(item.name)">−</button>
@@ -291,11 +292,6 @@
                       </label>
                     </div>
                   }
-                </div>
-
-                <div class="pv-comentario">
-                  <label>Comentario (opcional)</label>
-                  <textarea [(ngModel)]="vComentario" placeholder="Notas sobre la venta..." rows="2"></textarea>
                 </div>
 
                 <button class="pv-finalizar" (click)="finalizarVenta()">

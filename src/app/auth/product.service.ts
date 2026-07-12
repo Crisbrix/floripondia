@@ -134,11 +134,11 @@ export class ProductService {
     } catch { this.cierre = null; }
   }
 
-  async sellCart(items: { name: string; quantity: number }[], metodo_pago: string, total: number = 0, recibido: number = 0, comentario: string = ''): Promise<boolean> {
+  async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0): Promise<boolean> {
     try {
       this.lastError = '';
       await firstValueFrom(
-        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido, comentario })
+        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido })
       );
       await this.fetchInventory();
       await this.fetchSales();
