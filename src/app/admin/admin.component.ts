@@ -277,6 +277,21 @@ export class AdminComponent {
     if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
     return this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
   }
+  get cierreCashTotal() {
+    return this.cierrePorMetodoArr
+      .filter(m => m.metodo_pago === 'efectivo')
+      .reduce((s, m) => s + Number(m.total), 0);
+  }
+  get cierreTransferTotal() {
+    return this.cierrePorMetodoArr
+      .filter(m => ['nequi', 'daviplata', 'addi'].includes(m.metodo_pago))
+      .reduce((s, m) => s + Number(m.total), 0);
+  }
+  get cierreCardTotal() {
+    return this.cierrePorMetodoArr
+      .filter(m => m.metodo_pago === 'tarjeta')
+      .reduce((s, m) => s + Number(m.total), 0);
+  }
   editSaleData: any = null;
   editSaleId: number | null = null;
 

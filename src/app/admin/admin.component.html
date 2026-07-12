@@ -407,14 +407,40 @@
             <div class="rep-card"><span class="rep-num">{{ cierreResumen?.articulos ?? 0 }}</span><span class="rep-label">Artículos vendidos</span></div>
           </div>
 
+          <div class="cierre-efectivo-box">
+            <span class="cierre-efectivo-label">Efectivo en caja</span>
+            <span class="cierre-efectivo-monto">${{ cierreCashTotal.toLocaleString() }}</span>
+          </div>
+
+          <div class="cierre-otros">
+            <div class="cierre-otros-card">
+              <span class="cierre-otros-label">Transferencias</span>
+              <span class="cierre-otros-valor">${{ cierreTransferTotal.toLocaleString() }}</span>
+              @for (m of cierrePorMetodoArr; track m.metodo_pago) {
+                @if (['nequi','daviplata','addi'].includes(m.metodo_pago)) {
+                  <span class="cierre-otros-det">{{ m.metodo_pago }}: ${{ (+m.total).toLocaleString() }}</span>
+                }
+              }
+            </div>
+            <div class="cierre-otros-card">
+              <span class="cierre-otros-label">Tarjeta</span>
+              <span class="cierre-otros-valor">${{ cierreCardTotal.toLocaleString() }}</span>
+              @for (m of cierrePorMetodoArr; track m.metodo_pago) {
+                @if (m.metodo_pago === 'tarjeta') {
+                  <span class="cierre-otros-det">tarjeta: ${{ (+m.total).toLocaleString() }}</span>
+                }
+              }
+            </div>
+          </div>
+
           <div class="cierre-metodos">
-            <h3>Totales por método de pago</h3>
+            <h3>Detalle por método de pago</h3>
             <div class="cierre-metodos-grid">
               @for (m of cierrePorMetodoArr; track m.metodo_pago) {
                 <div class="cierre-metodo-card">
                   <span class="cierre-metodo-nombre">{{ m.metodo_pago }}</span>
                   <span class="cierre-metodo-ventas">{{ m.cantidad }} venta(s)</span>
-                  <span class="cierre-metodo-total">${{ m.total.toLocaleString() }}</span>
+                  <span class="cierre-metodo-total">${{ (+m.total).toLocaleString() }}</span>
                 </div>
               }
             </div>

@@ -1341,6 +1341,59 @@
 }
 .cierre-tabla tbody tr:last-child td { border-bottom: none; }
 .cierre-tabla tbody tr:hover { background: #fdf5ff; }
+.cierre-efectivo-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.cierre-efectivo-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #2e7d32;
+}
+.cierre-efectivo-monto {
+  font-weight: 900;
+  font-size: 1.8rem;
+  color: #1b5e20;
+}
+.cierre-otros {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.cierre-otros-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+}
+.cierre-otros-label {
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.cierre-otros-valor {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #888;
+  margin-bottom: 4px;
+}
+.cierre-otros-det {
+  font-size: 0.75rem;
+  color: #bbb;
+  text-transform: capitalize;
+}
+
 .cierre-accion {
   display: flex;
   justify-content: flex-end;
