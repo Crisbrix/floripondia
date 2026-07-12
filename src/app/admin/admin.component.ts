@@ -247,6 +247,7 @@ export class AdminComponent {
 
   vMsg = '';
   vErr = '';
+  cartOpen = false;
   cart: { name: string; quantity: number; color: string }[] = [];
   paymentMethod: string = 'efectivo';
   vTotal = 0;
@@ -267,6 +268,18 @@ export class AdminComponent {
     this.paymentMethod = m;
   }
 
+  iconoProducto(nombre: string): string {
+    const mapa: Record<string,string> = {
+      Chaquetas:'🧥', Sacos:'👔', Jeanes:'👖', Pantalones:'👖',
+      Pañoletas:'🧣', Pantalonetas:'🩳', 'Faldas / Vestidos':'👗',
+      Corsés:'🫧', Blusas:'👚', Básicas:'👕', Bodies:'🩱',
+      Tenis:'👟', Sombreros:'🎩', Camisetas:'👕', Gorras:'🧢',
+      Medias:'🧦', Aretes:'💎', Collares:'📿', Bolsos:'👜',
+      Caimanes:'👞', Pulseras:'📿', Correas:'🎀',
+    };
+    return mapa[nombre] || '✦';
+  }
+
   agregarAlCarrito(itemName: string) {
     const inv = this.inventory.find(i => i.name === itemName);
     if (!inv || inv.stock <= 0) {
@@ -283,6 +296,7 @@ export class AdminComponent {
     } else {
       this.cart.push({ name: itemName, quantity: 1, color: inv.color });
     }
+    this.cartOpen = true;
     this.vMsg = `${itemName} +1`;
     this.vErr = '';
   }
