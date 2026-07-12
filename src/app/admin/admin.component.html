@@ -343,17 +343,43 @@
             @if (stats.ventasPorVendedor?.length) {
               <div class="rep-vend-grid">
                 @for (v of stats.ventasPorVendedor; track v.vendedor) {
-                  <div class="rep-vend-card">
+                  <button class="rep-vend-card" (click)="verVentasVendedor(v.vendedor)">
                     <span class="rep-vend-name">{{ v.vendedor }}</span>
                     <span class="rep-vend-ventas">{{ v.ventas }} venta(s)</span>
                     <span class="rep-vend-total">${{ v.total.toLocaleString() }}</span>
-                  </div>
+                  </button>
                 }
               </div>
             } @else {
               <p class="rep-vend-empty">Aún no hay ventas registradas</p>
             }
           </div>
+
+          @if (selectedVendor) {
+            <div class="modal-overlay" (click)="cerrarVentasVendedor()">
+              <div class="modal-card" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="cerrarVentasVendedor()">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+                <h2>Ventas de {{ selectedVendor }}</h2>
+                <div class="vend-detalle-lista">
+                  @for (sale of vendorSales; track sale.id) {
+                    <div class="vend-detalle-row">
+                      <div class="vend-detalle-info">
+                        <span class="vend-detalle-prod">{{ sale.productName }}</span>
+                        <span class="vend-detalle-meta">{{ sale.quantity }} ud &middot; ${{ sale.total.toLocaleString() }} &middot; {{ sale.paymentMethod }} &middot; {{ sale.date }}</span>
+                      </div>
+                      <span class="vend-detalle-total">${{ sale.total.toLocaleString() }}</span>
+                    </div>
+                  }
+                </div>
+                <div class="vend-detalle-foot">
+                  <span>Total</span>
+                  <strong>${{ vendorTotal.toLocaleString() }}</strong>
+                </div>
+              </div>
+            </div>
+          }
         }
       </section>
     }

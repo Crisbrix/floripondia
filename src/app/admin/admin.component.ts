@@ -83,6 +83,16 @@ export class AdminComponent {
     setTimeout(() => this.renderCharts());
   }
 
+  verVentasVendedor(vendedor: string) {
+    this.selectedVendor = vendedor;
+    this.vendorSales = this.productSvc.sales.filter(s => s.vendedor === vendedor);
+  }
+
+  cerrarVentasVendedor() {
+    this.selectedVendor = '';
+    this.vendorSales = [];
+  }
+
   private renderCharts() {
     this.destroyCharts();
     const s = this.stats;
@@ -250,6 +260,9 @@ export class AdminComponent {
   vMsg = '';
   vErr = '';
   cartOpen = false;
+  selectedVendor = '';
+  vendorSales: any[] = [];
+  get vendorTotal() { return this.vendorSales.reduce((s, v) => s + v.total, 0); }
   cart: { name: string; quantity: number; color: string }[] = [];
   paymentMethod: string = 'efectivo';
   vTotal = 0;
