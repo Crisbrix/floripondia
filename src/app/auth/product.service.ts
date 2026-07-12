@@ -10,6 +10,7 @@ export interface Product {
   image: string;
   color: string;
   stock: number;
+  descripcion?: string;
 }
 
 export interface Sale {
@@ -40,12 +41,14 @@ export interface Stats {
   metodos: { metodo_pago: string; cantidad: number; total: number }[];
   topProductos: { producto: string; vendidos: number }[];
   inventario: { nombre: string; stock: number; vendidos: number }[];
+  ventasPorVendedor: { vendedor: string; ventas: number; total: number }[];
 }
 
 export interface InventoryItem {
   name: string;
   stock: number;
   color: string;
+  descripcion?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -110,21 +113,28 @@ export class ProductService {
     await this.fetchProducts();
   }
 
-  async updateStock(name: string, stock: number) {
-    await firstValueFrom(this.http.patch(`${this.api}/inventario/${encodeURIComponent(name)}`, { stock }));
+  async updateStock(name: string, stock: number, descripcion?: string) {
+    const body: any = {};
+    if (stock >= 0) body.stock = stock;
+    if (descripcion !== undefined) body.descripcion = descripcion;
+    await firstValueFrom(this.http.patch(`${this.api}/inventario/${encodeURIComponent(name)}`, body));
     await this.fetchInventory();
     await this.fetchProducts();
   }
 
+  lastError = '';
+
   async sellCart(items: { name: string; quantity: number }[], metodo_pago: string, total: number = 0, recibido: number = 0): Promise<boolean> {
     try {
+      this.lastError = '';
       await firstValueFrom(
         this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido })
       );
       await this.fetchInventory();
       await this.fetchSales();
       return true;
-    } catch {
+    } catch (err: any) {
+      this.lastError = err.error?.error || err.message || 'Error desconocido';
       return false;
     }
   }

@@ -955,6 +955,85 @@
 }
 .perfil-btn:hover { background: #444; }
 
+/* ===== Descripción (textarea en modal) ===== */
+.modal-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 70px;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.modal-textarea:focus { border-color: #E1BEE7; }
+
+/* ===== Descripción en tarjetas ===== */
+.prod-card-desc {
+  margin: 4px 0 0;
+  font-size: 0.75rem;
+  color: #999;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.pv-desc {
+  font-size: 0.65rem;
+  color: #bbb;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+/* ===== Ventas por vendedor ===== */
+.rep-vendedores {
+  margin-top: 32px;
+}
+.rep-vendedores h3 {
+  font-size: 1.1rem;
+  margin: 0 0 12px;
+  color: #555;
+}
+.rep-vend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+.rep-vend-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px 14px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rep-vend-name {
+  font-weight: 700;
+  color: #444;
+  font-size: 0.95rem;
+}
+.rep-vend-ventas {
+  font-size: 0.8rem;
+  color: #999;
+}
+.rep-vend-total {
+  font-weight: 700;
+  color: #E1BEE7;
+  font-size: 1.1rem;
+}
+
 /* Mobile toggle (outside sidebar) */
 .mobile-toggle {
   display: none;
@@ -980,7 +1059,9 @@
   height: 2.5px;
   background: #888;
   border-radius: 2px;
+  flex-shrink: 0;
 }
+.mobile-toggle svg { color: #888; }
 .sidebar-overlay {
   display: none;
   position: fixed;
@@ -994,7 +1075,6 @@
   .mobile-toggle { display: flex; }
   .sidebar-overlay { display: block; }
 
-  .admin-layout { flex-direction: column; }
   .admin-layout { flex-direction: column; }
 
   .sidebar {
@@ -1012,7 +1092,7 @@
     transform: translateX(-100%);
     width: 220px;
   }
-  .sidebar-toggle { display: flex; }
+  .sidebar-header .sidebar-toggle { display: none; }
 
   .admin-main {
     margin-left: 0;
@@ -1067,6 +1147,8 @@
   /* Tablas / listas */
   .item { flex-direction: column; gap: 4px; padding: 12px; }
   .item-col.right { text-align: left; }
+
+  .rep-vend-grid { grid-template-columns: repeat(2, 1fr); }
 
   /* Modal */
   .modal-card { width: 95vw; padding: 20px; margin: 10px; }

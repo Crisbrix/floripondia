@@ -24,6 +24,7 @@ export class AdminComponent {
   newName = '';
   newCat = '';
   newImg = '';
+  newDesc = '';
   newStock = 0;
   editProd: Product | null = null;
   msg = '';
@@ -164,14 +165,16 @@ export class AdminComponent {
   async guardarProd() {
     if (!this.newName) { this.err = 'El nombre es obligatorio'; return; }
     try {
+      const catName = this.newCat || this.editProd?.category || '';
       if (this.editProd) {
         await this.productSvc.update(this.editProd.id, this.newName, this.newCat, this.newImg || this.editProd.image);
-        if (this.newStock >= 0) {
-          await this.productSvc.updateStock(this.editProd.name, this.newStock);
-        }
+        await this.productSvc.updateStock(this.editProd.name, this.newStock, this.newDesc || undefined);
         this.msg = 'Producto actualizado';
       } else {
         await this.productSvc.add(this.newName, this.newCat, this.newImg || '');
+        if (catName) {
+          await this.productSvc.updateStock(catName, 0, this.newDesc || undefined);
+        }
         this.msg = 'Producto creado';
       }
       this.limpiarForm();
@@ -185,6 +188,7 @@ export class AdminComponent {
     this.newName = '';
     this.newCat = '';
     this.newImg = '';
+    this.newDesc = '';
     this.newStock = 0;
     this.msg = '';
     this.err = '';
@@ -192,10 +196,12 @@ export class AdminComponent {
   }
 
   editar(p: Product) {
+    const inv = this.inventory.find(i => i.name === p.name);
     this.editProd = p;
     this.newName = p.name;
     this.newCat = p.category;
     this.newImg = p.image;
+    this.newDesc = inv?.descripcion || '';
     this.newStock = p.stock;
     this.msg = '';
     this.err = '';
@@ -214,6 +220,7 @@ export class AdminComponent {
     this.newName = '';
     this.newCat = '';
     this.newImg = '';
+    this.newDesc = '';
     this.newStock = 0;
     this.showProdModal = false;
   }
@@ -316,7 +323,7 @@ export class AdminComponent {
       this.vTotal = 0;
       this.vRecibido = 0;
     } else {
-      this.vErr = 'Error al procesar la venta';
+      this.vErr = 'Error al procesar la venta: ' + this.productSvc.lastError;
       this.vMsg = '';
     }
   }

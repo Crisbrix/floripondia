@@ -26,7 +26,8 @@ CREATE TABLE categorias (
   id    INT         AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(60) NOT NULL UNIQUE,
   stock INT         NOT NULL DEFAULT 0,
-  color VARCHAR(7)  NOT NULL DEFAULT '#FFFFFF'
+  color VARCHAR(7)  NOT NULL DEFAULT '#FFFFFF',
+  descripcion TEXT
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------
