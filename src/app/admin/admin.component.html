@@ -340,15 +340,19 @@
 
           <div class="rep-vendedores">
             <h3>Ventas por vendedor</h3>
-            <div class="rep-vend-grid">
-              @for (v of stats.ventasPorVendedor; track v.vendedor) {
-                <div class="rep-vend-card">
-                  <span class="rep-vend-name">{{ v.vendedor }}</span>
-                  <span class="rep-vend-ventas">{{ v.ventas }} venta(s)</span>
-                  <span class="rep-vend-total">${{ v.total.toLocaleString() }}</span>
-                </div>
-              }
-            </div>
+            @if (stats.ventasPorVendedor?.length) {
+              <div class="rep-vend-grid">
+                @for (v of stats.ventasPorVendedor; track v.vendedor) {
+                  <div class="rep-vend-card">
+                    <span class="rep-vend-name">{{ v.vendedor }}</span>
+                    <span class="rep-vend-ventas">{{ v.ventas }} venta(s)</span>
+                    <span class="rep-vend-total">${{ v.total.toLocaleString() }}</span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="rep-vend-empty">Aún no hay ventas registradas</p>
+            }
           </div>
         }
       </section>

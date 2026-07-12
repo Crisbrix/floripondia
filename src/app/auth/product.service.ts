@@ -90,6 +90,7 @@ export class ProductService {
   async fetchStats() {
     try {
       const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/stats`));
+      if (!res.ventasPorVendedor) res.ventasPorVendedor = [];
       this.stats = res;
     } catch { this.stats = null; }
   }
