@@ -265,17 +265,9 @@ export class AdminComponent {
   get vendorTotal() { return this.vendorSales.reduce((s, v) => s + v.total, 0); }
   cierreLoading = false;
   cierreSales: any[] = [];
-  get cierreTotal() { return this.cierreSales.reduce((s, v) => s + v.total, 0); }
-  get cierrePorMetodo() {
-    const map = new Map<string, { metodo: string; ventas: number; total: number }>();
-    for (const s of this.cierreSales) {
-      const m = s.paymentMethod;
-      if (!map.has(m)) map.set(m, { metodo: m, ventas: 0, total: 0 });
-      map.get(m)!.ventas += s.quantity;
-      map.get(m)!.total += s.total;
-    }
-    return [...map.values()];
-  }
+  cierreResumen: any = null;
+  cierrePorMetodoArr: any[] = [];
+  get cierreTotal() { return this.cierreResumen?.total ?? this.cierreSales.reduce((s, v) => s + v.total, 0); }
   cart: { name: string; quantity: number; color: string; comentario: string }[] = [];
   paymentMethod: string = 'efectivo';
   vTotal = 0;
@@ -392,9 +384,11 @@ export class AdminComponent {
   async abrirCierre() {
     this.tab = 'cierre';
     this.cierreLoading = true;
-    await this.productSvc.fetchSales();
-    const hoy = new Date().toISOString().slice(0, 10);
-    this.cierreSales = this.productSvc.sales.filter(s => s.date === hoy);
+    await this.productSvc.fetchCierre();
+    const c = this.productSvc.cierre;
+    this.cierreSales = c?.ventas || [];
+    this.cierreResumen = c?.resumen || null;
+    this.cierrePorMetodoArr = c?.metodos || [];
     this.cierreLoading = false;
   }
 

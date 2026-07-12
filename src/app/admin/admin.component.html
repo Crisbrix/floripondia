@@ -402,17 +402,18 @@
           <div class="admin-ok" style="text-align:center;padding:2rem">Cargando...</div>
         } @else {
           <div class="cierre-resumen">
-            <div class="rep-card"><span class="rep-num">{{ cierreSales.length }}</span><span class="rep-label">Ventas hoy</span></div>
+            <div class="rep-card"><span class="rep-num">{{ cierreResumen?.transacciones ?? cierreSales.length }}</span><span class="rep-label">Ventas hoy</span></div>
             <div class="rep-card"><span class="rep-num">${{ cierreTotal.toLocaleString() }}</span><span class="rep-label">Total vendido</span></div>
+            <div class="rep-card"><span class="rep-num">{{ cierreResumen?.articulos ?? 0 }}</span><span class="rep-label">Artículos vendidos</span></div>
           </div>
 
           <div class="cierre-metodos">
             <h3>Totales por método de pago</h3>
             <div class="cierre-metodos-grid">
-              @for (m of cierrePorMetodo; track m.metodo) {
+              @for (m of cierrePorMetodoArr; track m.metodo_pago) {
                 <div class="cierre-metodo-card">
-                  <span class="cierre-metodo-nombre">{{ m.metodo }}</span>
-                  <span class="cierre-metodo-ventas">{{ m.ventas }} venta(s)</span>
+                  <span class="cierre-metodo-nombre">{{ m.metodo_pago }}</span>
+                  <span class="cierre-metodo-ventas">{{ m.cantidad }} venta(s)</span>
                   <span class="cierre-metodo-total">${{ m.total.toLocaleString() }}</span>
                 </div>
               }
