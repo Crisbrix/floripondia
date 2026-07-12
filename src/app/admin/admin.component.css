@@ -1216,6 +1216,7 @@
 
   /* POS */
   .pv-layout { flex-direction: column; }
+  .pv-left.pv-left-shrink { margin-right: 0; }
   .pv-right {
     position: fixed;
     top: auto;
