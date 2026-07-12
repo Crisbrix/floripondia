@@ -50,6 +50,12 @@
           @if (sidebarOpen) { <span>Reportes</span> }
         </button>
       }
+      <button [class.active]="tab === 'cierre'" (click)="abrirCierre()">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </span>
+        @if (sidebarOpen) { <span>Cierre</span> }
+      </button>
       <button [class.active]="tab === 'perfil'" (click)="abrirPerfil()">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -287,6 +293,11 @@
                   }
                 </div>
 
+                <div class="pv-comentario">
+                  <label>Comentario (opcional)</label>
+                  <textarea [(ngModel)]="vComentario" placeholder="Notas sobre la venta..." rows="2"></textarea>
+                </div>
+
                 <button class="pv-finalizar" (click)="finalizarVenta()">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   Finalizar venta
@@ -368,6 +379,9 @@
                       <div class="vend-detalle-info">
                         <span class="vend-detalle-prod">{{ sale.productName }}</span>
                         <span class="vend-detalle-meta">{{ sale.quantity }} ud &middot; ${{ sale.total.toLocaleString() }} &middot; {{ sale.paymentMethod }} &middot; {{ sale.date }}</span>
+                        @if (sale.comentario) {
+                          <span class="vend-detalle-coment">Comentario: {{ sale.comentario }}</span>
+                        }
                       </div>
                       <span class="vend-detalle-total">${{ sale.total.toLocaleString() }}</span>
                     </div>
@@ -380,6 +394,77 @@
               </div>
             </div>
           }
+        }
+      </section>
+    }
+
+    @if (tab === 'cierre') {
+      <section>
+        <h1>Cierre de caja</h1>
+
+        @if (cierreLoading) {
+          <div class="admin-ok" style="text-align:center;padding:2rem">Cargando...</div>
+        } @else {
+          <div class="cierre-resumen">
+            <div class="rep-card"><span class="rep-num">{{ cierreSales.length }}</span><span class="rep-label">Ventas hoy</span></div>
+            <div class="rep-card"><span class="rep-num">${{ cierreTotal.toLocaleString() }}</span><span class="rep-label">Total vendido</span></div>
+          </div>
+
+          <div class="cierre-metodos">
+            <h3>Totales por método de pago</h3>
+            <div class="cierre-metodos-grid">
+              @for (m of cierrePorMetodo; track m.metodo) {
+                <div class="cierre-metodo-card">
+                  <span class="cierre-metodo-nombre">{{ m.metodo }}</span>
+                  <span class="cierre-metodo-ventas">{{ m.ventas }} venta(s)</span>
+                  <span class="cierre-metodo-total">${{ m.total.toLocaleString() }}</span>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="cierre-lista">
+            <h3>Todas las ventas del día</h3>
+            <div class="cierre-tabla-wrap">
+              <table class="cierre-tabla">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Cant.</th>
+                    <th>Total</th>
+                    <th>Método</th>
+                    <th>Pagó</th>
+                    <th>Cambio</th>
+                    <th>Vendedor</th>
+                    <th>Comentario</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (sale of cierreSales; track sale.id) {
+                    <tr>
+                      <td>{{ sale.id }}</td>
+                      <td>{{ sale.productName }}</td>
+                      <td>{{ sale.quantity }}</td>
+                      <td>${{ sale.total.toLocaleString() }}</td>
+                      <td>{{ sale.paymentMethod }}</td>
+                      <td>${{ sale.recibido.toLocaleString() }}</td>
+                      <td>${{ sale.cambio.toLocaleString() }}</td>
+                      <td>{{ sale.vendedor }}</td>
+                      <td>{{ sale.comentario || '—' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="cierre-accion">
+            <button class="btn-primary" (click)="confirmarCierre()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Confirmar cierre de caja
+            </button>
+          </div>
         }
       </section>
     }

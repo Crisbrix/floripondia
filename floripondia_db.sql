@@ -57,8 +57,11 @@ CREATE TABLE ventas (
   metodo_pago  VARCHAR(20) NOT NULL DEFAULT 'efectivo',
   fecha        DATE        NOT NULL DEFAULT (CURRENT_DATE),
   vendedor_id  INT         NOT NULL,
+  comentario   TEXT,
   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE ventas ADD COLUMN comentario TEXT;
 
 -- -----------------------------------------------------------
 -- ÍNDICES
@@ -127,3 +130,4 @@ INSERT INTO productos (nombre, categoria, imagen, color) VALUES
 
 -- Migración para bases existentes
 ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
+ALTER TABLE ventas ADD COLUMN comentario TEXT;

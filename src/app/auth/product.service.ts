@@ -24,6 +24,7 @@ export interface Sale {
   paymentMethod: string;
   date: string;
   vendedor: string;
+  comentario?: string;
 }
 
 export interface CartItem {
@@ -124,12 +125,20 @@ export class ProductService {
   }
 
   lastError = '';
+  cierre: any = null;
 
-  async sellCart(items: { name: string; quantity: number }[], metodo_pago: string, total: number = 0, recibido: number = 0): Promise<boolean> {
+  async fetchCierre() {
+    try {
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierre`));
+      this.cierre = res;
+    } catch { this.cierre = null; }
+  }
+
+  async sellCart(items: { name: string; quantity: number }[], metodo_pago: string, total: number = 0, recibido: number = 0, comentario: string = ''): Promise<boolean> {
     try {
       this.lastError = '';
       await firstValueFrom(
-        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido })
+        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido, comentario })
       );
       await this.fetchInventory();
       await this.fetchSales();

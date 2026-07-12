@@ -17,7 +17,7 @@ Chart.register(BarController, DoughnutController, BarElement, ArcElement, Catego
 })
 export class AdminComponent {
   sidebarOpen = true;
-  tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' = 'productos';
+  tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' = 'productos';
 
   users: (User & { password?: string })[] = [];
 
@@ -260,9 +260,23 @@ export class AdminComponent {
   vMsg = '';
   vErr = '';
   cartOpen = false;
+  vComentario = '';
   selectedVendor = '';
   vendorSales: any[] = [];
   get vendorTotal() { return this.vendorSales.reduce((s, v) => s + v.total, 0); }
+  cierreLoading = false;
+  cierreSales: any[] = [];
+  get cierreTotal() { return this.cierreSales.reduce((s, v) => s + v.total, 0); }
+  get cierrePorMetodo() {
+    const map = new Map<string, { metodo: string; ventas: number; total: number }>();
+    for (const s of this.cierreSales) {
+      const m = s.paymentMethod;
+      if (!map.has(m)) map.set(m, { metodo: m, ventas: 0, total: 0 });
+      map.get(m)!.ventas += s.quantity;
+      map.get(m)!.total += s.total;
+    }
+    return [...map.values()];
+  }
   cart: { name: string; quantity: number; color: string }[] = [];
   paymentMethod: string = 'efectivo';
   vTotal = 0;
@@ -363,16 +377,32 @@ export class AdminComponent {
     }
     const items = this.cart.map(i => ({ name: i.name, quantity: i.quantity }));
     const recibido = this.esTransferencia ? this.vTotal : this.vRecibido;
-    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, recibido);
+    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, recibido, this.vComentario);
     if (ok) {
       this.vMsg = `Venta finalizada — ${this.cartTotal} artículo(s)`;
       this.vErr = '';
       this.cart = [];
       this.vTotal = 0;
       this.vRecibido = 0;
+      this.vComentario = '';
     } else {
       this.vErr = 'Error al procesar la venta: ' + this.productSvc.lastError;
       this.vMsg = '';
+    }
+  }
+
+  async abrirCierre() {
+    this.tab = 'cierre';
+    this.cierreLoading = true;
+    await this.productSvc.fetchSales();
+    const hoy = new Date().toISOString().slice(0, 10);
+    this.cierreSales = this.productSvc.sales.filter(s => s.date === hoy);
+    this.cierreLoading = false;
+  }
+
+  async confirmarCierre() {
+    if (confirm('¿Confirmar el cierre de caja del día de hoy?')) {
+      alert('Cierre de caja confirmado. Puedes imprimir o guardar esta pantalla como registro.');
     }
   }
 
