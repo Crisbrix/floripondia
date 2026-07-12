@@ -126,6 +126,13 @@ export class ProductService {
 
   lastError = '';
 
+  async confirmarCierre() {
+    try {
+      await firstValueFrom(this.http.post(`${this.api}/ventas/cierre/confirmar`, {}));
+      return true;
+    } catch { return false; }
+  }
+
   async deleteSale(id: number) {
     await firstValueFrom(this.http.delete(`${this.api}/ventas/${id}`));
     await this.fetchSales();

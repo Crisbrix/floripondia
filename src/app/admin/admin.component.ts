@@ -273,6 +273,7 @@ export class AdminComponent {
   cierreSales: any[] = [];
   cierreResumen: any = null;
   cierrePorMetodoArr: any[] = [];
+  cierreConfirmado = false;
   get cierreTotal() {
     if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
     return this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
@@ -447,12 +448,18 @@ export class AdminComponent {
     this.cierreSales = c?.ventas || [];
     this.cierreResumen = c?.resumen || null;
     this.cierrePorMetodoArr = c?.metodos || [];
+    this.cierreConfirmado = !!c?.confirmado;
     this.cierreLoading = false;
   }
 
   async confirmarCierre() {
-    if (confirm('¿Confirmar el cierre de caja del día de hoy?')) {
-      alert('Cierre de caja confirmado. Puedes imprimir o guardar esta pantalla como registro.');
+    if (!confirm('¿Confirmar el cierre de caja del día de hoy? Esta acción no se puede deshacer.')) return;
+    const ok = await this.productSvc.confirmarCierre();
+    if (ok) {
+      this.cierreConfirmado = true;
+      this.abrirCierre();
+    } else {
+      alert('Error al confirmar el cierre');
     }
   }
 

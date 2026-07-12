@@ -128,6 +128,17 @@ INSERT INTO productos (nombre, categoria, imagen, color) VALUES
   ('Pulseras',        'Pulseras',        '', '#F3E5F5'),
   ('Correas',         'Correas',         '', '#FFF9C4');
 
+-- -----------------------------------------------------------
+-- 5. CIERRES DE CAJA
+-- -----------------------------------------------------------
+CREATE TABLE cierres (
+  id            INT      AUTO_INCREMENT PRIMARY KEY,
+  fecha         DATE     NOT NULL UNIQUE,
+  confirmado_por INT     NOT NULL,
+  confirmado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (confirmado_por) REFERENCES usuarios(id) ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- Migración para bases existentes
 ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
 ALTER TABLE ventas ADD COLUMN comentario TEXT;
