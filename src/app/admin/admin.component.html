@@ -173,7 +173,7 @@
 
     @if (tab === 'ventas') {
       <section class="pv-layout">
-        <div class="pv-left">
+        <div class="pv-left" [class.pv-left-shrink]="cartOpen">
           <div class="pv-header">
             <h1><span class="pv-icon">✦</span> Nueva venta</h1>
             <div class="pv-items-count">{{ inventory.length }} productos</div>
@@ -186,7 +186,7 @@
             @for (item of inventory; track item.name) {
               <button class="pv-card" [class.agotado]="item.stock === 0" (click)="agregarAlCarrito(item.name)">
                 <span class="pv-card-top" [style.background]="item.color">
-                  <span class="pv-icono">{{ iconoProducto(item.name) }}</span>
+                  <span class="pv-icono" [innerHTML]="iconoProducto(item.name)"></span>
                 </span>
                 <span class="pv-card-body">
                   <span class="pv-name">{{ item.name }}</span>

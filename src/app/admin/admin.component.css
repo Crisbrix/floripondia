@@ -535,7 +535,8 @@
   gap: 28px;
   align-items: flex-start;
 }
-.pv-left { flex: 1; min-width: 0; }
+.pv-left { flex: 1; min-width: 0; transition: margin-right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.pv-left.pv-left-shrink { margin-right: 400px; }
 .pv-right {
   position: fixed;
   top: 20px;
@@ -673,10 +674,16 @@
   flex-shrink: 0;
 }
 .pv-icono {
-  font-size: 1.4rem;
-  line-height: 1;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  color: rgba(0,0,0,0.35);
 }
+.pv-icono svg { display: block; }
 
 .pv-card-body {
   flex: 1;
@@ -1231,7 +1238,7 @@
     margin-bottom: 80px;
   }
   .pv-card-top { height: 44px; }
-  .pv-icono { font-size: 1.2rem; }
+  .pv-icono { width: 28px; height: 28px; }
   .pv-name { font-size: 0.78rem; }
 
   .pv-row { padding: 10px 16px; }
@@ -1279,7 +1286,7 @@
 @media (max-width: 480px) {
   .pv-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
   .pv-card-top { height: 38px; }
-  .pv-icono { font-size: 1rem; }
+  .pv-icono { width: 24px; height: 24px; }
   .pv-cart-btn { width: 48px; height: 48px; bottom: 16px; right: 16px; }
   .rep-resumen { grid-template-columns: repeat(2, 1fr); }
   .prod-grid { grid-template-columns: repeat(2, 1fr); }
