@@ -17,7 +17,12 @@ Chart.register(BarController, DoughnutController, BarElement, ArcElement, Catego
 })
 export class AdminComponent {
   sidebarOpen = true;
-  tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' = 'productos';
+  private _tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' = 'productos';
+  get tab() { return this._tab; }
+  set tab(v) {
+    if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
+    this._tab = v;
+  }
 
   users: (User & { password?: string })[] = [];
 
@@ -288,10 +293,13 @@ export class AdminComponent {
     this.paymentMethod = m;
   }
 
+  private iconCache = new Map<string, SafeHtml>();
+
   iconoProducto(nombre: string): SafeHtml {
+    if (this.iconCache.has(nombre)) return this.iconCache.get(nombre)!;
     const svg = (path: string, vb = '0 0 24 24') =>
       `<svg viewBox="${vb}" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
-    const mapa: Record<string,SafeHtml> = {
+    const mapa: Record<string, string> = {
       Chaquetas:  svg('<path d="M7 5l-5 4v14h8v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6h8V9l-5-4"/><path d="M7 5V3a2 2 0 0 1 2-2h2"/><path d="M17 5V3a2 2 0 0 0-2-2h-2"/>'),
       Sacos:      svg('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>'),
       Jeanes:     svg('<path d="M6 2L4 6v16h7V10h2v12h7V6l-2-4"/><line x1="4" y1="10" x2="20" y2="10"/>'),
@@ -316,7 +324,9 @@ export class AdminComponent {
       Correas:    svg('<rect x="3" y="10" width="18" height="4" rx="2"/><circle cx="7" cy="12" r="1.5" fill="currentColor"/><circle cx="17" cy="12" r="1.5" fill="currentColor"/>'),
     };
     const svgStr = mapa[nombre] || svg('<circle cx="12" cy="12" r="6"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>');
-    return this.sanitizer.bypassSecurityTrustHtml(svgStr as string);
+    const safe = this.sanitizer.bypassSecurityTrustHtml(svgStr);
+    this.iconCache.set(nombre, safe);
+    return safe;
   }
 
   agregarAlCarrito(itemName: string) {

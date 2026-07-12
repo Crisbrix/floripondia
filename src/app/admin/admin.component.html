@@ -347,7 +347,7 @@
 
           <div class="rep-vendedores">
             <h3>Ventas por vendedor</h3>
-            @if (stats.ventasPorVendedor?.length) {
+            @if (stats.ventasPorVendedor.length) {
               <div class="rep-vend-grid">
                 @for (v of stats.ventasPorVendedor; track v.vendedor) {
                   <button class="rep-vend-card" (click)="verVentasVendedor(v.vendedor)">
