@@ -1345,6 +1345,41 @@
   display: flex;
   justify-content: flex-end;
 }
+.cierre-acciones {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.cierre-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.cierre-btn-edit { background: #E8F5E9; color: #2e7d32; }
+.cierre-btn-edit:hover { background: #C8E6C9; }
+.cierre-btn-del { background: #FCE4EC; color: #c44; }
+.cierre-btn-del:hover { background: #F8BBD0; }
+.modal-textarea {
+  width: 100%;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: #555;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+  font-family: inherit;
+  box-sizing: border-box;
+  background: #fff;
+}
+.modal-textarea:focus { border-color: #E1BEE7; }
 
 /* Mobile toggle (outside sidebar) */
 .mobile-toggle {

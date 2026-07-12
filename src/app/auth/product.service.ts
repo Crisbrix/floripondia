@@ -125,6 +125,17 @@ export class ProductService {
   }
 
   lastError = '';
+
+  async deleteSale(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/ventas/${id}`));
+    await this.fetchSales();
+    await this.fetchInventory();
+  }
+
+  async updateSale(id: number, data: any) {
+    await firstValueFrom(this.http.put(`${this.api}/ventas/${id}`, data));
+    await this.fetchSales();
+  }
   cierre: any = null;
 
   async fetchCierre() {

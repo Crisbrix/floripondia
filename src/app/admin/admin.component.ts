@@ -88,8 +88,9 @@ export class AdminComponent {
     setTimeout(() => this.renderCharts());
   }
 
-  verVentasVendedor(vendedor: string) {
+  async verVentasVendedor(vendedor: string) {
     this.selectedVendor = vendedor;
+    await this.productSvc.fetchSales();
     this.vendorSales = this.productSvc.sales.filter(s => s.vendedor === vendedor);
   }
 
@@ -267,12 +268,44 @@ export class AdminComponent {
   cartOpen = false;
   selectedVendor = '';
   vendorSales: any[] = [];
-  get vendorTotal() { return this.vendorSales.reduce((s, v) => s + v.total, 0); }
+  get vendorTotal() { return this.vendorSales.reduce((s, v) => s + Number(v.total), 0); }
   cierreLoading = false;
   cierreSales: any[] = [];
   cierreResumen: any = null;
   cierrePorMetodoArr: any[] = [];
-  get cierreTotal() { return this.cierreResumen?.total ?? this.cierreSales.reduce((s, v) => s + v.total, 0); }
+  get cierreTotal() {
+    if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
+    return this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
+  }
+  editSaleData: any = null;
+  editSaleId: number | null = null;
+
+  async eliminarVenta(id: number, name: string) {
+    if (!confirm(`¿Eliminar la venta de "${name}"? El stock se restaurará.`)) return;
+    await this.productSvc.deleteSale(id);
+    this.abrirCierre();
+  }
+
+  abrirEditarVenta(sale: any) {
+    this.editSaleId = sale.id;
+    this.editSaleData = { ...sale };
+  }
+  cerrarEditarVenta() { this.editSaleId = null; this.editSaleData = null; }
+  async guardarEditarVenta() {
+    if (!this.editSaleId || !this.editSaleData) return;
+    await this.productSvc.updateSale(this.editSaleId, {
+      productName: this.editSaleData.productName,
+      quantity: this.editSaleData.quantity,
+      total: this.editSaleData.total,
+      recibido: this.editSaleData.recibido,
+      cambio: this.editSaleData.cambio,
+      paymentMethod: this.editSaleData.paymentMethod,
+      comentario: this.editSaleData.comentario,
+    });
+    this.cerrarEditarVenta();
+    this.abrirCierre();
+  }
+
   cart: { name: string; quantity: number; color: string; comentario: string }[] = [];
   paymentMethod: string = 'efectivo';
   vTotal = 0;

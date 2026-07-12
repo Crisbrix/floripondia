@@ -435,6 +435,7 @@
                     <th>Cambio</th>
                     <th>Vendedor</th>
                     <th>Comentario</th>
+                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -449,12 +450,50 @@
                       <td>${{ sale.cambio.toLocaleString() }}</td>
                       <td>{{ sale.vendedor }}</td>
                       <td>{{ sale.comentario || '—' }}</td>
+                      <td class="cierre-acciones">
+                        <button class="cierre-btn cierre-btn-edit" (click)="abrirEditarVenta(sale)" title="Editar">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button class="cierre-btn cierre-btn-del" (click)="eliminarVenta(sale.id, sale.productName)" title="Eliminar">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                      </td>
                     </tr>
                   }
                 </tbody>
               </table>
             </div>
           </div>
+
+          @if (editSaleId) {
+            <div class="modal-overlay" (click)="cerrarEditarVenta()">
+              <div class="modal-card" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="cerrarEditarVenta()">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+                <h2>Editar venta #{{ editSaleId }}</h2>
+                <div class="modal-form">
+                  <input type="text" placeholder="Producto" [(ngModel)]="editSaleData.productName" />
+                  <input type="number" min="1" placeholder="Cantidad" [(ngModel)]="editSaleData.quantity" />
+                  <input type="number" min="0" placeholder="Total $" [(ngModel)]="editSaleData.total" />
+                  <input type="number" min="0" placeholder="Recibido $" [(ngModel)]="editSaleData.recibido" />
+                  <input type="number" min="0" placeholder="Cambio $" [(ngModel)]="editSaleData.cambio" />
+                  <select [(ngModel)]="editSaleData.paymentMethod">
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="nequi">Nequi</option>
+                    <option value="daviplata">Daviplata</option>
+                    <option value="addi">Addi</option>
+                  </select>
+                  <textarea class="modal-textarea" placeholder="Comentario" [(ngModel)]="editSaleData.comentario"></textarea>
+                  <div class="modal-btns">
+                    <button class="btn-primary" (click)="guardarEditarVenta()">Guardar</button>
+                    <button class="btn-sec" (click)="cerrarEditarVenta()">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
 
           <div class="cierre-accion">
             <button class="btn-primary" (click)="confirmarCierre()">
