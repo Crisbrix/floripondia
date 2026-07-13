@@ -166,4 +166,22 @@ export class ProductService {
       return false;
     }
   }
+
+  async fetchAllCategories() {
+    try {
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/categorias`));
+    } catch { return []; }
+  }
+
+  async createCategory(data: { nombre: string; stock?: number; color?: string; descripcion?: string }) {
+    await firstValueFrom(this.http.post(`${this.api}/categorias`, data));
+  }
+
+  async updateCategory(id: number, data: { nombre: string; color?: string; descripcion?: string }) {
+    await firstValueFrom(this.http.put(`${this.api}/categorias/${id}`, data));
+  }
+
+  async deleteCategory(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/categorias/${id}`));
+  }
 }

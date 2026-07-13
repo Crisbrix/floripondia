@@ -29,6 +29,12 @@
         @if (sidebarOpen) { <span>Productos</span> }
       </button>
       @if (isAdmin) {
+        <button [class.active]="tab === 'categorias'" (click)="abrirCategorias()">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </span>
+          @if (sidebarOpen) { <span>Categorías</span> }
+        </button>
         <button [class.active]="tab === 'usuarios'" (click)="tab = 'usuarios'">
           <span class="nav-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -130,6 +136,68 @@
                     Editar
                   </button>
                   <button class="prod-del" (click)="eliminar(p.id)">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    @if (tab === 'categorias') {
+      <section>
+        <div class="prod-header">
+          <h1>Categorías</h1>
+          <button class="btn-primary prod-nuevo" (click)="abrirCatModal()">+ Nueva categoría</button>
+        </div>
+
+        @if (catMsg) { <div class="admin-ok">{{ catMsg }}</div> }
+        @if (catErr) { <div class="admin-error">{{ catErr }}</div> }
+
+        @if (catModal) {
+          <div class="modal-overlay" (click)="cerrarCatModal()">
+            <div class="modal-card" (click)="$event.stopPropagation()">
+              <button class="modal-close" (click)="cerrarCatModal()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+              <h2>{{ catEdit ? 'Editar categoría' : 'Nueva categoría' }}</h2>
+              <div class="modal-form">
+                <input type="text" placeholder="Nombre" [(ngModel)]="catNombre" />
+                <div class="cat-color-row">
+                  <label>Color</label>
+                  <input type="color" [(ngModel)]="catColor" />
+                  <span class="cat-color-preview" [style.background]="catColor"></span>
+                </div>
+                <textarea class="modal-textarea" placeholder="Descripción" [(ngModel)]="catDesc"></textarea>
+                <div class="modal-btns">
+                  <button class="btn-primary" (click)="guardarCat()">{{ catEdit ? 'Actualizar' : 'Crear' }}</button>
+                  <button class="btn-sec" (click)="cerrarCatModal()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="prod-grid">
+          @for (c of categorias; track c.id) {
+            <div class="prod-card">
+              <div class="prod-card-top" [style.background]="c.color">
+                <span class="prod-card-stock">{{ c.stock }}</span>
+              </div>
+              <div class="prod-card-body">
+                <h3>{{ c.name }}</h3>
+                @if (c.descripcion) {
+                  <p class="prod-card-desc">{{ c.descripcion }}</p>
+                }
+                <div class="prod-card-acc">
+                  <button class="prod-edit" (click)="abrirCatModal(c)">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Editar
+                  </button>
+                  <button class="prod-del" (click)="eliminarCat(c.id, c.name)">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     Eliminar
                   </button>

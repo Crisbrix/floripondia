@@ -17,7 +17,7 @@ Chart.register(BarController, DoughnutController, BarElement, ArcElement, Catego
 })
 export class AdminComponent {
   sidebarOpen = true;
-  private _tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' = 'productos';
+  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -73,6 +73,14 @@ export class AdminComponent {
   get inventory() { return this.productSvc.inventory; }
   stats: Stats | null = null;
   get user() { return this.auth.getSession(); }
+  categorias: any[] = [];
+  catModal = false;
+  catEdit: any = null;
+  catNombre = '';
+  catColor = '#E1BEE7';
+  catDesc = '';
+  catMsg = '';
+  catErr = '';
 
   chartInstances: Chart[] = [];
   pNombre = '';
@@ -241,6 +249,51 @@ export class AdminComponent {
     this.newDesc = '';
     this.newStock = 0;
     this.showProdModal = false;
+  }
+
+  async abrirCategorias() {
+    this.tab = 'categorias';
+    this.categorias = await this.productSvc.fetchAllCategories();
+    this.catMsg = ''; this.catErr = '';
+  }
+
+  abrirCatModal(edit?: any) {
+    this.catEdit = edit || null;
+    this.catNombre = edit?.name || '';
+    this.catColor = edit?.color || '#E1BEE7';
+    this.catDesc = edit?.descripcion || '';
+    this.catMsg = ''; this.catErr = '';
+    this.catModal = true;
+  }
+  cerrarCatModal() { this.catModal = false; this.catEdit = null; }
+
+  async guardarCat() {
+    if (!this.catNombre) { this.catErr = 'El nombre es obligatorio'; return; }
+    try {
+      if (this.catEdit) {
+        await this.productSvc.updateCategory(this.catEdit.id, { nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc });
+        this.catMsg = 'Categoría actualizada';
+      } else {
+        await this.productSvc.createCategory({ nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc });
+        this.catMsg = 'Categoría creada';
+      }
+      this.cerrarCatModal();
+      this.categorias = await this.productSvc.fetchAllCategories();
+      if (this.tab === 'productos') await this.productSvc.fetchProducts();
+      if (this.tab === 'ventas') await this.productSvc.fetchInventory();
+    } catch (err: any) {
+      this.catErr = err.error?.error || 'Error al guardar';
+    }
+  }
+
+  async eliminarCat(id: number, name: string) {
+    if (!confirm(`¿Eliminar la categoría "${name}" y todos sus productos asociados?`)) return;
+    try {
+      await this.productSvc.deleteCategory(id);
+      this.categorias = await this.productSvc.fetchAllCategories();
+      await this.productSvc.fetchProducts();
+      this.catMsg = 'Categoría eliminada';
+    } catch { this.catErr = 'Error al eliminar'; }
   }
 
   async cargarUsuarios() {

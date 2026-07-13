@@ -1114,6 +1114,32 @@
 .perfil-btn:hover { background: #444; }
 
 /* ===== Descripción (textarea en modal) ===== */
+.cat-color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cat-color-row label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #888;
+}
+.cat-color-row input[type="color"] {
+  width: 44px;
+  height: 44px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  padding: 2px;
+  cursor: pointer;
+  background: none;
+}
+.cat-color-preview {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 2px solid #eee;
+}
+
 .modal-textarea {
   width: 100%;
   padding: 12px 14px;
