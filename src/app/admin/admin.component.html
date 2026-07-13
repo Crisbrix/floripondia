@@ -56,6 +56,12 @@
           @if (sidebarOpen) { <span>Reportes</span> }
         </button>
       }
+      <button [class.active]="tab === 'apartados'" (click)="abrirApartados()">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </span>
+        @if (sidebarOpen) { <span>Apartados</span> }
+      </button>
       <button [class.active]="tab === 'cierre'" (click)="abrirCierre()">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -380,6 +386,122 @@
       </section>
     }
 
+    @if (tab === 'apartados') {
+      <section>
+        <div class="prod-header">
+          <h1>Apartados</h1>
+          <button class="btn-primary prod-nuevo" (click)="abrirApModal()">+ Nuevo apartado</button>
+        </div>
+
+        @if (apMsg) { <div class="admin-ok">{{ apMsg }}</div> }
+        @if (apErr) { <div class="admin-error">{{ apErr }}</div> }
+
+        @if (apModal) {
+          <div class="modal-overlay" (click)="cerrarApModal()">
+            <div class="modal-card" (click)="$event.stopPropagation()">
+              <button class="modal-close" (click)="cerrarApModal()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+              <h2>{{ apEdit ? 'Editar apartado' : 'Nuevo apartado' }}</h2>
+              <div class="modal-form">
+                <input type="text" placeholder="Nombre del cliente" [(ngModel)]="apClienteNombre" />
+                <input type="tel" placeholder="Celular" [(ngModel)]="apClienteCelular" />
+                <input type="email" placeholder="Correo (opcional)" [(ngModel)]="apClienteCorreo" />
+                <select [(ngModel)]="apProducto">
+                  <option value="">-- Producto --</option>
+                  @for (inv of inventory; track inv.name) {
+                    <option [value]="inv.name">{{ inv.name }}</option>
+                  }
+                </select>
+                <input type="number" min="0" placeholder="Abono $" [(ngModel)]="apAbono" />
+                <input type="number" min="0" placeholder="Saldo $" [(ngModel)]="apSaldo" />
+                <textarea class="modal-textarea" placeholder="Comentario (opcional)" [(ngModel)]="apComentario"></textarea>
+                <div class="modal-btns">
+                  <button class="btn-primary" (click)="guardarAp()">{{ apEdit ? 'Actualizar' : 'Crear' }}</button>
+                  <button class="btn-sec" (click)="cerrarApModal()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (apartados.length) {
+          <div class="prod-grid">
+            @for (ap of apartados; track ap.id) {
+              <div class="ap-card" [class.ap-pendiente]="ap.estado === 'pendiente'" [class.ap-completado]="ap.estado === 'completado'" [class.ap-cancelado]="ap.estado === 'cancelado'">
+                <div class="ap-head">
+                  <span class="ap-cliente">{{ ap.clienteNombre }}</span>
+                  <span class="ap-estado" [class.estado-pend]="ap.estado === 'pendiente'" [class.estado-comp]="ap.estado === 'completado'" [class.estado-can]="ap.estado === 'cancelado'">{{ ap.estado }}</span>
+                </div>
+                <div class="ap-body">
+                  <div class="ap-info">
+                    <span class="ap-label">Producto</span>
+                    <span class="ap-val">{{ ap.producto }}</span>
+                  </div>
+                  @if (ap.clienteCelular) {
+                    <div class="ap-info">
+                      <span class="ap-label">Celular</span>
+                      <span class="ap-val">{{ ap.clienteCelular }}</span>
+                    </div>
+                  }
+                  @if (ap.clienteCorreo) {
+                    <div class="ap-info">
+                      <span class="ap-label">Correo</span>
+                      <span class="ap-val">{{ ap.clienteCorreo }}</span>
+                    </div>
+                  }
+                  <div class="ap-info">
+                    <span class="ap-label">Abono</span>
+                    <span class="ap-val ap-val-monto">${{ (+ap.abono).toLocaleString() }}</span>
+                  </div>
+                  @if (ap.saldo > 0) {
+                    <div class="ap-info">
+                      <span class="ap-label">Saldo</span>
+                      <span class="ap-val ap-val-monto">${{ (+ap.saldo).toLocaleString() }}</span>
+                    </div>
+                  }
+                  @if (ap.comentario) {
+                    <div class="ap-info">
+                      <span class="ap-label">Comentario</span>
+                      <span class="ap-val ap-val-coment">{{ ap.comentario }}</span>
+                    </div>
+                  }
+                  <div class="ap-info">
+                    <span class="ap-label">Vendedor</span>
+                    <span class="ap-val">{{ ap.vendedor }}</span>
+                  </div>
+                  <div class="ap-info">
+                    <span class="ap-label">Fecha</span>
+                    <span class="ap-val">{{ ap.date }}</span>
+                  </div>
+                </div>
+                <div class="ap-acc">
+                  @if (ap.estado === 'pendiente') {
+                    <button class="ap-btn ap-btn-comp" (click)="cambiarEstadoAp(ap.id, 'completado')" title="Completar">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                    <button class="ap-btn ap-btn-can" (click)="cambiarEstadoAp(ap.id, 'cancelado')" title="Cancelar">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  }
+                  <button class="ap-btn ap-btn-edit" (click)="abrirApModal(ap)" title="Editar">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  @if (isAdmin) {
+                    <button class="ap-btn ap-btn-del" (click)="eliminarAp(ap.id)" title="Eliminar">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p style="text-align:center;color:#ccc;padding:2rem">No hay apartados registrados</p>
+        }
+      </section>
+    }
+
     @if (tab === 'reportes') {
       <section>
         <h1>Reportes</h1>
@@ -432,29 +554,47 @@
 
           @if (selectedVendor) {
             <div class="modal-overlay" (click)="cerrarVentasVendedor()">
-              <div class="modal-card" (click)="$event.stopPropagation()">
+              <div class="modal-card vend-detalle-card" (click)="$event.stopPropagation()">
                 <button class="modal-close" (click)="cerrarVentasVendedor()">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
                 <h2>Ventas de {{ selectedVendor }}</h2>
+                <div class="vend-detalle-date">
+                  <button class="vend-date-btn" (click)="vendorDatePrev()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                  </button>
+                  <span class="vend-date-label">{{ vendorDate }}</span>
+                  <button class="vend-date-btn" (click)="vendorDateNext()">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+                  </button>
+                </div>
                 <div class="vend-detalle-lista">
-                  @for (sale of vendorSales; track sale.id) {
-                    <div class="vend-detalle-row">
-                      <div class="vend-detalle-info">
-                        <span class="vend-detalle-prod">{{ sale.productName }}</span>
-                        <span class="vend-detalle-meta">{{ sale.quantity }} ud &middot; ${{ sale.total.toLocaleString() }} &middot; {{ sale.paymentMethod }} &middot; {{ sale.date }}</span>
-                        @if (sale.comentario) {
-                          <span class="vend-detalle-coment">Comentario: {{ sale.comentario }}</span>
-                        }
+                  @for (g of vendorGroups; track g.id) {
+                    <div class="vend-grupo">
+                      <div class="vend-grupo-head">
+                        <span class="vend-grupo-meta">{{ g.metodo }}</span>
+                        <span class="vend-grupo-total">${{ g.total.toLocaleString() }}</span>
                       </div>
-                      <span class="vend-detalle-total">${{ sale.total.toLocaleString() }}</span>
+                      @for (sale of g.items; track sale.id) {
+                        <div class="vend-detalle-row">
+                          <div class="vend-detalle-info">
+                            <span class="vend-detalle-prod">{{ sale.productName }}</span>
+                            <span class="vend-detalle-meta">{{ sale.quantity }} ud</span>
+                            @if (sale.comentario) {
+                              <span class="vend-detalle-coment">{{ sale.comentario }}</span>
+                            }
+                          </div>
+                        </div>
+                      }
                     </div>
                   }
                 </div>
-                <div class="vend-detalle-foot">
-                  <span>Total</span>
-                  <strong>${{ vendorTotal.toLocaleString() }}</strong>
-                </div>
+                @if (vendorGroups.length > 0) {
+                  <div class="vend-detalle-foot">
+                    <span>Total</span>
+                    <strong>${{ vendorTotal.toLocaleString() }}</strong>
+                  </div>
+                }
               </div>
             </div>
           }

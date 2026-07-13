@@ -17,7 +17,7 @@ Chart.register(BarController, DoughnutController, BarElement, ArcElement, Catego
 })
 export class AdminComponent {
   sidebarOpen = true;
-  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' = 'productos';
+  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -96,15 +96,30 @@ export class AdminComponent {
     setTimeout(() => this.renderCharts());
   }
 
-  async verVentasVendedor(vendedor: string) {
+  async verVentasVendedor(vendedor: string, fecha?: string) {
     this.selectedVendor = vendedor;
-    await this.productSvc.fetchSales();
-    this.vendorSales = this.productSvc.sales.filter(s => s.vendedor === vendedor);
+    this.vendorDate = fecha || new Date().toISOString().slice(0, 10);
+    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(vendedor, this.vendorDate);
+  }
+
+  async vendorDatePrev() {
+    const d = new Date(this.vendorDate);
+    d.setDate(d.getDate() - 1);
+    this.vendorDate = d.toISOString().slice(0, 10);
+    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(this.selectedVendor, this.vendorDate);
+  }
+
+  async vendorDateNext() {
+    const d = new Date(this.vendorDate);
+    d.setDate(d.getDate() + 1);
+    this.vendorDate = d.toISOString().slice(0, 10);
+    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(this.selectedVendor, this.vendorDate);
   }
 
   cerrarVentasVendedor() {
     this.selectedVendor = '';
     this.vendorSales = [];
+    this.vendorDate = '';
   }
 
   private renderCharts() {
@@ -316,12 +331,121 @@ export class AdminComponent {
     }
   }
 
+  apartados: any[] = [];
+  apModal = false;
+  apEdit: any = null;
+  apClienteNombre = '';
+  apClienteCelular = '';
+  apClienteCorreo = '';
+  apProducto = '';
+  apAbono = 0;
+  apSaldo = 0;
+  apComentario = '';
+  apMsg = '';
+  apErr = '';
+
+  async abrirApartados() {
+    this.tab = 'apartados';
+    this.apartados = await this.productSvc.fetchApartados();
+    this.apMsg = ''; this.apErr = '';
+  }
+
+  abrirApModal(edit?: any) {
+    this.apEdit = edit || null;
+    this.apClienteNombre = edit?.clienteNombre || '';
+    this.apClienteCelular = edit?.clienteCelular || '';
+    this.apClienteCorreo = edit?.clienteCorreo || '';
+    this.apProducto = edit?.producto || '';
+    this.apAbono = edit?.abono || 0;
+    this.apSaldo = edit?.saldo || 0;
+    this.apComentario = edit?.comentario || '';
+    this.apMsg = ''; this.apErr = '';
+    this.apModal = true;
+  }
+  cerrarApModal() { this.apModal = false; this.apEdit = null; }
+
+  async guardarAp() {
+    if (!this.apClienteNombre || !this.apProducto) { this.apErr = 'Nombre del cliente y producto requeridos'; return; }
+    try {
+      if (this.apEdit) {
+        await this.productSvc.updateApartado(this.apEdit.id, {
+          clienteNombre: this.apClienteNombre,
+          clienteCelular: this.apClienteCelular,
+          clienteCorreo: this.apClienteCorreo,
+          producto: this.apProducto,
+          abono: this.apAbono,
+          saldo: this.apSaldo,
+          estado: this.apEdit.estado,
+          comentario: this.apComentario,
+        });
+        this.apMsg = 'Apartado actualizado';
+      } else {
+        await this.productSvc.createApartado({
+          clienteNombre: this.apClienteNombre,
+          clienteCelular: this.apClienteCelular,
+          clienteCorreo: this.apClienteCorreo,
+          producto: this.apProducto,
+          abono: this.apAbono,
+          saldo: this.apSaldo,
+          comentario: this.apComentario,
+        });
+        this.apMsg = 'Apartado creado';
+      }
+      this.cerrarApModal();
+      this.apartados = await this.productSvc.fetchApartados();
+    } catch (err: any) {
+      this.apErr = err.error?.error || 'Error al guardar';
+    }
+  }
+
+  async eliminarAp(id: number) {
+    if (!confirm('¿Eliminar este apartado?')) return;
+    try {
+      await this.productSvc.deleteApartado(id);
+      this.apartados = await this.productSvc.fetchApartados();
+      this.apMsg = 'Apartado eliminado';
+    } catch { this.apErr = 'Error al eliminar'; }
+  }
+
+  async cambiarEstadoAp(id: number, estado: string) {
+    try {
+      const ap = this.apartados.find(a => a.id === id);
+      if (!ap) return;
+      await this.productSvc.updateApartado(id, {
+        clienteNombre: ap.clienteNombre,
+        clienteCelular: ap.clienteCelular,
+        clienteCorreo: ap.clienteCorreo,
+        producto: ap.producto,
+        abono: ap.abono,
+        saldo: ap.saldo,
+        estado,
+        comentario: ap.comentario,
+      });
+      this.apartados = await this.productSvc.fetchApartados();
+    } catch { this.apErr = 'Error al actualizar estado'; }
+  }
+
   vMsg = '';
   vErr = '';
   cartOpen = false;
   selectedVendor = '';
   vendorSales: any[] = [];
+  vendorDate = '';
   get vendorTotal() { return this.vendorSales.reduce((s, v) => s + Number(v.total), 0); }
+  get vendorGroups() {
+    const map = new Map<string, any[]>();
+    for (const s of this.vendorSales) {
+      const g = s.grupoId || `solo-${s.id}`;
+      if (!map.has(g)) map.set(g, []);
+      map.get(g)!.push(s);
+    }
+    return Array.from(map.entries()).map(([id, items]) => ({
+      id,
+      items,
+      total: items.reduce((sum: number, i: any) => sum + Number(i.total), 0),
+      metodo: items[0]?.paymentMethod || '',
+    }));
+  }
   cierreLoading = false;
   cierreSales: any[] = [];
   cierreResumen: any = null;

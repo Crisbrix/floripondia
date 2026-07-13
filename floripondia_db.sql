@@ -55,13 +55,12 @@ CREATE TABLE ventas (
   recibido     DECIMAL(12,0) NOT NULL DEFAULT 0,
   cambio       DECIMAL(12,0) NOT NULL DEFAULT 0,
   metodo_pago  VARCHAR(20) NOT NULL DEFAULT 'efectivo',
-  fecha        DATE        NOT NULL DEFAULT (CURRENT_DATE),
-  vendedor_id  INT         NOT NULL,
-  comentario   TEXT,
-  FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
+   fecha        DATE        NOT NULL DEFAULT (CURRENT_DATE),
+   vendedor_id  INT         NOT NULL,
+   comentario   TEXT,
+   grupo_id     VARCHAR(36),
+   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
-
-ALTER TABLE ventas ADD COLUMN comentario TEXT;
 
 -- -----------------------------------------------------------
 -- ÍNDICES
@@ -139,6 +138,25 @@ CREATE TABLE cierres (
   FOREIGN KEY (confirmado_por) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- -----------------------------------------------------------
+-- 6. APARTADOS
+-- -----------------------------------------------------------
+CREATE TABLE apartados (
+  id              INT         AUTO_INCREMENT PRIMARY KEY,
+  cliente_nombre  VARCHAR(100) NOT NULL,
+  cliente_celular VARCHAR(20)  NOT NULL DEFAULT '',
+  cliente_correo  VARCHAR(120) NOT NULL DEFAULT '',
+  producto        VARCHAR(120) NOT NULL,
+  abono           DECIMAL(12,0) NOT NULL DEFAULT 0,
+  saldo           DECIMAL(12,0) NOT NULL DEFAULT 0,
+  fecha           DATE        NOT NULL DEFAULT (CURRENT_DATE),
+  vendedor_id     INT         NOT NULL,
+  estado          VARCHAR(20) NOT NULL DEFAULT 'pendiente',
+  comentario      TEXT,
+  FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- Migración para bases existentes
 ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
 ALTER TABLE ventas ADD COLUMN comentario TEXT;
+ALTER TABLE ventas ADD COLUMN grupo_id VARCHAR(36) AFTER comentario;

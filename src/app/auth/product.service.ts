@@ -25,6 +25,7 @@ export interface Sale {
   date: string;
   vendedor: string;
   comentario?: string;
+  grupoId?: string;
 }
 
 export interface CartItem {
@@ -145,6 +146,14 @@ export class ProductService {
   }
   cierre: any = null;
 
+  async fetchVendorSalesByDate(nombre: string, fecha: string): Promise<Sale[]> {
+    try {
+      return await firstValueFrom(
+        this.http.get<Sale[]>(`${this.api}/ventas/vendedor`, { params: { nombre, fecha } })
+      );
+    } catch { return []; }
+  }
+
   async fetchCierre() {
     try {
       const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierre`));
@@ -183,5 +192,23 @@ export class ProductService {
 
   async deleteCategory(id: number) {
     await firstValueFrom(this.http.delete(`${this.api}/categorias/${id}`));
+  }
+
+  async fetchApartados(): Promise<any[]> {
+    try {
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/apartados`));
+    } catch { return []; }
+  }
+
+  async createApartado(data: any) {
+    await firstValueFrom(this.http.post(`${this.api}/apartados`, data));
+  }
+
+  async updateApartado(id: number, data: any) {
+    await firstValueFrom(this.http.put(`${this.api}/apartados/${id}`, data));
+  }
+
+  async deleteApartado(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/apartados/${id}`));
   }
 }
