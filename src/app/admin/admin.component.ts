@@ -131,7 +131,8 @@ export class AdminComponent {
   private renderCharts() {
     this.destroyCharts();
     const s = this.stats;
-    if (!s) return;
+    if (!s) { console.warn('renderCharts: stats es null/undefined'); return; }
+    console.log('renderCharts stats:', s);
 
     const createChart = (id: string, config: any) => {
       const canvas = document.getElementById(id) as HTMLCanvasElement;
@@ -139,6 +140,7 @@ export class AdminComponent {
         console.warn(`Canvas #${id} no encontrado`);
         return;
       }
+      console.log(`Creando chart #${id}`, config.data);
       try {
         this.chartInstances.push(new Chart(canvas, config));
       } catch (e) {
