@@ -2,11 +2,11 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Chart, BarController, DoughnutController, BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import { Chart, BarController, DoughnutController, BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend, LineController, LineElement, PointElement, Filler } from 'chart.js';
 import { AuthService, User } from '../auth/auth.service';
 import { ProductService, Product, Stats } from '../auth/product.service';
 
-Chart.register(BarController, DoughnutController, BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend);
+Chart.register(BarController, DoughnutController, LineController, BarElement, ArcElement, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
 
 @Component({
   selector: 'app-admin',
@@ -149,6 +149,8 @@ export class AdminComponent {
         canvas.width = pw;
         canvas.height = ph;
       }
+      const ctx = canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
       config.options.responsive = false;
       config.options.maintainAspectRatio = false;
       console.log(`Creando chart #${id} canvas=${canvas.width}x${canvas.height}`);
@@ -173,7 +175,6 @@ export class AdminComponent {
         ],
       },
       options: {
-        responsive: true, maintainAspectRatio: false,
         plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 12 } } },
         scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } }, y1: { position: 'right', beginAtZero: true, grid: { display: false } } },
       },
