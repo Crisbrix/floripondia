@@ -375,6 +375,9 @@
   position: relative;
   height: 220px;
 }
+.rep-chart-wrap canvas {
+  display: block;
+}
 
 /* ===== Productos ===== */
 .prod-header {
