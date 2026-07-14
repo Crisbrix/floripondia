@@ -133,6 +133,8 @@ export class AdminComponent {
     const s = this.stats;
     if (!s) { console.warn('renderCharts: stats es null/undefined'); return; }
     console.log('renderCharts stats:', s);
+    console.log('ventasDia raw:', JSON.stringify(s.ventasDia));
+    console.log('metodos raw:', JSON.stringify(s.metodos));
 
     const createChart = (id: string, config: any) => {
       const canvas = document.getElementById(id) as HTMLCanvasElement;
