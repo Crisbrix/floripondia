@@ -639,6 +639,7 @@ export class AdminComponent {
   selectedVendor = '';
   vendorSales: any[] = [];
   vendorDate = '';
+  coloresVend = ['#E1BEE7','#BBDEFB','#C8E6C9','#FFF9C4','#F8BBD0','#B2EBF2','#D1C4E9','#FFE0B2'];
   get vendorTotal() { return this.vendorSales.reduce((s, v) => s + Number(v.total), 0); }
   get vendorGroups() {
     const map = new Map<string, any[]>();

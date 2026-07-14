@@ -541,6 +541,24 @@
             </div>
           </div>
 
+          <div class="rep-vendedores">
+            <h3>Rendimiento de vendedores</h3>
+            @if (stats.ventasPorVendedor.length) {
+              <div class="rep-vend-grid">
+                @for (v of stats.ventasPorVendedor; track v.vendedor) {
+                  <button class="rep-vend-card" (click)="verVentasVendedor(v.vendedor)" [style.--accent]="coloresVend[$index % coloresVend.length]">
+                    <span class="rep-vend-avatar">{{ v.vendedor[0] }}</span>
+                    <span class="rep-vend-name">{{ v.vendedor }}</span>
+                    <span class="rep-vend-stat"><strong>{{ v.ventas }}</strong> ventas</span>
+                    <span class="rep-vend-total">${{ v.total.toLocaleString() }}</span>
+                  </button>
+                }
+              </div>
+            } @else {
+              <p class="rep-vend-empty">Aún no hay ventas registradas hoy</p>
+            }
+          </div>
+
           @if (analyticsData) {
             <div class="analytics-section">
               <div class="rep-resumen">
@@ -595,23 +613,6 @@
               }
             </div>
           }
-
-          <div class="rep-vendedores">
-            <h3>Ventas por vendedor</h3>
-            @if (stats.ventasPorVendedor.length) {
-              <div class="rep-vend-grid">
-                @for (v of stats.ventasPorVendedor; track v.vendedor) {
-                  <button class="rep-vend-card" (click)="verVentasVendedor(v.vendedor)">
-                    <span class="rep-vend-name">{{ v.vendedor }}</span>
-                    <span class="rep-vend-ventas">{{ v.ventas }} venta(s)</span>
-                    <span class="rep-vend-total">${{ v.total.toLocaleString() }}</span>
-                  </button>
-                }
-              </div>
-            } @else {
-              <p class="rep-vend-empty">Aún no hay ventas registradas</p>
-            }
-          </div>
 
           @if (selectedVendor) {
             <div class="modal-overlay" (click)="cerrarVentasVendedor()">
