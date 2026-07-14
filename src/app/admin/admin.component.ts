@@ -99,7 +99,7 @@ export class AdminComponent {
     setTimeout(() => {
       this.renderCharts();
       this.renderAnalyticsCharts();
-    });
+    }, 100);
   }
 
   async verVentasVendedor(vendedor: string, fecha?: string) {
@@ -140,7 +140,8 @@ export class AdminComponent {
         console.warn(`Canvas #${id} no encontrado`);
         return;
       }
-      console.log(`Creando chart #${id}`, config.data);
+      const rect = canvas.getBoundingClientRect();
+      console.log(`Creando chart #${id} dims=${rect.width.toFixed(0)}x${rect.height.toFixed(0)}`, config.data);
       try {
         this.chartInstances.push(new Chart(canvas, config));
       } catch (e) {
@@ -148,6 +149,7 @@ export class AdminComponent {
       }
     };
 
+    const n = (v: any) => Number(v);
     const colores: Record<string, string> = { efectivo: '#C8E6C9', tarjeta: '#BBDEFB', nequi: '#E1BEE7', daviplata: '#FFF9C4', addi: '#F8BBD0' };
     const dias = s.ventasDia.slice().reverse();
 
@@ -156,8 +158,8 @@ export class AdminComponent {
       data: {
         labels: dias.map(d => d.fecha.slice(5)),
         datasets: [
-          { label: 'Ventas', data: dias.map(d => d.cantidad), backgroundColor: '#BBDEFB', borderRadius: 4 },
-          { label: 'Ingresos $', data: dias.map(d => d.ingresos), backgroundColor: '#FFF9C4', borderRadius: 4, yAxisID: 'y1' },
+          { label: 'Ventas', data: dias.map(d => n(d.cantidad)), backgroundColor: '#BBDEFB', borderRadius: 4 },
+          { label: 'Ingresos $', data: dias.map(d => n(d.ingresos)), backgroundColor: '#FFF9C4', borderRadius: 4, yAxisID: 'y1' },
         ],
       },
       options: {
@@ -171,7 +173,7 @@ export class AdminComponent {
       type: 'doughnut',
       data: {
         labels: s.metodos.map(m => m.metodo_pago),
-        datasets: [{ data: s.metodos.map(m => m.cantidad), backgroundColor: s.metodos.map(m => colores[m.metodo_pago] || '#ddd'), borderWidth: 0 }],
+        datasets: [{ data: s.metodos.map(m => n(m.cantidad)), backgroundColor: s.metodos.map(m => colores[m.metodo_pago] || '#ddd'), borderWidth: 0 }],
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } } },
     });
@@ -180,7 +182,7 @@ export class AdminComponent {
       type: 'bar',
       data: {
         labels: s.topProductos.map(p => p.producto),
-        datasets: [{ label: 'Unidades vendidas', data: s.topProductos.map(p => p.vendidos), backgroundColor: '#F8BBD0', borderRadius: 4 }],
+        datasets: [{ label: 'Unidades vendidas', data: s.topProductos.map(p => n(p.vendidos)), backgroundColor: '#F8BBD0', borderRadius: 4 }],
       },
       options: {
         responsive: true, maintainAspectRatio: false, indexAxis: 'y',
@@ -194,8 +196,8 @@ export class AdminComponent {
       data: {
         labels: s.inventario.slice(0, 10).map(i => i.nombre),
         datasets: [
-          { label: 'Stock', data: s.inventario.slice(0, 10).map(i => i.stock), backgroundColor: '#BBDEFB', borderRadius: 4 },
-          { label: 'Vendidos', data: s.inventario.slice(0, 10).map(i => i.vendidos), backgroundColor: '#F8BBD0', borderRadius: 4 },
+          { label: 'Stock', data: s.inventario.slice(0, 10).map(i => n(i.stock)), backgroundColor: '#BBDEFB', borderRadius: 4 },
+          { label: 'Vendidos', data: s.inventario.slice(0, 10).map(i => n(i.vendidos)), backgroundColor: '#F8BBD0', borderRadius: 4 },
         ],
       },
       options: {
@@ -338,6 +340,7 @@ export class AdminComponent {
     this.destroyCharts();
     const d = this.analyticsData;
     if (!d) return;
+    const n = (v: any) => Number(v);
 
     const create = (id: string, config: any) => {
       const canvas = document.getElementById(id) as HTMLCanvasElement;
