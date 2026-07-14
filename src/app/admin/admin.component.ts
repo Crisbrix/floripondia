@@ -140,8 +140,16 @@ export class AdminComponent {
         console.warn(`Canvas #${id} no encontrado`);
         return;
       }
-      const rect = canvas.getBoundingClientRect();
-      console.log(`Creando chart #${id} dims=${rect.width.toFixed(0)}x${rect.height.toFixed(0)}`, config.data);
+      const parent = canvas.parentElement;
+      if (parent) {
+        const pw = parent.clientWidth || 300;
+        const ph = parent.clientHeight || 200;
+        canvas.width = pw;
+        canvas.height = ph;
+      }
+      config.options.responsive = false;
+      config.options.maintainAspectRatio = false;
+      console.log(`Creando chart #${id} canvas=${canvas.width}x${canvas.height}`);
       try {
         this.chartInstances.push(new Chart(canvas, config));
       } catch (e) {
@@ -345,6 +353,10 @@ export class AdminComponent {
     const create = (id: string, config: any) => {
       const canvas = document.getElementById(id) as HTMLCanvasElement;
       if (!canvas) return;
+      const parent = canvas.parentElement;
+      if (parent) { canvas.width = parent.clientWidth || 300; canvas.height = parent.clientHeight || 200; }
+      config.options.responsive = false;
+      config.options.maintainAspectRatio = false;
       try { this.chartInstances.push(new Chart(canvas, config)); } catch {}
     };
 
