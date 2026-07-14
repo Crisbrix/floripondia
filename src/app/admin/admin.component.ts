@@ -348,7 +348,6 @@ export class AdminComponent {
   analyticsData: any = null;
 
   private renderAnalyticsCharts() {
-    this.destroyCharts();
     const d = this.analyticsData;
     if (!d) return;
     const n = (v: any) => Number(v);
