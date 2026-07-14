@@ -17,7 +17,7 @@ Chart.register(BarController, DoughnutController, BarElement, ArcElement, Catego
 })
 export class AdminComponent {
   sidebarOpen = true;
-  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' = 'productos';
+  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -90,10 +90,16 @@ export class AdminComponent {
 
   async abrirReportes() {
     this.tab = 'reportes';
-    await this.productSvc.fetchStats();
+    await Promise.all([
+      this.productSvc.fetchStats(),
+      this.productSvc.fetchAnalytics().then(d => this.analyticsData = d),
+    ]);
     this.stats = this.productSvc.stats;
     this.cdr.detectChanges();
-    setTimeout(() => this.renderCharts());
+    setTimeout(() => {
+      this.renderCharts();
+      this.renderAnalyticsCharts();
+    });
   }
 
   async verVentasVendedor(vendedor: string, fecha?: string) {
@@ -301,6 +307,189 @@ export class AdminComponent {
     }
   }
 
+  informeMes = '';
+  informeData: any = null;
+
+  async abrirInforme(mes?: string) {
+    this.tab = 'informe';
+    this.informeMes = mes || new Date().toISOString().slice(0, 7);
+    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes);
+  }
+
+  async informeMesPrev() {
+    const [y, m] = this.informeMes.split('-').map(Number);
+    const d = new Date(y, m - 2, 1);
+    this.informeMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes);
+  }
+
+  async informeMesNext() {
+    const [y, m] = this.informeMes.split('-').map(Number);
+    const d = new Date(y, m, 1);
+    this.informeMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes);
+  }
+
+  analyticsData: any = null;
+
+  private renderAnalyticsCharts() {
+    this.destroyCharts();
+    const d = this.analyticsData;
+    if (!d) return;
+
+    const create = (id: string, config: any) => {
+      const canvas = document.getElementById(id) as HTMLCanvasElement;
+      if (!canvas) return;
+      try { this.chartInstances.push(new Chart(canvas, config)); } catch {}
+    };
+
+    const colores: Record<string, string> = { efectivo: '#C8E6C9', tarjeta: '#BBDEFB', nequi: '#E1BEE7', daviplata: '#FFF9C4', addi: '#F8BBD0' };
+
+    if (d.ventasDiarias?.length) {
+      create('chart-vd', {
+        type: 'line',
+        data: {
+          labels: d.ventasDiarias.map((x: any) => x.fecha.slice(5)),
+          datasets: [
+            { label: 'Ventas', data: d.ventasDiarias.map((x: any) => x.cantidad), borderColor: '#BBDEFB', backgroundColor: 'rgba(187,222,251,0.1)', fill: true, tension: 0.3, pointRadius: 2 },
+            { label: 'Ingresos', data: d.ventasDiarias.map((x: any) => x.ingresos), borderColor: '#E1BEE7', backgroundColor: 'rgba(225,190,231,0.1)', fill: true, tension: 0.3, pointRadius: 2, yAxisID: 'y1' },
+          ],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 10 } } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } }, y1: { position: 'right', beginAtZero: true, grid: { display: false } } } },
+      });
+    }
+
+    if (d.ventasSemanales?.length) {
+      create('chart-vs', {
+        type: 'line',
+        data: {
+          labels: d.ventasSemanales.map((x: any) => x.inicio_semana?.slice(5) || x.semana),
+          datasets: [{ label: 'Ventas semanales', data: d.ventasSemanales.map((x: any) => x.cantidad), borderColor: '#FFF9C4', backgroundColor: 'rgba(255,249,196,0.1)', fill: true, tension: 0.3 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    if (d.ventasMensuales?.length) {
+      create('chart-vm', {
+        type: 'line',
+        data: {
+          labels: d.ventasMensuales.map((x: any) => x.mes),
+          datasets: [{ label: 'Ventas mensuales', data: d.ventasMensuales.map((x: any) => x.cantidad), borderColor: '#F8BBD0', backgroundColor: 'rgba(248,187,208,0.1)', fill: true, tension: 0.3 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    if (d.ventasMesActual && d.ventasMesAnterior) {
+      create('chart-comp-mes', {
+        type: 'bar',
+        data: {
+          labels: ['Mes anterior', 'Mes actual'],
+          datasets: [{ label: 'Ingresos', data: [Number(d.ventasMesAnterior.ingresos), Number(d.ventasMesActual.ingresos)], backgroundColor: ['#E1BEE7', '#BBDEFB'], borderRadius: 4 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    if (d.ventasAnioActual && d.ventasAnioAnterior) {
+      create('chart-comp-anio', {
+        type: 'line',
+        data: {
+          labels: ['Año anterior', 'Año actual'],
+          datasets: [{ label: 'Ingresos', data: [Number(d.ventasAnioAnterior.ingresos), Number(d.ventasAnioActual.ingresos)], borderColor: '#C8E6C9', backgroundColor: 'rgba(200,230,201,0.2)', fill: true, pointBackgroundColor: '#2e7d32', pointRadius: 6 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    if (d.ventasDiaSemana?.length) {
+      const orden = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+      const etiq = orden.filter(o => d.ventasDiaSemana.some((x: any) => x.dia === o));
+      const datos = etiq.map(e => d.ventasDiaSemana.find((x: any) => x.dia === e)?.cantidad || 0);
+      create('chart-dia-semana', {
+        type: 'bar',
+        data: {
+          labels: etiq,
+          datasets: [{ label: 'Ventas', data: datos, backgroundColor: '#E1BEE7', borderRadius: 4 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    if (d.distribucionMetodos?.length) {
+      create('chart-metodos-pie', {
+        type: 'doughnut',
+        data: {
+          labels: d.distribucionMetodos.map((m: any) => m.metodo_pago),
+          datasets: [{ data: d.distribucionMetodos.map((m: any) => m.total), backgroundColor: d.distribucionMetodos.map((m: any) => colores[m.metodo_pago] || '#ddd'), borderWidth: 0 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } },
+      });
+    }
+
+    if (d.topProductos?.length) {
+      create('chart-top-prod', {
+        type: 'bar',
+        data: {
+          labels: d.topProductos.map((p: any) => p.producto),
+          datasets: [{ label: 'Vendidos', data: d.topProductos.map((p: any) => p.vendidos), backgroundColor: '#F8BBD0', borderRadius: 4 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f5f5f5' } }, y: { grid: { display: false } } } },
+      });
+    }
+
+    if (d.bottomProductos?.length) {
+      create('chart-bottom-prod', {
+        type: 'bar',
+        data: {
+          labels: d.bottomProductos.map((p: any) => p.producto),
+          datasets: [{ label: 'Vendidos', data: d.bottomProductos.map((p: any) => p.vendidos), backgroundColor: '#FFF9C4', borderRadius: 4 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f5f5f5' } }, y: { grid: { display: false } } } },
+      });
+    }
+
+    if (d.rotacionProductos?.length) {
+      create('chart-rotacion', {
+        type: 'bar',
+        data: {
+          labels: d.rotacionProductos.slice(0, 10).map((p: any) => p.producto),
+          datasets: [
+            { label: 'Stock', data: d.rotacionProductos.slice(0, 10).map((p: any) => p.stock), backgroundColor: '#BBDEFB', borderRadius: 4 },
+            { label: 'Vendidos', data: d.rotacionProductos.slice(0, 10).map((p: any) => p.vendidos), backgroundColor: '#F8BBD0', borderRadius: 4 },
+          ],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 10 } } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    if (d.ventasCategorias?.length) {
+      create('chart-ventas-cat', {
+        type: 'bar',
+        data: {
+          labels: d.ventasCategorias.map((c: any) => c.categoria),
+          datasets: [{ label: 'Total $', data: d.ventasCategorias.map((c: any) => c.total), backgroundColor: '#E1BEE7', borderRadius: 4 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, grid: { color: '#f5f5f5' } }, y: { grid: { display: false } } } },
+      });
+    }
+
+    if (d.ventasVendedor?.length) {
+      create('chart-vendedores', {
+        type: 'bar',
+        data: {
+          labels: d.ventasVendedor.map((v: any) => v.vendedor),
+          datasets: [
+            { label: 'Ventas', data: d.ventasVendedor.map((v: any) => v.ventas), backgroundColor: '#BBDEFB', borderRadius: 4 },
+            { label: 'Productos vendidos', data: d.ventasVendedor.map((v: any) => v.productos), backgroundColor: '#F8BBD0', borderRadius: 4 },
+          ],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 10 } } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+  }
+
   async eliminarCat(id: number, name: string) {
     if (!confirm(`¿Eliminar la categoría "${name}" y todos sus productos asociados?`)) return;
     try {
@@ -451,6 +640,7 @@ export class AdminComponent {
   cierreResumen: any = null;
   cierrePorMetodoArr: any[] = [];
   cierreConfirmado = false;
+  cajaAbierta = false;
   get cierreTotal() {
     if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
     return this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
@@ -622,11 +812,22 @@ export class AdminComponent {
     this.cierreLoading = true;
     await this.productSvc.fetchCierre();
     const c = this.productSvc.cierre;
+    this.cajaAbierta = !!c?.cajaAbierta;
     this.cierreSales = c?.ventas || [];
     this.cierreResumen = c?.resumen || null;
     this.cierrePorMetodoArr = c?.metodos || [];
     this.cierreConfirmado = !!c?.confirmado;
     this.cierreLoading = false;
+  }
+
+  async handleAbrirCaja() {
+    const ok = await this.productSvc.abrirCaja();
+    if (ok) {
+      this.cajaAbierta = true;
+      this.abrirCierre();
+    } else {
+      alert('Error al abrir la caja');
+    }
   }
 
   async confirmarCierre() {

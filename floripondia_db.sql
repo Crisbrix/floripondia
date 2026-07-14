@@ -156,6 +156,17 @@ CREATE TABLE apartados (
   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- -----------------------------------------------------------
+-- 7. APERTURAS DE CAJA
+-- -----------------------------------------------------------
+CREATE TABLE aperturas_caja (
+  id          INT      AUTO_INCREMENT PRIMARY KEY,
+  fecha       DATE     NOT NULL,
+  abierto_por INT      NOT NULL,
+  abierto_en  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (abierto_por) REFERENCES usuarios(id) ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- Migración para bases existentes
 ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
 ALTER TABLE ventas ADD COLUMN comentario TEXT;

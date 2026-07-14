@@ -55,6 +55,12 @@
           </span>
           @if (sidebarOpen) { <span>Reportes</span> }
         </button>
+        <button [class.active]="tab === 'informe'" (click)="abrirInforme()">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </span>
+          @if (sidebarOpen) { <span>Informe mensual</span> }
+        </button>
       }
       <button [class.active]="tab === 'apartados'" (click)="abrirApartados()">
         <span class="nav-icon">
@@ -535,6 +541,61 @@
             </div>
           </div>
 
+          @if (analyticsData) {
+            <div class="analytics-section">
+              <div class="rep-resumen">
+                <div class="rep-card"><span class="rep-num">{{ analyticsData.totalDia.ventas }}</span><span class="rep-label">Ventas hoy</span></div>
+                <div class="rep-card"><span class="rep-num">${{ (+analyticsData.totalDia.monto).toLocaleString() }}</span><span class="rep-label">Total hoy</span></div>
+                <div class="rep-card"><span class="rep-num">{{ analyticsData.productosVendidosDia }}</span><span class="rep-label">Productos hoy</span></div>
+                <div class="rep-card"><span class="rep-num">{{ analyticsData.crecimiento }}%</span><span class="rep-label">Crecimiento vs mes ant.</span></div>
+                <div class="rep-card"><span class="rep-num">{{ analyticsData.productosAgotados }}</span><span class="rep-label">Agotados</span></div>
+                <div class="rep-card"><span class="rep-num">{{ analyticsData.productosProximosAgotar }}</span><span class="rep-label">Próx. a agotarse</span></div>
+              </div>
+
+              <div class="analytics-grid">
+                <div class="rep-chart-box"><h3>Ventas diarias (30 días)</h3><div class="rep-chart-wrap"><canvas id="chart-vd"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Ventas semanales</h3><div class="rep-chart-wrap"><canvas id="chart-vs"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Ventas mensuales</h3><div class="rep-chart-wrap"><canvas id="chart-vm"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Mes actual vs anterior</h3><div class="rep-chart-wrap"><canvas id="chart-comp-mes"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Año actual vs anterior</h3><div class="rep-chart-wrap"><canvas id="chart-comp-anio"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Ventas por día de la semana</h3><div class="rep-chart-wrap"><canvas id="chart-dia-semana"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Distribución métodos de pago</h3><div class="rep-chart-wrap"><canvas id="chart-metodos-pie"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Top 10 productos más vendidos</h3><div class="rep-chart-wrap"><canvas id="chart-top-prod"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Top 10 menos vendidos</h3><div class="rep-chart-wrap"><canvas id="chart-bottom-prod"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Rotación: Stock vs Vendidos</h3><div class="rep-chart-wrap"><canvas id="chart-rotacion"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Ventas por categoría</h3><div class="rep-chart-wrap"><canvas id="chart-ventas-cat"></canvas></div></div>
+                <div class="rep-chart-box"><h3>Rendimiento vendedores</h3><div class="rep-chart-wrap"><canvas id="chart-vendedores"></canvas></div></div>
+              </div>
+
+              @if (analyticsData.productosSinMovimiento?.length) {
+                <h3 style="margin:24px 0 10px;color:#888;font-size:0.95rem">Productos sin movimiento</h3>
+                <div class="analytics-tags">
+                  @for (p of analyticsData.productosSinMovimiento; track p) {
+                    <span class="analytics-tag">{{ p }}</span>
+                  }
+                </div>
+              }
+
+              @if (analyticsData.productosJuntos?.length) {
+                <h3 style="margin:24px 0 10px;color:#888;font-size:0.95rem">Productos vendidos juntos</h3>
+                <div class="analytics-pairs">
+                  @for (p of analyticsData.productosJuntos; track $index) {
+                    <div class="analytics-pair">
+                      <span class="analytics-pair-prod">{{ p.prod1 }}</span>
+                      <span class="analytics-pair-plus">+</span>
+                      <span class="analytics-pair-prod">{{ p.prod2 }}</span>
+                      <span class="analytics-pair-veces">{{ p.veces }} vez(es)</span>
+                    </div>
+                  }
+                </div>
+              }
+
+              @if (analyticsData.cantidadPromedio > 0) {
+                <h3 style="margin:24px 0 10px;color:#888;font-size:0.95rem">Ticket promedio: {{ analyticsData.cantidadPromedio.toFixed(1) }} producto(s) por compra</h3>
+              }
+            </div>
+          }
+
           <div class="rep-vendedores">
             <h3>Ventas por vendedor</h3>
             @if (stats.ventasPorVendedor.length) {
@@ -602,12 +663,147 @@
       </section>
     }
 
+    @if (tab === 'informe') {
+      <section>
+        <h1>Informe mensual</h1>
+        <div class="vend-detalle-date">
+          <button class="vend-date-btn" (click)="informeMesPrev()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="vend-date-label">{{ informeMes }}</span>
+          <button class="vend-date-btn" (click)="informeMesNext()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+        </div>
+
+        @if (informeData) {
+          <div class="rep-resumen">
+            <div class="rep-card"><span class="rep-num">{{ informeData.resumen.ventas }}</span><span class="rep-label">Ventas</span></div>
+            <div class="rep-card"><span class="rep-num">${{ (+informeData.resumen.monto).toLocaleString() }}</span><span class="rep-label">Total</span></div>
+            <div class="rep-card"><span class="rep-num">{{ informeData.resumen.articulos }}</span><span class="rep-label">Artículos</span></div>
+          </div>
+
+          <div class="informe-metodos">
+            <h3>Resumen por método de pago</h3>
+            <div class="informe-metodos-grid">
+              <div class="informe-metodo-card" style="border-left-color:#C8E6C9">
+                <span class="informe-metodo-nombre">Efectivo</span>
+                <span class="informe-metodo-monto">${{ (+informeData.efectivo).toLocaleString() }}</span>
+              </div>
+              <div class="informe-metodo-card" style="border-left-color:#BBDEFB">
+                <span class="informe-metodo-nombre">Tarjeta</span>
+                <span class="informe-metodo-monto">${{ (+informeData.tarjeta).toLocaleString() }}</span>
+              </div>
+              <div class="informe-metodo-card" style="border-left-color:#E1BEE7">
+                <span class="informe-metodo-nombre">Transferencias</span>
+                <span class="informe-metodo-monto">${{ (+informeData.transferencias).toLocaleString() }}</span>
+                <div class="informe-metodo-det">
+                  <span>Nequi: ${{ (+informeData.nequi).toLocaleString() }}</span>
+                  <span>Daviplata: ${{ (+informeData.daviplata).toLocaleString() }}</span>
+                  <span>Addi: ${{ (+informeData.addi).toLocaleString() }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          @if (informeData.porVendedor?.length) {
+            <div class="informe-vendedores">
+              <h3>Ventas por vendedor</h3>
+              <div class="informe-tabla-wrap">
+                <table class="informe-tabla">
+                  <thead>
+                    <tr>
+                      <th>Vendedor</th>
+                      <th>Ventas</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (v of informeData.porVendedor; track v.vendedor) {
+                      <tr>
+                        <td>{{ v.vendedor }}</td>
+                        <td>{{ v.ventas }}</td>
+                        <td class="informe-monto">${{ (+v.total).toLocaleString() }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
+          @if (informeData.porMetodo?.length) {
+            <div class="informe-metodos-tabla">
+              <h3>Desglose por método de pago</h3>
+              <div class="informe-tabla-wrap">
+                <table class="informe-tabla">
+                  <thead>
+                    <tr>
+                      <th>Método</th>
+                      <th>Cantidad</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (m of informeData.porMetodo; track m.metodo_pago) {
+                      <tr>
+                        <td class="informe-capitalize">{{ m.metodo_pago }}</td>
+                        <td>{{ m.cantidad }}</td>
+                        <td class="informe-monto">${{ (+m.total).toLocaleString() }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
+          @if (informeData.diario?.length) {
+            <div class="informe-diario">
+              <h3>Ventas por día</h3>
+              <div class="informe-tabla-wrap">
+                <table class="informe-tabla">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Ventas</th>
+                      <th>Ingresos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of informeData.diario; track d.fecha) {
+                      <tr>
+                        <td>{{ d.fecha }}</td>
+                        <td>{{ d.cantidad }}</td>
+                        <td class="informe-monto">${{ (+d.ingresos).toLocaleString() }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+        } @else {
+          <p style="text-align:center;color:#ccc;padding:2rem">No hay datos para este mes</p>
+        }
+      </section>
+    }
+
     @if (tab === 'cierre') {
       <section>
         <h1>Cierre de caja</h1>
 
         @if (cierreLoading) {
           <div class="admin-ok" style="text-align:center;padding:2rem">Cargando...</div>
+        } @else if (!cajaAbierta) {
+          <div style="text-align:center;padding:3rem 1rem">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:1rem"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <p style="color:#bbb;font-size:1rem;margin-bottom:1.5rem">La caja está cerrada. Ábrela para registrar ventas.</p>
+            <button class="btn-primary" style="padding:14px 32px;font-size:1rem" (click)="handleAbrirCaja()">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Abrir caja
+            </button>
+          </div>
         } @else {
           <div class="cierre-resumen">
             <div class="rep-card"><span class="rep-num">{{ cierreResumen?.transacciones ?? cierreSales.length }}</span><span class="rep-label">Ventas hoy</span></div>

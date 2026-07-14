@@ -161,6 +161,13 @@ export class ProductService {
     } catch { this.cierre = null; }
   }
 
+  async abrirCaja() {
+    try {
+      await firstValueFrom(this.http.post(`${this.api}/ventas/caja/abrir`, {}));
+      return true;
+    } catch { return false; }
+  }
+
   async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0): Promise<boolean> {
     try {
       this.lastError = '';
@@ -210,5 +217,20 @@ export class ProductService {
 
   async deleteApartado(id: number) {
     await firstValueFrom(this.http.delete(`${this.api}/apartados/${id}`));
+  }
+
+  async fetchInformeMensual(mes: string): Promise<any> {
+    try {
+      return await firstValueFrom(this.http.get(`${this.api}/ventas/informe-mensual`, { params: { mes } }));
+    } catch { return null; }
+  }
+
+  async fetchAnalytics(): Promise<any> {
+    try {
+      return await firstValueFrom(this.http.get(`${this.api}/ventas/analytics`));
+    } catch (e: any) {
+      if (e.error) console.error('Analytics error:', e.error);
+      return null;
+    }
   }
 }
