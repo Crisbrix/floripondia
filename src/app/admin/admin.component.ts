@@ -660,6 +660,10 @@ export class AdminComponent {
   cierreResumen: any = null;
   cierrePorMetodoArr: any[] = [];
   cierreConfirmado = false;
+  mostrarHistorial = false;
+  historialCierres: any[] = [];
+  verCierreFechaData: any = null;
+  verCierreDetalle: any[] = [];
   cajaAbierta = false;
   get cierreTotal() {
     if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
@@ -859,6 +863,24 @@ export class AdminComponent {
     } else {
       alert('Error al confirmar el cierre');
     }
+  }
+
+  async toggleHistorialCierres() {
+    this.mostrarHistorial = !this.mostrarHistorial;
+    if (this.mostrarHistorial && !this.historialCierres.length) {
+      this.historialCierres = await this.productSvc.fetchCierres();
+    }
+  }
+
+  async verCierreFecha(fecha: string) {
+    const res = await this.productSvc.fetchSalesByDate(fecha);
+    this.verCierreFechaData = { fecha, ventas: res.length, articulos: res.reduce((s, r) => s + Number(r.quantity), 0), total: res.reduce((s, r) => s + Number(r.total), 0) };
+    this.verCierreDetalle = res;
+  }
+
+  cerrarVerCierreFecha() {
+    this.verCierreFechaData = null;
+    this.verCierreDetalle = [];
   }
 
   abrirPerfil() {

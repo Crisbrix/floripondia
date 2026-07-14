@@ -940,6 +940,77 @@
               </button>
             </div>
           }
+
+          <div style="margin-top:20px;text-align:center">
+            <button class="btn-sec" (click)="toggleHistorialCierres()">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Historial de cierres
+            </button>
+          </div>
+
+          @if (mostrarHistorial) {
+            <div class="modal-overlay" (click)="toggleHistorialCierres()">
+              <div class="modal-card" style="max-width:640px;max-height:80vh;overflow-y:auto" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="toggleHistorialCierres()">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+                <h2>Historial de cierres</h2>
+                @if (historialCierres.length) {
+                  <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+                    @for (c of historialCierres; track c.id) {
+                      <div style="display:flex;align-items:center;justify-content:space-between;background:#f9f9f9;border-radius:12px;padding:14px 18px;gap:12px;flex-wrap:wrap">
+                        <div>
+                          <div style="font-weight:700;color:#444;font-size:0.95rem">{{ c.fecha }}</div>
+                          <div style="font-size:0.8rem;color:#999">Cerrado por {{ c.confirmado_por }} · {{ c.ventas }} ventas · ${{ (+c.total).toLocaleString() }}</div>
+                        </div>
+                        <button class="btn-sec" style="padding:8px 16px;font-size:0.8rem" (click)="verCierreFecha(c.fecha)">
+                          Ver ventas
+                        </button>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p style="text-align:center;color:#ccc;padding:2rem 0">No hay cierres registrados</p>
+                }
+              </div>
+            </div>
+          }
+
+          @if (verCierreFechaData) {
+            <div class="modal-overlay" (click)="cerrarVerCierreFecha()">
+              <div class="modal-card" style="max-width:700px;max-height:80vh;overflow-y:auto" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="cerrarVerCierreFecha()">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+                <h2>Ventas del {{ verCierreFechaData.fecha }}</h2>
+                <div style="display:flex;gap:12px;margin:12px 0;flex-wrap:wrap">
+                  <div class="rep-card" style="flex:1;min-width:100px"><span class="rep-num">{{ verCierreFechaData.ventas }}</span><span class="rep-label">Ventas</span></div>
+                  <div class="rep-card" style="flex:1;min-width:100px"><span class="rep-num">{{ verCierreFechaData.articulos }}</span><span class="rep-label">Artículos</span></div>
+                  <div class="rep-card" style="flex:1;min-width:100px"><span class="rep-num">${{ (+verCierreFechaData.total).toLocaleString() }}</span><span class="rep-label">Total</span></div>
+                </div>
+                @if (verCierreDetalle.length) {
+                  <div class="cierre-tabla-wrap">
+                    <table class="cierre-tabla">
+                      <thead><tr><th>Producto</th><th>Cant.</th><th>Total</th><th>Método</th><th>Vendedor</th></tr></thead>
+                      <tbody>
+                        @for (s of verCierreDetalle; track s.id) {
+                          <tr>
+                            <td>{{ s.productName }}</td>
+                            <td>{{ s.quantity }}</td>
+                            <td>${{ (+s.total).toLocaleString() }}</td>
+                            <td>{{ s.paymentMethod }}</td>
+                            <td>{{ s.vendedor }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <p style="text-align:center;color:#ccc;padding:1rem 0">Cargando ventas...</p>
+                }
+              </div>
+            </div>
+          }
         }
       </section>
     }

@@ -134,6 +134,13 @@ export class ProductService {
     } catch { return false; }
   }
 
+  async fetchCierres(): Promise<any[]> {
+    try {
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierres`));
+      return res;
+    } catch { return []; }
+  }
+
   async deleteSale(id: number) {
     await firstValueFrom(this.http.delete(`${this.api}/ventas/${id}`));
     await this.fetchSales();
@@ -151,6 +158,12 @@ export class ProductService {
       return await firstValueFrom(
         this.http.get<Sale[]>(`${this.api}/ventas/vendedor`, { params: { nombre, fecha } })
       );
+    } catch { return []; }
+  }
+
+  async fetchSalesByDate(fecha: string): Promise<any[]> {
+    try {
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/ventas`, { params: { fecha } }));
     } catch { return []; }
   }
 
