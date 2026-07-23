@@ -68,6 +68,12 @@
         </span>
         @if (sidebarOpen) { <span>Apartados</span> }
       </button>
+      <button class="melsus-btn" [class.active]="tab === 'melsus'" (click)="abrirMelsus()">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/></svg>
+        </span>
+        @if (sidebarOpen) { <span class="melsus-label">Melsus</span> }
+      </button>
       <button [class.active]="tab === 'cierre'" (click)="abrirCierre()">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -116,7 +122,17 @@
                     <option [value]="inv.name">{{ inv.name }}</option>
                   }
                 </select>
-                <input type="text" placeholder="URL de imagen (opcional)" [(ngModel)]="newImg" />
+                <input type="text" placeholder="URL de imagen (o sube una abajo)" [(ngModel)]="newImg" />
+                @if (newImg) {
+                  <div class="img-preview-wrap">
+                    <img class="img-preview" [src]="newImg" />
+                  </div>
+                }
+                <div class="local-img-row">
+                  <span class="local-img-label">Subir imagen desde tu PC:</span>
+                  <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+                  @if (uploading) { <span class="local-img-uploading">Subiendo...</span> }
+                </div>
                 <textarea class="modal-textarea" placeholder="Descripción del producto" [(ngModel)]="newDesc"></textarea>
                 @if (editProd) {
                   <input type="number" min="0" placeholder="Stock" [(ngModel)]="newStock" />
@@ -504,6 +520,87 @@
           </div>
         } @else {
           <p style="text-align:center;color:#ccc;padding:2rem">No hay apartados registrados</p>
+        }
+      </section>
+    }
+
+    @if (tab === 'melsus') {
+      <section class="melsus-section">
+        <div class="melsus-header">
+          <div class="melsus-brand">
+            <span class="melsus-icon">M</span>
+            <div>
+              <h1>Melsus</h1>
+              <span class="melsus-sub">Marca hermana — ventas separadas</span>
+            </div>
+          </div>
+        </div>
+
+        @if (melsusMsg) { <div class="admin-ok">{{ melsusMsg }}</div> }
+        @if (melsusErr) { <div class="admin-error">{{ melsusErr }}</div> }
+
+        <div class="melsus-card">
+          <h2>Registrar venta</h2>
+          <div class="melsus-form">
+            <input type="text" placeholder="¿Qué bolso se vendió?" [(ngModel)]="melsusProducto" />
+            <div class="pv-metodo-opts">
+              <button class="pv-metodo-btn melsus-met-btn" [class.act]="melsusMetodo === 'efectivo'" (click)="melsusMetodo = 'efectivo'">Efectivo</button>
+              <button class="pv-metodo-btn melsus-met-btn" [class.act]="melsusMetodo === 'tarjeta'" (click)="melsusMetodo = 'tarjeta'">Tarjeta</button>
+              <button class="pv-metodo-btn melsus-met-btn" [class.act]="melsusMetodo === 'nequi'" (click)="melsusMetodo = 'nequi'">Nequi</button>
+              <button class="pv-metodo-btn melsus-met-btn" [class.act]="melsusMetodo === 'daviplata'" (click)="melsusMetodo = 'daviplata'">Daviplata</button>
+              <button class="pv-metodo-btn melsus-met-btn" [class.act]="melsusMetodo === 'addi'" (click)="melsusMetodo = 'addi'">Addi</button>
+            </div>
+            <input type="number" min="0" placeholder="Total $" [(ngModel)]="melsusTotal" />
+            <textarea class="modal-textarea" placeholder="Comentario (opcional)" [(ngModel)]="melsusComentario"></textarea>
+            <button class="melsus-reg-btn" (click)="registrarMelsus()">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Registrar venta
+            </button>
+          </div>
+        </div>
+
+        @if (melsusLoading) {
+          <p style="text-align:center;color:#ccc;padding:2rem">Cargando...</p>
+        } @else if (melsusDatos.length) {
+          <div class="melsus-historial">
+            <h2>Historial de ventas Melsus</h2>
+            <div class="cierre-tabla-wrap">
+              <table class="cierre-tabla">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Total</th>
+                    <th>Método</th>
+                    <th>Comentario</th>
+                    <th>Vendedor</th>
+                    <th>Fecha</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (v of melsusDatos; track v.id) {
+                    <tr>
+                      <td>{{ v.id }}</td>
+                      <td>{{ v.producto }}</td>
+                      <td>${{ (+v.total).toLocaleString() }}</td>
+                      <td>{{ v.metodoPago || v.metodo_pago }}</td>
+                      <td>{{ v.comentario || '—' }}</td>
+                      <td>{{ v.vendedor }}</td>
+                      <td>{{ v.fecha?.slice(0, 10) }}</td>
+                      <td>
+                        <button class="cierre-btn cierre-btn-del" (click)="eliminarMelsus(v.id)" title="Eliminar">
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        } @else {
+          <p style="text-align:center;color:#bbb;padding:2rem">No hay ventas Melsus registradas</p>
         }
       </section>
     }

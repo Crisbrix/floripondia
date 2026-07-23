@@ -20,6 +20,7 @@ export class RegisterComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  //Valida campos, registra usuario y redirige al login
   async registrarse() {
     if (!this.nombre || !this.email || !this.password) {
       this.error = 'Todos los campos son obligatorios';

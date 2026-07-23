@@ -14,8 +14,10 @@ export class NavbarComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  //Retorna sesion activa del usuario
   get user() { return this.auth.getSession(); }
 
+  //Cierra sesion y redirige al inicio
   logout() {
     this.auth.logout();
     this.menuOpen = false;

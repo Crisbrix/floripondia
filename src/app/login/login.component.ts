@@ -17,6 +17,7 @@ export class LoginComponent {
 
   constructor(private auth: AuthService, private router: Router) {}
 
+  //Intenta iniciar sesion y redirige al admin
   async ingresar() {
     const user = await this.auth.login(this.email, this.password);
     if (user) {

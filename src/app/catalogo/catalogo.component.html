@@ -1,9 +1,12 @@
+<!--Encabezado del catalogo-->
 <section class="cata-header">
   <h1>Catálogo</h1>
   <p>Encuentra tu próximo favorito</p>
 </section>
 
+<!--Cuerpo: sidebar + grid de productos-->
 <div class="cata-body">
+  <!--Filtros de categoria-->
   <aside class="sidebar">
     <h3>Categorías</h3>
     @for (cat of categories; track cat.key) {
@@ -18,6 +21,7 @@
     }
   </aside>
 
+  <!--Grid de productos filtrados-->
   <div class="grid">
     @for (product of filtered; track product.id) {
       <div class="card">

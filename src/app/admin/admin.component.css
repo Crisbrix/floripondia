@@ -1485,6 +1485,39 @@
 .cierre-btn-edit:hover { background: #C8E6C9; }
 .cierre-btn-del { background: #FCE4EC; color: #c44; }
 .cierre-btn-del:hover { background: #F8BBD0; }
+.img-preview-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background: #f9f9f9;
+  border-radius: 12px;
+}
+.img-preview {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.local-img-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.local-img-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #bbb;
+}
+.local-img-row input[type="file"] {
+  font-size: 0.8rem;
+  color: #888;
+}
+.local-img-uploading {
+  font-size: 0.8rem;
+  color: #E1BEE7;
+  font-weight: 600;
+}
+
 .modal-textarea {
   width: 100%;
   border: 2px solid #eee;
@@ -1927,6 +1960,54 @@
   color: #bbb;
   font-weight: 600;
 }
+
+/* ===== Melsus — marca separada ===== */
+.melsus-btn .nav-icon { color: #E1BEE7; }
+.melsus-btn.active { background: linear-gradient(135deg, #E1BEE7, #F8BBD0) !important; color: #fff !important; }
+.melsus-btn.active .nav-icon { color: #fff; }
+.melsus-label { color: #E1BEE7; font-weight: 700; }
+.melsus-btn.active .melsus-label { color: #fff; }
+
+.melsus-section { --accent: #E1BEE7; }
+.melsus-header { margin-bottom: 20px; }
+.melsus-brand { display: flex; align-items: center; gap: 14px; }
+.melsus-icon {
+  width: 50px; height: 50px; border-radius: 16px;
+  background: linear-gradient(135deg, #E1BEE7, #F8BBD0);
+  color: #fff; font-size: 1.6rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Georgia', serif; font-style: italic;
+  box-shadow: 0 4px 12px rgba(225,190,231,0.3);
+}
+.melsus-brand h1 { font-family: 'Georgia', serif; font-size: 1.6rem; color: #E1BEE7; margin: 0; }
+.melsus-sub { font-size: 0.75rem; color: #ccc; font-weight: 600; }
+
+.melsus-card {
+  background: #fff; border-radius: 18px; padding: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  border: 1px solid #f5f5f5;
+  margin-bottom: 24px;
+  border-left: 4px solid #E1BEE7;
+}
+.melsus-card h2 { font-size: 1rem; color: #888; margin: 0 0 16px; }
+.melsus-form { display: flex; flex-direction: column; gap: 12px; }
+.melsus-form input, .melsus-form textarea {
+  padding: 12px 14px; border: 2px solid #f0f0f0; border-radius: 12px;
+  font-size: 0.9rem; outline: none; font-family: inherit;
+}
+.melsus-form input:focus, .melsus-form textarea:focus { border-color: #E1BEE7; }
+.melsus-met-btn { flex: 1; }
+.melsus-reg-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px; border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #E1BEE7, #F8BBD0);
+  color: #fff; font-weight: 800; font-size: 1rem; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.melsus-reg-btn:hover { opacity: 0.85; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(225,190,231,0.3); }
+
+.melsus-historial { margin-top: 8px; }
+.melsus-historial h2 { font-size: 1rem; color: #888; margin: 0 0 12px; }
 
 @media (max-width: 768px) {
   .analytics-grid { grid-template-columns: 1fr; }

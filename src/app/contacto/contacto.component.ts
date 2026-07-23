@@ -13,6 +13,7 @@ export class ContactoComponent {
   correo = '';
   mensaje = '';
 
+  //Abre WhatsApp con el mensaje del formulario
   enviarWhatsApp() {
     const texto = `Hola! Soy ${this.nombre || '...'}. ${this.mensaje || 'Quiero información'}`;
     window.open(`https://wa.me/573134834606?text=${encodeURIComponent(texto)}`, '_blank');

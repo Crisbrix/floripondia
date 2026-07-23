@@ -1,7 +1,9 @@
+<!--Barra de navegacion principal-->
 <nav>
   <div class="container nav-content">
     <a routerLink="/" class="logo">Floripondía</a>
 
+    <!--Links de navegacion para desktop-->
     <div class="links">
       <a routerLink="/">Inicio</a>
       <a routerLink="/catalogo">Catálogo</a>
@@ -12,6 +14,7 @@
       }
     </div>
 
+    <!--Seccion de autenticacion-->
     <div class="auth-section">
       @if (user) {
         <span class="user-name">{{ user.nombre }}</span>
@@ -21,12 +24,14 @@
       }
     </div>
 
+    <!--Boton hamburguesa para movil-->
     <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
       <span></span><span></span><span></span>
     </button>
   </div>
 </nav>
 
+<!--Overlay del menu movil-->
 @if (menuOpen) {
   <div class="overlay" (click)="menuOpen = false">
     <div class="overlay-menu" (click)="$event.stopPropagation()">

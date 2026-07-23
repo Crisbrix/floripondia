@@ -1,3 +1,4 @@
+<!--Hero principal-->
 <section class="hero">
   <div class="hero-content">
     <h1>Floripondía</h1>
@@ -5,6 +6,7 @@
   </div>
 </section>
 
+<!--Categorias con efecto poster-->
 @for (cat of categories; track cat.name; let i = $index) {
   <section class="poster" #poster>
     <div class="poster-inner" [class.reverse]="i % 2 !== 0">

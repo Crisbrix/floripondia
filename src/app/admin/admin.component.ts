@@ -2,11 +2,12 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Chart, BarController, DoughnutController, BarElement, ArcElement, CategoryScale, LinearScale, Tooltip, Legend, LineController, LineElement, PointElement, Filler } from 'chart.js';
+
 import { AuthService, User } from '../auth/auth.service';
 import { ProductService, Product, Stats } from '../auth/product.service';
+import Chart from 'chart.js/auto';
 
-Chart.register(BarController, DoughnutController, LineController, BarElement, ArcElement, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler);
+//Chart.js auto-importa y registra todos los componentes
 
 @Component({
   selector: 'app-admin',
@@ -17,7 +18,8 @@ Chart.register(BarController, DoughnutController, LineController, BarElement, Ar
 })
 export class AdminComponent {
   sidebarOpen = true;
-  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' = 'productos';
+  //Pestaña activa del panel admin
+  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -66,6 +68,7 @@ export class AdminComponent {
     await Promise.all(tasks);
   }
 
+  //Verifica si el usuario es admin
   get isAdmin() { return this.auth.getSession()?.role === 'admin'; }
   get products() { return this.productSvc.all; }
   get sales() { return this.productSvc.sales; }
@@ -88,6 +91,7 @@ export class AdminComponent {
   pMsg = '';
   pErr = '';
 
+  //Abre seccion reportes y renderiza graficos
   async abrirReportes() {
     this.tab = 'reportes';
     await Promise.all([
@@ -102,12 +106,14 @@ export class AdminComponent {
     }, 100);
   }
 
+  //Modal de ventas por vendedor en una fecha
   async verVentasVendedor(vendedor: string, fecha?: string) {
     this.selectedVendor = vendedor;
     this.vendorDate = fecha || new Date().toISOString().slice(0, 10);
     this.vendorSales = await this.productSvc.fetchVendorSalesByDate(vendedor, this.vendorDate);
   }
 
+  //Navegacion de fechas en modal vendedor
   async vendorDatePrev() {
     const d = new Date(this.vendorDate);
     d.setDate(d.getDate() - 1);
@@ -128,6 +134,7 @@ export class AdminComponent {
     this.vendorDate = '';
   }
 
+  //Renderiza graficos de stats (barras, dona, inventario)
   private renderCharts() {
     this.destroyCharts();
     const s = this.stats;
@@ -219,11 +226,13 @@ export class AdminComponent {
     });
   }
 
+  //Destruye graficos previos
   private destroyCharts() {
     for (const c of this.chartInstances) c.destroy();
     this.chartInstances = [];
   }
 
+  //Guarda o actualiza producto
   async guardarProd() {
     if (!this.newName) { this.err = 'El nombre es obligatorio'; return; }
     try {
@@ -243,6 +252,23 @@ export class AdminComponent {
     } catch {
       this.err = 'Error al guardar el producto';
     }
+  }
+
+  uploading = false;
+
+  async onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    const file = input.files[0];
+    this.uploading = true;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = (reader.result as string).split(',')[1];
+      const url = await this.productSvc.uploadImage(base64, `${Date.now()}-${file.name}`);
+      if (url) this.newImg = url;
+      this.uploading = false;
+    };
+    reader.readAsDataURL(file);
   }
 
   nuevoProd() {
@@ -347,6 +373,7 @@ export class AdminComponent {
 
   analyticsData: any = null;
 
+  //Renderiza graficos de analytics (lineas, barras, donas)
   private renderAnalyticsCharts() {
     const d = this.analyticsData;
     if (!d) return;
@@ -519,10 +546,12 @@ export class AdminComponent {
     } catch { this.catErr = 'Error al eliminar'; }
   }
 
+  //Carga lista de usuarios
   async cargarUsuarios() {
     this.users = await this.auth.getAllUsers();
   }
 
+  //Crea vendedor o admin
   async crearUsuario() {
     if (!this.uNombre || !this.uEmail || !this.uPass) {
       this.uErr = 'Todos los campos son obligatorios'; return;
@@ -631,6 +660,54 @@ export class AdminComponent {
       });
       this.apartados = await this.productSvc.fetchApartados();
     } catch { this.apErr = 'Error al actualizar estado'; }
+  }
+
+  //Melsus — marca separada, no afecta cierre/reportes
+  melsusDatos: any[] = [];
+  melsusProducto = '';
+  melsusMetodo = 'efectivo';
+  melsusTotal = 0;
+  melsusComentario = '';
+  melsusMsg = '';
+  melsusErr = '';
+  melsusLoading = false;
+
+  async abrirMelsus() {
+    this.tab = 'melsus';
+    this.melsusLoading = true;
+    this.melsusDatos = await this.productSvc.fetchMelsus();
+    this.melsusLoading = false;
+    this.melsusMsg = '';
+    this.melsusErr = '';
+  }
+
+  async registrarMelsus() {
+    if (!this.melsusProducto) { this.melsusErr = '¿Qué bolso se vendió?'; return; }
+    if (this.melsusTotal <= 0) { this.melsusErr = 'Ingresa el total'; return; }
+    this.melsusErr = '';
+    try {
+      await this.productSvc.createMelsus({
+        producto: this.melsusProducto,
+        metodo_pago: this.melsusMetodo,
+        total: this.melsusTotal,
+        comentario: this.melsusComentario,
+      });
+      this.melsusMsg = 'Venta Melsus registrada';
+      this.melsusProducto = '';
+      this.melsusTotal = 0;
+      this.melsusComentario = '';
+      this.melsusDatos = await this.productSvc.fetchMelsus();
+    } catch {
+      this.melsusErr = 'Error al registrar';
+    }
+  }
+
+  async eliminarMelsus(id: number) {
+    if (!confirm('¿Eliminar esta venta Melsus?')) return;
+    try {
+      await this.productSvc.deleteMelsus(id);
+      this.melsusDatos = await this.productSvc.fetchMelsus();
+    } catch { this.melsusErr = 'Error al eliminar'; }
   }
 
   vMsg = '';
@@ -831,6 +908,7 @@ export class AdminComponent {
     }
   }
 
+  //Abre seccion de cierre y carga datos del dia
   async abrirCierre() {
     this.tab = 'cierre';
     this.cierreLoading = true;
@@ -891,6 +969,7 @@ export class AdminComponent {
     this.pErr = '';
   }
 
+  //Guarda cambios de perfil
   async guardarPerfil() {
     this.pMsg = '';
     this.pErr = '';
@@ -902,6 +981,7 @@ export class AdminComponent {
     }
   }
 
+  //Cierra sesion y redirige al inicio
   cerrarSesion() {
     this.auth.logout();
     this.router.navigateByUrl('/');

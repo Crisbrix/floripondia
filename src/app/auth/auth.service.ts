@@ -27,6 +27,7 @@ export class AuthService {
     return localStorage.getItem(this.tokenKey);
   }
 
+  //Login: envia credenciales y guarda token + sesion
   async login(email: string, password: string): Promise<User | null> {
     try {
       const res: any = await firstValueFrom(
@@ -40,6 +41,7 @@ export class AuthService {
     }
   }
 
+  //Registro publico como cliente
   async register(email: string, nombre: string, password: string): Promise<boolean> {
     try {
       await firstValueFrom(
@@ -51,6 +53,7 @@ export class AuthService {
     }
   }
 
+  //Admin crea vendedor/admin
   async createUser(email: string, nombre: string, password: string, role: 'vendedor' | 'admin'): Promise<boolean> {
     try {
       await firstValueFrom(
@@ -62,6 +65,7 @@ export class AuthService {
     }
   }
 
+  //Lista todos los usuarios (admin)
   async getAllUsers(): Promise<(User & { password?: string })[]> {
     try {
       const res: any = await firstValueFrom(this.http.get(`${this.api}/usuarios`));
@@ -71,6 +75,7 @@ export class AuthService {
     }
   }
 
+  //Actualiza perfil propio
   async updateProfile(nombre: string, password?: string): Promise<boolean> {
     try {
       const body: any = { nombre };

@@ -97,6 +97,7 @@ export class ProductService {
     } catch { this.stats = null; }
   }
 
+  //CRUD productos
   async add(name: string, category: string, image: string) {
     await firstValueFrom(
       this.http.post(`${this.api}/productos`, { nombre: name, categoria: category, imagen: image })
@@ -116,6 +117,7 @@ export class ProductService {
     await this.fetchProducts();
   }
 
+  //Actualiza stock de inventario
   async updateStock(name: string, stock: number, descripcion?: string) {
     const body: any = {};
     if (stock >= 0) body.stock = stock;
@@ -127,6 +129,7 @@ export class ProductService {
 
   lastError = '';
 
+  //Confirma cierre de caja
   async confirmarCierre() {
     try {
       await firstValueFrom(this.http.post(`${this.api}/ventas/cierre/confirmar`, {}));
@@ -134,6 +137,7 @@ export class ProductService {
     } catch { return false; }
   }
 
+  //Historial de cierres
   async fetchCierres(): Promise<any[]> {
     try {
       const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierres`));
@@ -141,6 +145,7 @@ export class ProductService {
     } catch { return []; }
   }
 
+  //CRUD ventas
   async deleteSale(id: number) {
     await firstValueFrom(this.http.delete(`${this.api}/ventas/${id}`));
     await this.fetchSales();
@@ -153,6 +158,7 @@ export class ProductService {
   }
   cierre: any = null;
 
+  //Ventas por vendedor y fecha (modal vendedor)
   async fetchVendorSalesByDate(nombre: string, fecha: string): Promise<Sale[]> {
     try {
       return await firstValueFrom(
@@ -161,12 +167,14 @@ export class ProductService {
     } catch { return []; }
   }
 
+  //Ventas filtradas por fecha
   async fetchSalesByDate(fecha: string): Promise<any[]> {
     try {
       return await firstValueFrom(this.http.get<any[]>(`${this.api}/ventas`, { params: { fecha } }));
     } catch { return []; }
   }
 
+  //Estado del cierre actual
   async fetchCierre() {
     try {
       const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierre`));
@@ -174,6 +182,7 @@ export class ProductService {
     } catch { this.cierre = null; }
   }
 
+  //Abre caja
   async abrirCaja() {
     try {
       await firstValueFrom(this.http.post(`${this.api}/ventas/caja/abrir`, {}));
@@ -181,6 +190,7 @@ export class ProductService {
     } catch { return false; }
   }
 
+  //Venta multiple con carrito
   async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0): Promise<boolean> {
     try {
       this.lastError = '';
@@ -196,6 +206,7 @@ export class ProductService {
     }
   }
 
+  //CRUD categorias
   async fetchAllCategories() {
     try {
       return await firstValueFrom(this.http.get<any[]>(`${this.api}/categorias`));
@@ -214,6 +225,7 @@ export class ProductService {
     await firstValueFrom(this.http.delete(`${this.api}/categorias/${id}`));
   }
 
+  //CRUD apartados
   async fetchApartados(): Promise<any[]> {
     try {
       return await firstValueFrom(this.http.get<any[]>(`${this.api}/apartados`));
@@ -232,17 +244,40 @@ export class ProductService {
     await firstValueFrom(this.http.delete(`${this.api}/apartados/${id}`));
   }
 
+  //Informe mensual
   async fetchInformeMensual(mes: string): Promise<any> {
     try {
       return await firstValueFrom(this.http.get(`${this.api}/ventas/informe-mensual`, { params: { mes } }));
     } catch { return null; }
   }
 
+  //Ventas Melsus (marca separada)
+  async fetchMelsus(): Promise<any[]> {
+    try { return await firstValueFrom(this.http.get<any[]>(`${this.api}/melsus`)); }
+    catch { return []; }
+  }
+  async createMelsus(data: { producto: string; metodo_pago: string; total: number; comentario?: string }) {
+    await firstValueFrom(this.http.post(`${this.api}/melsus`, data));
+  }
+  async deleteMelsus(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/melsus/${id}`));
+  }
+
+  //Sube imagen a Vercel Blob y devuelve URL
+  async uploadImage(data: string, filename: string): Promise<string> {
+    try {
+      const res: any = await firstValueFrom(
+        this.http.post(`${this.api}/upload`, { data, filename })
+      );
+      return res.url;
+    } catch { return ''; }
+  }
+
+  //Analytics global
   async fetchAnalytics(): Promise<any> {
     try {
       return await firstValueFrom(this.http.get(`${this.api}/ventas/analytics`));
     } catch (e: any) {
-      if (e.error) console.error('Analytics error:', e.error);
       return null;
     }
   }

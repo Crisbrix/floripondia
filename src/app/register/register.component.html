@@ -1,8 +1,10 @@
+<!--Pagina de registro-->
 <section class="auth-page">
   <div class="auth-card">
     <h1>Crear cuenta</h1>
     <p>Regístrate como cliente</p>
 
+    <!--Mensajes de error y exito-->
     @if (error) {
       <div class="auth-error">{{ error }}</div>
     }
@@ -10,6 +12,7 @@
       <div class="auth-ok">¡Cuenta creada! Redirigiendo...</div>
     }
 
+    <!--Formulario de registro-->
     <div class="auth-form">
       <input type="text" placeholder="Nombre completo" [(ngModel)]="nombre" />
       <input type="email" placeholder="Correo electrónico" [(ngModel)]="email" />
@@ -18,6 +21,7 @@
       <button (click)="registrarse()">Crear cuenta</button>
     </div>
 
+    <!--Link a login-->
     <p class="auth-footer">
       ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
     </p>
