@@ -191,11 +191,11 @@ export class ProductService {
   }
 
   //Venta multiple con carrito
-  async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0): Promise<boolean> {
+  async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0, pagos?: { metodo: string; monto: number }[]): Promise<boolean> {
     try {
       this.lastError = '';
       await firstValueFrom(
-        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido })
+        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido, pagos })
       );
       await this.fetchInventory();
       await this.fetchSales();

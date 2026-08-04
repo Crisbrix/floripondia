@@ -790,13 +790,27 @@ export class AdminComponent {
     this.abrirCierre();
   }
 
-  cart: { name: string; quantity: number; color: string; comentario: string }[] = [];
+  cart: { name: string; quantity: number; color: string; precio: number; comentario: string }[] = [];
   paymentMethod: string = 'efectivo';
-  vTotal = 0;
   vRecibido = 0;
+  pagoCombinado = false;
+  pagosCombinados: Record<string, number> = { efectivo: 0, tarjeta: 0, nequi: 0, daviplata: 0, addi: 0 };
+
+  get totalPagosCombinados() {
+    return Object.values(this.pagosCombinados).reduce((s, v) => s + (Number(v) || 0), 0);
+  }
+
+  get saldoPagoCombinado() {
+    return this.vTotal - this.totalPagosCombinados;
+  }
 
   get cartTotal() {
     return this.cart.reduce((s, i) => s + i.quantity, 0);
+  }
+
+  //Suma automática del carrito según precio x cantidad
+  get vTotal() {
+    return this.cart.reduce((s, i) => s + (Number(i.precio) || 0) * i.quantity, 0);
   }
 
   get vCambio() {
@@ -808,6 +822,24 @@ export class AdminComponent {
 
   seleccionarMetodo(m: string) {
     this.paymentMethod = m;
+    this.pagoCombinado = false;
+  }
+
+  activarPagoCombinado() {
+    this.pagoCombinado = true;
+    if (!this.pagosCombinados) {
+      this.pagosCombinados = { efectivo: 0, tarjeta: 0, nequi: 0, daviplata: 0, addi: 0 };
+    }
+  }
+
+  get combinadoMetodos() {
+    return [
+      { metodo: 'efectivo', label: 'Efectivo' },
+      { metodo: 'tarjeta', label: 'Tarjeta' },
+      { metodo: 'nequi', label: 'Nequi' },
+      { metodo: 'daviplata', label: 'Daviplata' },
+      { metodo: 'addi', label: 'Addi' },
+    ];
   }
 
   private iconCache = new Map<string, SafeHtml>();
@@ -860,7 +892,7 @@ export class AdminComponent {
         this.vErr = `Stock insuficiente de ${itemName}`; return;
       }
     } else {
-      this.cart.push({ name: itemName, quantity: 1, color: inv.color, comentario: '' });
+      this.cart.push({ name: itemName, quantity: 1, color: inv.color, precio: 0, comentario: '' });
     }
     this.cartOpen = true;
     this.vMsg = `${itemName} +1`;
@@ -885,7 +917,24 @@ export class AdminComponent {
     if (this.vTotal <= 0) {
       this.vErr = 'Ingresa el total de la venta'; return;
     }
-    if (!this.esTransferencia) {
+
+    let metodo = this.paymentMethod;
+    let recibido = this.esTransferencia ? this.vTotal : this.vRecibido;
+    let pagos: { metodo: string; monto: number }[] | undefined;
+
+    if (this.pagoCombinado) {
+      pagos = Object.entries(this.pagosCombinados)
+        .map(([m, monto]) => ({ metodo: m, monto: Number(monto) || 0 }))
+        .filter(p => p.monto > 0);
+      if (pagos.length < 2) {
+        this.vErr = 'Escribe el monto en al menos dos métodos'; return;
+      }
+      if (Math.abs(this.totalPagosCombinados - this.vTotal) > 0.01) {
+        this.vErr = 'La suma de los pagos no coincide con el total'; return;
+      }
+      metodo = 'combinado';
+      recibido = this.vTotal;
+    } else if (!this.esTransferencia) {
       if (this.vRecibido <= 0) {
         this.vErr = 'Ingresa cuánto pagaron'; return;
       }
@@ -893,15 +942,16 @@ export class AdminComponent {
         this.vErr = 'El pago no cubre el total'; return;
       }
     }
+
     const items = this.cart.map(i => ({ name: i.name, quantity: i.quantity, comentario: i.comentario }));
-    const recibido = this.esTransferencia ? this.vTotal : this.vRecibido;
-    const ok = await this.productSvc.sellCart(items, this.paymentMethod, this.vTotal, recibido);
+    const ok = await this.productSvc.sellCart(items, metodo, this.vTotal, recibido, pagos);
     if (ok) {
       this.vMsg = `Venta finalizada — ${this.cartTotal} artículo(s)`;
       this.vErr = '';
       this.cart = [];
-      this.vTotal = 0;
       this.vRecibido = 0;
+      this.pagoCombinado = false;
+      this.pagosCombinados = { efectivo: 0, tarjeta: 0, nequi: 0, daviplata: 0, addi: 0 };
     } else {
       this.vErr = 'Error al procesar la venta: ' + this.productSvc.lastError;
       this.vMsg = '';

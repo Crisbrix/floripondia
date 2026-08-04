@@ -328,6 +328,7 @@
                   <div class="pv-row-info">
                     <span class="pv-row-name">{{ item.name }}</span>
                     <span class="pv-row-precio">x{{ item.quantity }}</span>
+                    <input class="pv-row-precio-input" type="number" min="0" [(ngModel)]="item.precio" placeholder="Precio $" />
                     <input class="pv-row-coment" type="text" [(ngModel)]="item.comentario" placeholder="Comentario..." />
                   </div>
                   <div class="pv-row-qty">
@@ -344,9 +345,9 @@
                 <div class="pv-cash">
                   <div class="pv-cash-field">
                     <label>Total $</label>
-                    <input type="number" min="0" [(ngModel)]="vTotal" placeholder="0" />
+                    <div class="pv-total-val">${{ vTotal.toLocaleString() }}</div>
                   </div>
-                  @if (!esTransferencia) {
+                  @if (!esTransferencia && !pagoCombinado) {
                     <div class="pv-cash-field">
                       <label>Pagó $</label>
                       <input type="number" min="0" [(ngModel)]="vRecibido" placeholder="0" />
@@ -370,12 +371,16 @@
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                       Tarjeta
                     </button>
-                    <button class="pv-metodo-btn" [class.act]="esTransferencia" (click)="paymentMethod = 'nequi'">
+                    <button class="pv-metodo-btn" [class.act]="esTransferencia && !pagoCombinado" (click)="seleccionarMetodo('nequi')">
                       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                       Transf.
                     </button>
+                    <button class="pv-metodo-btn" [class.act]="pagoCombinado" (click)="activarPagoCombinado()">
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/><line x1="6" y1="15" x2="10" y2="15"/><line x1="14" y1="15" x2="18" y2="15"/></svg>
+                      Combinado
+                    </button>
                   </div>
-                  @if (esTransferencia) {
+                  @if (esTransferencia && !pagoCombinado) {
                     <div class="pv-sub-opts">
                       <label class="pv-radio" [class.act]="paymentMethod === 'nequi'">
                         <input type="radio" name="transf" value="nequi" [(ngModel)]="paymentMethod"> Nequi
@@ -386,6 +391,29 @@
                       <label class="pv-radio" [class.act]="paymentMethod === 'addi'">
                         <input type="radio" name="transf" value="addi" [(ngModel)]="paymentMethod"> Addi
                       </label>
+                    </div>
+                  }
+                  @if (pagoCombinado) {
+                    <div class="pv-combinado">
+                      <p class="pv-combinado-tip">Divide el total ${{ vTotal.toLocaleString() }} entre los métodos usados:</p>
+                      <div class="pv-combinado-grid">
+                        @for (entry of combinadoMetodos; track entry.metodo) {
+                          <div class="pv-combinado-item">
+                            <span class="pv-combinado-name">{{ entry.label }}</span>
+                            <input type="number" min="0" [(ngModel)]="pagosCombinados[entry.metodo]" placeholder="0" />
+                          </div>
+                        }
+                      </div>
+                      <div class="pv-combinado-resumen" [class.ok]="saldoPagoCombinado === 0" [class.mal]="saldoPagoCombinado !== 0">
+                        <span>Sumado: ${{ totalPagosCombinados.toLocaleString() }}</span>
+                        @if (saldoPagoCombinado > 0) {
+                          <span class="pv-combinado-falta">Falta: ${{ saldoPagoCombinado.toLocaleString() }}</span>
+                        } @else if (saldoPagoCombinado < 0) {
+                          <span class="pv-combinado-sobra">Sobra: ${{ (-saldoPagoCombinado).toLocaleString() }}</span>
+                        } @else {
+                          <span class="pv-combinado-ok">Cubre el total</span>
+                        }
+                      </div>
                     </div>
                   }
                 </div>

@@ -59,6 +59,7 @@ CREATE TABLE ventas (
    vendedor_id  INT         NOT NULL,
    comentario   TEXT,
    grupo_id     VARCHAR(36),
+   detalles_pago TEXT,
    FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -171,3 +172,4 @@ CREATE TABLE aperturas_caja (
 ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
 ALTER TABLE ventas ADD COLUMN comentario TEXT;
 ALTER TABLE ventas ADD COLUMN grupo_id VARCHAR(36) AFTER comentario;
+ALTER TABLE ventas ADD COLUMN detalles_pago TEXT AFTER grupo_id;
