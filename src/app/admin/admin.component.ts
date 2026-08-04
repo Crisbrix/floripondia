@@ -19,7 +19,7 @@ import Chart from 'chart.js/auto';
 export class AdminComponent {
   sidebarOpen = true;
   //Pestaña activa del panel admin
-  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' = 'productos';
+  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' | 'contabilidad' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -708,6 +708,205 @@ export class AdminComponent {
       await this.productSvc.deleteMelsus(id);
       this.melsusDatos = await this.productSvc.fetchMelsus();
     } catch { this.melsusErr = 'Error al eliminar'; }
+  }
+
+  //Contabilidad — inversiones, gastos y balance del local
+  contabilidadData: any = null;
+  contabilidadMes = '';
+  contMovimientos: any[] = [];
+  contCategorias: any[] = [];
+  contResumen: any = null;
+  contInforme: any = null;
+  contLoading = false;
+  contModal = false;
+  contEdit: any = null;
+  contTipo: 'inversion' | 'gasto' = 'gasto';
+  contFecha = '';
+  contCategoria = 0;
+  contDesc = '';
+  contMonto = 0;
+  contDiario = false;
+  contNuevaCat = '';
+  contColorCat = '#E1BEE7';
+  contFiltro: 'inversion' | 'gasto' | 'todos' = 'todos';
+  contMsg = '';
+  contErr = '';
+
+  async abrirContabilidad(mes?: string) {
+    this.tab = 'contabilidad';
+    //Por defecto muestra el mes en curso ('' = todo el historial)
+    this.contabilidadMes = mes ?? new Date().toISOString().slice(0, 7);
+    await this.contCargar();
+  }
+
+  async contCargar() {
+    this.contLoading = true;
+    this.contabilidadData = await this.productSvc.fetchContabilidad(this.contabilidadMes || undefined);
+    this.contMovimientos = this.contabilidadData?.movimientos || [];
+    this.contCategorias = this.contabilidadData?.categorias || [];
+    this.contResumen = this.contabilidadData?.resumen || null;
+    this.contInforme = this.contabilidadMes ? await this.productSvc.fetchInformeMensual(this.contabilidadMes) : null;
+    this.contMsg = ''; this.contErr = '';
+    this.contLoading = false;
+    this.cdr.detectChanges();
+    setTimeout(() => this.renderContabilidadCharts(), 100);
+  }
+
+  async contMesPrev() {
+    const base = this.contabilidadMes || new Date().toISOString().slice(0, 7);
+    const [y, m] = base.split('-').map(Number);
+    const d = new Date(y, m - 2, 1);
+    this.contabilidadMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    await this.contCargar();
+  }
+
+  async contMesNext() {
+    const base = this.contabilidadMes || new Date().toISOString().slice(0, 7);
+    const [y, m] = base.split('-').map(Number);
+    const d = new Date(y, m, 1);
+    this.contabilidadMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    await this.contCargar();
+  }
+
+  get contCategoriasFiltro() {
+    return this.contCategorias.filter(c => c.tipo === this.contTipo);
+  }
+
+  get contMovsFiltrados() {
+    return this.contMovimientos.filter(m => this.contFiltro === 'todos' || m.tipo === this.contFiltro);
+  }
+
+  get contPorCategoria() {
+    const arr = this.contResumen?.porCategoria || [];
+    return {
+      gastos: arr.filter((c: any) => c.tipo === 'gasto'),
+      inversiones: arr.filter((c: any) => c.tipo === 'inversion'),
+    };
+  }
+
+  abrirContModal(edit?: any) {
+    this.contEdit = edit || null;
+    this.contTipo = edit?.tipo || 'gasto';
+    this.contFecha = edit?.fecha || new Date().toISOString().slice(0, 10);
+    this.contCategoria = edit?.categoria_id || 0;
+    this.contDesc = edit?.descripcion || '';
+    this.contMonto = edit?.monto || 0;
+    this.contDiario = !!edit?.es_diario;
+    this.contNuevaCat = '';
+    this.contMsg = ''; this.contErr = '';
+    this.contModal = true;
+  }
+
+  cerrarContModal() { this.contModal = false; this.contEdit = null; }
+
+  async guardarCont() {
+    if (!this.contFecha) { this.contErr = 'La fecha es obligatoria'; return; }
+    if (this.contMonto <= 0) { this.contErr = 'Ingresa un monto válido'; return; }
+    if (this.contTipo === 'gasto' && !this.contCategoria && !this.contCategoriasFiltro.length) {
+      this.contErr = 'Primero crea una categoría de gasto'; return;
+    }
+    try {
+      const data = {
+        fecha: this.contFecha,
+        tipo: this.contTipo,
+        categoria_id: this.contCategoria || undefined,
+        descripcion: this.contDesc,
+        monto: Number(this.contMonto),
+        es_diario: this.contDiario && this.contTipo === 'gasto',
+      };
+      if (this.contEdit) {
+        await this.productSvc.updateMovimiento(this.contEdit.id, data);
+        this.contMsg = 'Movimiento actualizado';
+      } else {
+        await this.productSvc.createMovimiento(data);
+        this.contMsg = 'Movimiento registrado';
+      }
+      this.cerrarContModal();
+      await this.contCargar();
+    } catch (err: any) {
+      this.contErr = err.error?.error || 'Error al guardar';
+    }
+  }
+
+  async eliminarCont(id: number) {
+    if (!confirm('¿Eliminar este movimiento?')) return;
+    try {
+      await this.productSvc.deleteMovimiento(id);
+      await this.contCargar();
+    } catch { this.contErr = 'Error al eliminar'; }
+  }
+
+  async crearCategoriaContable() {
+    const nombre = (this.contNuevaCat || '').trim();
+    if (!nombre) { this.contErr = 'Escribe el nombre de la categoría'; return; }
+    try {
+      await this.productSvc.createCategoriaContable({ nombre, tipo: this.contTipo, color: this.contColorCat });
+      this.contNuevaCat = '';
+      this.contCategorias = (await this.productSvc.fetchContabilidad(this.contabilidadMes || undefined))?.categorias || this.contCategorias;
+      const nuevo = this.contCategorias.find(c => c.nombre.toLowerCase() === nombre.toLowerCase());
+      if (nuevo) this.contCategoria = nuevo.id;
+      this.contMsg = 'Categoría creada';
+      this.contErr = '';
+    } catch (err: any) {
+      this.contErr = err.error?.error || 'Error al crear la categoría';
+    }
+  }
+
+  private renderContabilidadCharts() {
+    this.destroyCharts();
+    const crear = (id: string, config: any) => {
+      const canvas = document.getElementById(id) as HTMLCanvasElement;
+      if (!canvas) return;
+      const parent = canvas.parentElement;
+      if (parent) { canvas.width = parent.clientWidth || 300; canvas.height = parent.clientHeight || 200; }
+      config.options.responsive = false;
+      config.options.maintainAspectRatio = false;
+      try { this.chartInstances.push(new Chart(canvas, config)); } catch {}
+    };
+
+    const gastos = this.contPorCategoria.gastos;
+    if (gastos.length) {
+      crear('chart-cont-gastos', {
+        type: 'doughnut',
+        data: {
+          labels: gastos.map((c: any) => c.categoria || 'Otros'),
+          datasets: [{ data: gastos.map((c: any) => Number(c.total)), backgroundColor: gastos.map((c: any) => c.color || '#ddd'), borderWidth: 0 }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } } } },
+      });
+    }
+
+    if (this.contResumen) {
+      crear('chart-cont-balance', {
+        type: 'bar',
+        data: {
+          labels: ['Inversión', 'Gastos', 'Ventas', 'Balance'],
+          datasets: [{
+            data: [this.contResumen.totalInversion, this.contResumen.totalGastos, this.contResumen.totalVentas, this.contResumen.balance],
+            backgroundColor: ['#E1BEE7', '#F8BBD0', '#C8E6C9', '#BBDEFB'],
+            borderRadius: 4,
+          }],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
+
+    const diario = this.contResumen?.diario || [];
+    if (diario.length) {
+      const dias = diario.slice().reverse().map((d: any) => d.fecha.slice(5));
+      crear('chart-cont-diario', {
+        type: 'line',
+        data: {
+          labels: dias,
+          datasets: [
+            { label: 'Ventas', data: diario.slice().reverse().map((d: any) => d.ventas), borderColor: '#C8E6C9', backgroundColor: 'rgba(200,230,201,0.15)', fill: true, tension: 0.3, pointRadius: 2 },
+            { label: 'Gastos', data: diario.slice().reverse().map((d: any) => d.gastos), borderColor: '#F8BBD0', backgroundColor: 'rgba(248,187,208,0.15)', fill: true, tension: 0.3, pointRadius: 2 },
+            { label: 'Neto', data: diario.slice().reverse().map((d: any) => d.neto), borderColor: '#BBDEFB', backgroundColor: 'transparent', tension: 0.3, pointRadius: 2 },
+          ],
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 10 } } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
+      });
+    }
   }
 
   vMsg = '';

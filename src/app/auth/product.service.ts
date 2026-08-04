@@ -263,6 +263,34 @@ export class ProductService {
     await firstValueFrom(this.http.delete(`${this.api}/melsus/${id}`));
   }
 
+  //Contabilidad
+  async fetchContabilidad(mes?: string): Promise<any> {
+    try {
+      if (mes) {
+        return await firstValueFrom(this.http.get(`${this.api}/contabilidad`, { params: { mes } }));
+      }
+      return await firstValueFrom(this.http.get(`${this.api}/contabilidad`));
+    } catch (e: any) {
+      console.error('fetchContabilidad error:', e?.status, e?.error?.message ?? e?.message);
+      return null;
+    }
+  }
+  async createMovimiento(data: any) {
+    await firstValueFrom(this.http.post(`${this.api}/contabilidad`, data));
+  }
+  async updateMovimiento(id: number, data: any) {
+    await firstValueFrom(this.http.put(`${this.api}/contabilidad/${id}`, data));
+  }
+  async deleteMovimiento(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/contabilidad/${id}`));
+  }
+  async createCategoriaContable(data: { nombre: string; tipo: string; color?: string }) {
+    await firstValueFrom(this.http.post(`${this.api}/contabilidad/categorias`, data));
+  }
+  async deleteCategoriaContable(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/contabilidad/categorias/${id}`));
+  }
+
   //Sube imagen a Vercel Blob y devuelve URL
   async uploadImage(data: string, filename: string): Promise<string> {
     try {

@@ -68,6 +68,14 @@
         </span>
         @if (sidebarOpen) { <span>Apartados</span> }
       </button>
+      @if (isAdmin) {
+        <button [class.active]="tab === 'contabilidad'" (click)="abrirContabilidad()">
+          <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><line x1="7" y1="15" x2="11" y2="15"/></svg>
+          </span>
+          @if (sidebarOpen) { <span>Contabilidad</span> }
+        </button>
+      }
       <button class="melsus-btn" [class.active]="tab === 'melsus'" (click)="abrirMelsus()">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/></svg>
@@ -629,6 +637,199 @@
           </div>
         } @else {
           <p style="text-align:center;color:#bbb;padding:2rem">No hay ventas Melsus registradas</p>
+        }
+      </section>
+    }
+
+    @if (tab === 'contabilidad') {
+      <section>
+        <div class="prod-header">
+          <h1>Contabilidad</h1>
+          <button class="btn-primary prod-nuevo" (click)="abrirContModal()">+ Nuevo movimiento</button>
+        </div>
+
+        @if (contMsg) { <div class="admin-ok">{{ contMsg }}</div> }
+        @if (contErr) { <div class="admin-error">{{ contErr }}</div> }
+
+        <div class="vend-detalle-date">
+          <button class="vend-date-btn" (click)="contMesPrev()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span class="vend-date-label">{{ contabilidadMes || 'Todo el historial' }}</span>
+          <button class="vend-date-btn" (click)="contMesNext()">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+          </button>
+          @if (contabilidadMes) {
+            <button class="btn-sec vend-todo-btn" (click)="abrirContabilidad('')">Ver todo</button>
+          }
+        </div>
+
+        @if (contLoading) {
+          <p style="text-align:center;color:#ccc;padding:2rem">Cargando...</p>
+        } @else if (contResumen) {
+          <div class="rep-resumen">
+            <div class="rep-card"><span class="rep-num">${{ contResumen.totalInversion.toLocaleString() }}</span><span class="rep-label">Inversión</span></div>
+            <div class="rep-card"><span class="rep-num">${{ contResumen.totalGastos.toLocaleString() }}</span><span class="rep-label">Gastos</span></div>
+            <div class="rep-card"><span class="rep-num">${{ contResumen.gastosDiarios.toLocaleString() }}</span><span class="rep-label">Gastos diarios</span></div>
+            <div class="rep-card"><span class="rep-num">${{ contResumen.totalVentas.toLocaleString() }}</span><span class="rep-label">Ventas</span></div>
+            <div class="rep-card"><span class="rep-num" [class.rep-balance-neg]="contResumen.balance < 0" [class.rep-balance-pos]="contResumen.balance >= 0">${{ contResumen.balance.toLocaleString() }}</span><span class="rep-label">Balance</span></div>
+          </div>
+
+          <div class="rep-charts">
+            <div class="rep-chart-box"><h3>Distribución de gastos</h3><div class="rep-chart-wrap"><canvas id="chart-cont-gastos"></canvas></div></div>
+            <div class="rep-chart-box"><h3>Balance — inversión vs ventas</h3><div class="rep-chart-wrap"><canvas id="chart-cont-balance"></canvas></div></div>
+            <div class="rep-chart-box"><h3>Flujo diario del mes</h3><div class="rep-chart-wrap"><canvas id="chart-cont-diario"></canvas></div></div>
+          </div>
+
+          @if (contInforme && contabilidadMes) {
+            <div class="cont-seccion">
+              <h3>Ventas del mes — {{ contabilidadMes }}</h3>
+              <div class="rep-resumen">
+                <div class="rep-card"><span class="rep-num">{{ contInforme.resumen.ventas }}</span><span class="rep-label">Ventas</span></div>
+                <div class="rep-card"><span class="rep-num">{{ contInforme.resumen.articulos }}</span><span class="rep-label">Artículos</span></div>
+                <div class="rep-card"><span class="rep-num">${{ (+contInforme.resumen.monto).toLocaleString() }}</span><span class="rep-label">Total vendido</span></div>
+              </div>
+              <div class="informe-metodos-grid">
+                <div class="informe-metodo-card" style="border-left-color:#C8E6C9">
+                  <span class="informe-metodo-nombre">Efectivo</span>
+                  <span class="informe-metodo-monto">${{ (+contInforme.efectivo).toLocaleString() }}</span>
+                </div>
+                <div class="informe-metodo-card" style="border-left-color:#BBDEFB">
+                  <span class="informe-metodo-nombre">Tarjeta</span>
+                  <span class="informe-metodo-monto">${{ (+contInforme.tarjeta).toLocaleString() }}</span>
+                </div>
+                <div class="informe-metodo-card" style="border-left-color:#E1BEE7">
+                  <span class="informe-metodo-nombre">Transferencias</span>
+                  <span class="informe-metodo-monto">${{ (+contInforme.transferencias).toLocaleString() }}</span>
+                  <div class="informe-metodo-det">
+                    <span>Nequi: ${{ (+contInforme.nequi).toLocaleString() }}</span>
+                    <span>Daviplata: ${{ (+contInforme.daviplata).toLocaleString() }}</span>
+                    <span>Addi: ${{ (+contInforme.addi).toLocaleString() }}</span>
+                  </div>
+                </div>
+              </div>
+
+              @if (contInforme.porVendedor?.length) {
+                <div class="informe-vendedores">
+                  <h4>Ventas por vendedor</h4>
+                  <div class="informe-tabla-wrap">
+                    <table class="informe-tabla">
+                      <thead><tr><th>Vendedor</th><th>Ventas</th><th>Total</th></tr></thead>
+                      <tbody>
+                        @for (v of contInforme.porVendedor; track v.vendedor) {
+                          <tr><td>{{ v.vendedor }}</td><td>{{ v.ventas }}</td><td class="informe-monto">${{ (+v.total).toLocaleString() }}</td></tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (contResumen.diario?.length) {
+            <div class="cont-seccion">
+              <h3>Flujo diario — ventas vs gastos</h3>
+              <div class="cierre-tabla-wrap">
+                <table class="cierre-tabla">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Ventas</th>
+                      <th>Gastos</th>
+                      <th>Inversión</th>
+                      <th>Neto día</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of contResumen.diario; track d.fecha) {
+                      <tr>
+                        <td>{{ d.fecha }}</td>
+                        <td>${{ (+d.ventas).toLocaleString() }}</td>
+                        <td>${{ (+d.gastos).toLocaleString() }}</td>
+                        <td>${{ (+d.inversion).toLocaleString() }}</td>
+                        <td class="informe-monto" [class.rep-balance-pos]="(+d.neto) >= 0" [class.rep-balance-neg]="(+d.neto) < 0">${{ (+d.neto).toLocaleString() }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+        }
+
+        @if (contModal) {
+          <div class="modal-overlay" (click)="cerrarContModal()">
+            <div class="modal-card" (click)="$event.stopPropagation()">
+              <button class="modal-close" (click)="cerrarContModal()">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+              <h2>{{ contEdit ? 'Editar movimiento' : 'Nuevo movimiento' }}</h2>
+              <div class="modal-form">
+                <div class="role-select">
+                  <button [class.active]="contTipo === 'gasto'" (click)="contTipo = 'gasto'">Gasto</button>
+                  <button [class.active]="contTipo === 'inversion'" (click)="contTipo = 'inversion'">Inversión</button>
+                </div>
+                <input type="date" [(ngModel)]="contFecha" />
+                <select [(ngModel)]="contCategoria">
+                  <option [value]="0">-- Categoría --</option>
+                  @for (cat of contCategoriasFiltro; track cat.id) {
+                    <option [value]="cat.id">{{ cat.nombre }}</option>
+                  }
+                </select>
+                <div class="cont-cat-nueva">
+                  <input type="text" placeholder="O crea una nueva categoría..." [(ngModel)]="contNuevaCat" />
+                  <input type="color" [(ngModel)]="contColorCat" title="Color de la categoría" />
+                  <button class="btn-sec" (click)="crearCategoriaContable()">Añadir</button>
+                </div>
+                <input type="number" min="0" placeholder="Monto $" [(ngModel)]="contMonto" />
+                @if (contTipo === 'gasto') {
+                  <label class="cont-diario">
+                    <input type="checkbox" [(ngModel)]="contDiario"> Marcar como gasto del día (diario)
+                  </label>
+                }
+                <textarea class="modal-textarea" placeholder="Descripción / detalle" [(ngModel)]="contDesc"></textarea>
+                <div class="modal-btns">
+                  <button class="btn-primary" (click)="guardarCont()">{{ contEdit ? 'Actualizar' : 'Registrar' }}</button>
+                  <button class="btn-sec" (click)="cerrarContModal()">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <div class="cont-filtros">
+          <button [class.act]="contFiltro === 'todos'" (click)="contFiltro = 'todos'">Todos</button>
+          <button [class.act]="contFiltro === 'inversion'" (click)="contFiltro = 'inversion'">Inversiones</button>
+          <button [class.act]="contFiltro === 'gasto'" (click)="contFiltro = 'gasto'">Gastos</button>
+        </div>
+
+        @if (contMovsFiltrados.length) {
+          <div class="cont-lista">
+            @for (m of contMovsFiltrados; track m.id) {
+              <div class="cont-item">
+                <div class="cont-item-left">
+                  <span class="cont-item-badge" [class.tipo-gasto]="m.tipo === 'gasto'" [class.tipo-inv]="m.tipo === 'inversion'">{{ m.tipo === 'gasto' ? 'Gasto' : 'Inversión' }}</span>
+                  @if (m.es_diario) { <span class="cont-item-diario">Diario</span> }
+                </div>
+                <div class="cont-item-desc">
+                  <span class="cont-item-nombre">{{ m.descripcion || 'Sin descripción' }}</span>
+                  <span class="cont-item-meta">{{ m.categoria || 'Otros' }} · {{ m.fecha?.slice(0, 10) }} · {{ m.usuario }}</span>
+                </div>
+                <span class="cont-item-monto" [class.monto-gasto]="m.tipo === 'gasto'" [class.monto-inv]="m.tipo === 'inversion'">${{ (+m.monto).toLocaleString() }}</span>
+                <div class="cont-item-acc">
+                  <button class="prod-edit" (click)="abrirContModal(m)">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  </button>
+                  <button class="prod-del" (click)="eliminarCont(m.id)">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p style="text-align:center;color:#ccc;padding:2rem">Aún no hay movimientos para este período</p>
         }
       </section>
     }

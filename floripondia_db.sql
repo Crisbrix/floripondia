@@ -168,8 +168,70 @@ CREATE TABLE aperturas_caja (
   FOREIGN KEY (abierto_por) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- -----------------------------------------------------------
+-- 8. CONTABILIDAD — categorías
+-- -----------------------------------------------------------
+CREATE TABLE contabilidad_categorias (
+  id     INT          AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(60)  NOT NULL,
+  tipo   ENUM('inversion','gasto') NOT NULL DEFAULT 'gasto',
+  color  VARCHAR(7)   NOT NULL DEFAULT '#E1BEE7'
+) ENGINE=InnoDB;
+
+-- Categorías por defecto
+INSERT INTO contabilidad_categorias (nombre, tipo, color) VALUES
+  ('Compra de ropa',        'inversion', '#E1BEE7'),
+  ('Accesorios / Complementos', 'inversion', '#BBDEFB'),
+  ('Adecuación del local',  'inversion', '#FFF9C4'),
+  ('Equipos y muebles',     'inversion', '#C8E6C9'),
+  ('Otros (inversión)',     'inversion', '#F8BBD0'),
+  ('Arriendo',              'gasto', '#BBDEFB'),
+  ('Servicios públicos',    'gasto', '#FFF9C4'),
+  ('Empleados / Salarios',  'gasto', '#C8E6C9'),
+  ('Transporte',            'gasto', '#F8BBD0'),
+  ('Publicidad / Marketing','gasto', '#E1BEE7'),
+  ('Papelería',             'gasto', '#B2EBF2'),
+  ('Mantenimiento',         'gasto', '#FFE0B2'),
+  ('Otros',                 'gasto', '#BBBBBB');
+
+-- -----------------------------------------------------------
+-- 9. CONTABILIDAD — movimientos
+-- -----------------------------------------------------------
+CREATE TABLE contabilidad (
+  id           INT          AUTO_INCREMENT PRIMARY KEY,
+  fecha        DATE         NOT NULL DEFAULT (CURRENT_DATE),
+  tipo         ENUM('inversion','gasto') NOT NULL DEFAULT 'gasto',
+  categoria_id INT,
+  descripcion  TEXT,
+  monto        DECIMAL(12,0) NOT NULL DEFAULT 0,
+  es_diario    TINYINT      NOT NULL DEFAULT 0,
+  usuario_id   INT          NOT NULL,
+  creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (categoria_id) REFERENCES contabilidad_categorias(id) ON UPDATE CASCADE,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- Migración para bases existentes
 ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
 ALTER TABLE ventas ADD COLUMN comentario TEXT;
 ALTER TABLE ventas ADD COLUMN grupo_id VARCHAR(36) AFTER comentario;
 ALTER TABLE ventas ADD COLUMN detalles_pago TEXT AFTER grupo_id;
+
+-- Tablas de contabilidad (para bases con el esquema anterior)
+CREATE TABLE IF NOT EXISTS contabilidad_categorias (
+  id     INT          AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(60)  NOT NULL,
+  tipo   ENUM('inversion','gasto') NOT NULL DEFAULT 'gasto',
+  color  VARCHAR(7)   NOT NULL DEFAULT '#E1BEE7'
+);
+CREATE TABLE IF NOT EXISTS contabilidad (
+  id           INT          AUTO_INCREMENT PRIMARY KEY,
+  fecha        DATE         NOT NULL DEFAULT (CURRENT_DATE),
+  tipo         ENUM('inversion','gasto') NOT NULL DEFAULT 'gasto',
+  categoria_id INT,
+  descripcion  TEXT,
+  monto        DECIMAL(12,0) NOT NULL DEFAULT 0,
+  es_diario    TINYINT      NOT NULL DEFAULT 0,
+  usuario_id   INT          NOT NULL,
+  creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
