@@ -11,14 +11,6 @@
     <div class="sidebar-header">
       @if (sidebarOpen) {
         <span class="sidebar-logo">Floripondía</span>
-        <div class="sucursal-selector">
-          <button [class.active]="sucursal === 'floripondia'" (click)="elegirSucursal('floripondia')">
-            Floripondía
-          </button>
-          <button [class.active]="sucursal === 'for-men'" (click)="elegirSucursal('for-men')">
-            For Men
-          </button>
-        </div>
       }
       <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen">
         @if (sidebarOpen) {
@@ -1381,6 +1373,17 @@
       </section>
     }
   </main>
+
+  @if (sucursal) {
+    <div class="sucursal-flotante" [class.ghost]="scrollGhost">
+      <button [class.active]="sucursal === 'floripondia'" (click)="elegirSucursal('floripondia')">
+        Floripondía
+      </button>
+      <button [class.active]="sucursal === 'for-men'" (click)="elegirSucursal('for-men')">
+        For Men
+      </button>
+    </div>
+  }
 
   @if (!sucursal) {
     <div class="sucursal-modal">

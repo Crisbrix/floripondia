@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, HostListener } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -61,6 +61,19 @@ export class AdminComponent {
 
   //Local activo: '' = aún no elegido (se pide obligatoriamente)
   sucursal: 'floripondia' | 'for-men' | '' = '';
+  //Efecto fantasma del selector flotante al hacer scroll
+  scrollGhost = false;
+  private scrollTimer: any;
+
+  @HostListener('window:scroll')
+  onScroll() {
+    this.scrollGhost = true;
+    if (this.scrollTimer) clearTimeout(this.scrollTimer);
+    this.scrollTimer = setTimeout(() => {
+      this.scrollGhost = false;
+      this.cdr.detectChanges();
+    }, 600);
+  }
 
   get localLabel() {
     return this.sucursal === 'for-men' ? 'For Men' : 'Floripondia';

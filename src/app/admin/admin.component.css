@@ -2216,29 +2216,41 @@
   .pv-cash-field input { font-size: 0.9rem; }
 }
 
-/*Selector de local en la sidebar*/
-.sucursal-selector {
+/*Selector de local flotante (centro abajo, como el carrito)*/
+.sucursal-flotante {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 102;
   display: flex;
   gap: 6px;
-  margin-top: 10px;
+  padding: 7px;
+  background: rgba(51,51,51,0.95);
+  border-radius: 999px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.28);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
-.sucursal-selector button {
-  flex: 1;
-  padding: 6px 4px;
-  border: 1px solid #f0f0f0;
-  background: #fafafa;
-  color: #888;
-  border-radius: 8px;
-  font-size: 0.72rem;
+.sucursal-flotante.ghost {
+  opacity: 0.25;
+  transform: translateX(-50%) translateY(10px);
+}
+.sucursal-flotante button {
+  border: none;
+  background: transparent;
+  color: #ddd;
   font-weight: 700;
+  font-size: 0.78rem;
+  padding: 10px 20px;
+  border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s;
 }
-.sucursal-selector button.active {
-  background: #555;
-  color: #fff;
-  border-color: #555;
+.sucursal-flotante button:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.sucursal-flotante button.active {
+  background: #E1BEE7;
+  color: #333;
 }
 
 /*Modal obligatorio de eleccion de local*/
@@ -2302,9 +2314,9 @@
   color: #888;
 }
 
-/*Tema Floripondia For Men: negro + amarillo*/
+/*Tema Floripondia For Men: todo negro, letras blancas y acentos amarillos*/
 .admin-layout.for-men .sidebar {
-  background: #111;
+  background: #0d0d0d;
   border-right-color: #222;
 }
 .admin-layout.for-men .sidebar-logo { color: #FFD700; }
@@ -2313,9 +2325,100 @@
 .admin-layout.for-men .sidebar-nav button { color: #ccc; }
 .admin-layout.for-men .sidebar-nav button:hover { background: #222; color: #fff; }
 .admin-layout.for-men .sidebar-nav button.active { background: #FFD700; color: #111; }
-.admin-layout.for-men .btn-primary { background: #111; }
-.admin-layout.for-men .sucursal-selector button.active { background: #FFD700; color: #111; border-color: #FFD700; }
 .admin-layout.for-men .melsus-btn .nav-icon { color: #FFD700; }
 .admin-layout.for-men .melsus-btn.active .nav-icon { color: #111; }
 .admin-layout.for-men .sidebar-user { color: #999; }
 .admin-layout.for-men .sidebar-logout { border-color: #333; color: #ccc; }
+.admin-layout.for-men .sucursal-flotante {
+  background: rgba(0,0,0,0.92);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.5), 0 0 0 1px #333;
+}
+.admin-layout.for-men .sucursal-flotante button { color: #fff; }
+.admin-layout.for-men .sucursal-flotante button:hover { background: rgba(255,255,255,0.1); }
+.admin-layout.for-men .sucursal-flotante button.active { background: #FFD700; color: #000; }
+
+/*Fondo y texto general del contenido*/
+.admin-layout.for-men .admin-main { background: #0d0d0d; color: #fff; }
+.admin-layout.for-men .admin-main h1,
+.admin-layout.for-men .admin-main h2,
+.admin-layout.for-men .admin-main h3,
+.admin-layout.for-men .admin-main .prod-header h1,
+.admin-layout.for-men .admin-main .rep-title,
+.admin-layout.for-men .admin-main .cont-titulo { color: #fff; }
+.admin-layout.for-men .admin-main label { color: #ccc; }
+
+/*Inputs y selects*/
+.admin-layout.for-men .admin-main input,
+.admin-layout.for-men .admin-main select,
+.admin-layout.for-men .admin-main textarea {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #333;
+}
+.admin-layout.for-men .admin-main input::placeholder { color: #777; }
+.admin-layout.for-men .admin-main input:focus,
+.admin-layout.for-men .admin-main select:focus,
+.admin-layout.for-men .admin-main textarea:focus { border-color: #FFD700; }
+
+/*Botones*/
+.admin-layout.for-men .btn-primary {
+  background: #FFD700;
+  color: #111;
+}
+.admin-layout.for-men .btn-primary:hover { background: #e6c200; }
+.admin-layout.for-men .btn-sec {
+  color: #ddd;
+  border-color: #444;
+}
+.admin-layout.for-men .btn-sec:hover { border-color: #FFD700; color: #FFD700; }
+
+/*Tarjetas*/
+.admin-layout.for-men .pv-card,
+.admin-layout.for-men .prod-card,
+.admin-layout.for-men .rep-card,
+.admin-layout.for-men .cont-item,
+.admin-layout.for-men .ap-item,
+.admin-layout.for-men .cat-item,
+.admin-layout.for-men .usuario-item,
+.admin-layout.for-men .info-card,
+.admin-layout.for-men .cierre-card,
+.admin-layout.for-men .analytics-card,
+.admin-layout.for-men .informe-card {
+  background: #181818;
+  border-color: #2a2a2a;
+}
+.admin-layout.for-men .pv-card .pv-nombre,
+.admin-layout.for-men .prod-card .prod-name,
+.admin-layout.for-men .cont-item-nombre,
+.admin-layout.for-men .cat-item-nombre,
+.admin-layout.for-men .ap-item-nombre { color: #fff; }
+.admin-layout.for-men .pv-card .pv-stock,
+.admin-layout.for-men .prod-card .prod-cat,
+.admin-layout.for-men .cont-item-meta,
+.admin-layout.for-men .rep-card p,
+.admin-layout.for-men .info-card p { color: #aaa; }
+
+/*Modales*/
+.admin-layout.for-men .modal-overlay { background: rgba(0,0,0,0.75); }
+.admin-layout.for-men .modal-card { background: #161616; color: #fff; border-color: #2a2a2a; }
+.admin-layout.for-men .modal-card h2, .admin-layout.for-men .modal-card h3 { color: #fff; }
+.admin-layout.for-men .modal-card label { color: #ccc; }
+.admin-layout.for-men .modal-card input,
+.admin-layout.for-men .modal-card select,
+.admin-layout.for-men .modal-card textarea { background: #1f1f1f; color: #fff; border-color: #333; }
+
+/*Reportes y contabilidad*/
+.admin-layout.for-men .rep-resumen .rep-card,
+.admin-layout.for-men .cont-resumen-card { background: #181818; border-color: #2a2a2a; }
+.admin-layout.for-men .rep-vend-card { background: #181818; color: #fff; border-color: #2a2a2a; }
+.admin-layout.for-men .cierre-efectivo-box { background: #181818; color: #fff; border-color: #2a2a2a; }
+.admin-layout.for-men .perfil-body { background: #181818; color: #fff; }
+.admin-layout.for-men .perfil-body input { background: #1f1f1f; color: #fff; border-color: #333; }
+.admin-layout.for-men .melsus-section { --accent: #FFD700; }
+
+/*Mensajes de estado en tema oscuro*/
+.admin-layout.for-men .admin-ok,
+.admin-layout.for-men .pv-toast.ok,
+.admin-layout.for-men .cierre-ok { background: #1d3b22; color: #8fd39c; }
+.admin-layout.for-men .admin-error,
+.admin-layout.for-men .pv-toast.err { background: #3b1d1d; color: #f0a0a0; }
