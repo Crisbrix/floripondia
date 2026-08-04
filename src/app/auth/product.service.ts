@@ -271,7 +271,7 @@ export class ProductService {
       }
       return await firstValueFrom(this.http.get(`${this.api}/contabilidad`));
     } catch (e: any) {
-      console.error('fetchContabilidad error:', e?.status, e?.error?.message ?? e?.message);
+      console.error('fetchContabilidad error:', e?.status, '| body:', JSON.stringify(e?.error ?? e?.message));
       return null;
     }
   }
