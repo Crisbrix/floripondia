@@ -282,7 +282,7 @@ export class AdminComponent {
       const catName = this.newCat || this.editProd?.category || '';
       if (this.editProd) {
         await this.productSvc.update(this.editProd.id, this.newName, this.newCat, this.newImg || this.editProd.image, this.sucursal);
-        await this.productSvc.updateStock(this.editProd.name, this.newStock, this.newDesc || undefined, this.sucursal);
+        await this.productSvc.updateStock(catName, this.newStock, this.newDesc || undefined, this.sucursal);
         this.msg = 'Producto actualizado';
       } else {
         await this.productSvc.add(this.newName, this.newCat, this.newImg || '', this.sucursal);
