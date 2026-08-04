@@ -24,10 +24,12 @@ CREATE TABLE usuarios (
 -- -----------------------------------------------------------
 CREATE TABLE categorias (
   id    INT         AUTO_INCREMENT PRIMARY KEY,
-  nombre VARCHAR(60) NOT NULL UNIQUE,
+  nombre VARCHAR(60) NOT NULL,
+  sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia',
   stock INT         NOT NULL DEFAULT 0,
   color VARCHAR(7)  NOT NULL DEFAULT '#FFFFFF',
-  descripcion TEXT
+  descripcion TEXT,
+  UNIQUE KEY uq_cat_nombre_suc (nombre, sucursal)
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------
@@ -37,6 +39,7 @@ CREATE TABLE productos (
   id         INT          AUTO_INCREMENT PRIMARY KEY,
   nombre     VARCHAR(120) NOT NULL,
   categoria  VARCHAR(60)  NOT NULL,
+  sucursal   VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
   imagen     VARCHAR(255) NOT NULL DEFAULT '',
   color      VARCHAR(7)   NOT NULL DEFAULT '#FFFFFF',
   creado     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -55,12 +58,13 @@ CREATE TABLE ventas (
   recibido     DECIMAL(12,0) NOT NULL DEFAULT 0,
   cambio       DECIMAL(12,0) NOT NULL DEFAULT 0,
   metodo_pago  VARCHAR(20) NOT NULL DEFAULT 'efectivo',
-   fecha        DATE        NOT NULL DEFAULT (CURRENT_DATE),
-   vendedor_id  INT         NOT NULL,
-   comentario   TEXT,
-   grupo_id     VARCHAR(36),
-   detalles_pago TEXT,
-   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
+  sucursal     VARCHAR(20) NOT NULL DEFAULT 'floripondia',
+  fecha        DATE        NOT NULL,
+  vendedor_id  INT         NOT NULL,
+  comentario   TEXT,
+  grupo_id     VARCHAR(36),
+  detalles_pago TEXT,
+  FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------
@@ -133,9 +137,11 @@ INSERT INTO productos (nombre, categoria, imagen, color) VALUES
 -- -----------------------------------------------------------
 CREATE TABLE cierres (
   id            INT      AUTO_INCREMENT PRIMARY KEY,
-  fecha         DATE     NOT NULL UNIQUE,
+  fecha         DATE     NOT NULL,
+  sucursal      VARCHAR(20) NOT NULL DEFAULT 'floripondia',
   confirmado_por INT     NOT NULL,
   confirmado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_cierre_fecha_suc (fecha, sucursal),
   FOREIGN KEY (confirmado_por) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -148,9 +154,10 @@ CREATE TABLE apartados (
   cliente_celular VARCHAR(20)  NOT NULL DEFAULT '',
   cliente_correo  VARCHAR(120) NOT NULL DEFAULT '',
   producto        VARCHAR(120) NOT NULL,
+  sucursal        VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
   abono           DECIMAL(12,0) NOT NULL DEFAULT 0,
   saldo           DECIMAL(12,0) NOT NULL DEFAULT 0,
-  fecha           DATE        NOT NULL DEFAULT (CURRENT_DATE),
+  fecha           DATE        NOT NULL,
   vendedor_id     INT         NOT NULL,
   estado          VARCHAR(20) NOT NULL DEFAULT 'pendiente',
   comentario      TEXT,
@@ -163,6 +170,7 @@ CREATE TABLE apartados (
 CREATE TABLE aperturas_caja (
   id          INT      AUTO_INCREMENT PRIMARY KEY,
   fecha       DATE     NOT NULL,
+  sucursal    VARCHAR(20) NOT NULL DEFAULT 'floripondia',
   abierto_por INT      NOT NULL,
   abierto_en  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (abierto_por) REFERENCES usuarios(id) ON UPDATE CASCADE
@@ -199,12 +207,13 @@ INSERT INTO contabilidad_categorias (nombre, tipo, color) VALUES
 -- -----------------------------------------------------------
 CREATE TABLE contabilidad (
   id           INT          AUTO_INCREMENT PRIMARY KEY,
-  fecha        DATE         NOT NULL DEFAULT (CURRENT_DATE),
+  fecha        DATE         NOT NULL,
   tipo         ENUM('inversion','gasto') NOT NULL DEFAULT 'gasto',
   categoria_id INT,
   descripcion  TEXT,
   monto        DECIMAL(12,0) NOT NULL DEFAULT 0,
   es_diario    TINYINT      NOT NULL DEFAULT 0,
+  sucursal     VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
   usuario_id   INT          NOT NULL,
   creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (categoria_id) REFERENCES contabilidad_categorias(id) ON UPDATE CASCADE,
@@ -216,6 +225,17 @@ ALTER TABLE ventas MODIFY COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efect
 ALTER TABLE ventas ADD COLUMN comentario TEXT;
 ALTER TABLE ventas ADD COLUMN grupo_id VARCHAR(36) AFTER comentario;
 ALTER TABLE ventas ADD COLUMN detalles_pago TEXT AFTER grupo_id;
+ALTER TABLE ventas ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE productos ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE categorias ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE categorias DROP INDEX nombre;
+ALTER TABLE categorias ADD UNIQUE KEY uq_cat_nombre_suc (nombre, sucursal);
+ALTER TABLE apartados ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE aperturas_caja ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE contabilidad ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE cierres ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
+ALTER TABLE cierres DROP INDEX fecha;
+ALTER TABLE cierres ADD UNIQUE KEY uq_cierre_fecha_suc (fecha, sucursal);
 
 -- Tablas de contabilidad (para bases con el esquema anterior)
 CREATE TABLE IF NOT EXISTS contabilidad_categorias (
@@ -226,12 +246,13 @@ CREATE TABLE IF NOT EXISTS contabilidad_categorias (
 );
 CREATE TABLE IF NOT EXISTS contabilidad (
   id           INT          AUTO_INCREMENT PRIMARY KEY,
-  fecha        DATE         NOT NULL DEFAULT (CURRENT_DATE),
+  fecha        DATE         NOT NULL,
   tipo         ENUM('inversion','gasto') NOT NULL DEFAULT 'gasto',
   categoria_id INT,
   descripcion  TEXT,
   monto        DECIMAL(12,0) NOT NULL DEFAULT 0,
   es_diario    TINYINT      NOT NULL DEFAULT 0,
+  sucursal     VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
   usuario_id   INT          NOT NULL,
   creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

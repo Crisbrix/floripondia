@@ -52,17 +52,47 @@ export class AdminComponent {
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {
-    this.loadData();
+    this.sucursal = (sessionStorage.getItem('sucursal_activa') as any) || '';
+    if (this.sucursal) this.loadData();
     if (!this.isAdmin && (this.tab === 'reportes' || this.tab === 'usuarios')) {
       this.tab = 'productos';
     }
   }
 
+  //Local activo: '' = aún no elegido (se pide obligatoriamente)
+  sucursal: 'floripondia' | 'for-men' | '' = '';
+
+  get localLabel() {
+    return this.sucursal === 'for-men' ? 'For Men' : 'Floripondia';
+  }
+
+  //Elige el local desde el selector del panel
+  elegirSucursal(s: 'floripondia' | 'for-men') {
+    if (this.sucursal === s) return;
+    this.sucursal = s;
+    sessionStorage.setItem('sucursal_activa', s);
+    this.cart = [];
+    this.cartOpen = false;
+    this.loadData();
+    this.recargarSeccionActual();
+  }
+
+  private async recargarSeccionActual() {
+    const t = this.tab;
+    if (t === 'reportes') await this.abrirReportes();
+    else if (t === 'cierre') await this.abrirCierre();
+    else if (t === 'apartados') await this.abrirApartados();
+    else if (t === 'contabilidad') await this.contCargar();
+    else if (t === 'informe') await this.abrirInforme(this.informeMes);
+    else if (t === 'categorias') await this.abrirCategorias();
+  }
+
   async loadData() {
+    if (!this.sucursal) return;
     const tasks = [
-      this.productSvc.fetchProducts(),
-      this.productSvc.fetchSales(),
-      this.productSvc.fetchInventory(),
+      this.productSvc.fetchProducts(this.sucursal),
+      this.productSvc.fetchSales(this.sucursal),
+      this.productSvc.fetchInventory(this.sucursal),
     ];
     if (this.isAdmin) tasks.push(this.cargarUsuarios());
     await Promise.all(tasks);
@@ -95,8 +125,8 @@ export class AdminComponent {
   async abrirReportes() {
     this.tab = 'reportes';
     await Promise.all([
-      this.productSvc.fetchStats(),
-      this.productSvc.fetchAnalytics().then(d => this.analyticsData = d),
+      this.productSvc.fetchStats(this.sucursal),
+      this.productSvc.fetchAnalytics(this.sucursal).then(d => this.analyticsData = d),
     ]);
     this.stats = this.productSvc.stats;
     this.cdr.detectChanges();
@@ -110,7 +140,7 @@ export class AdminComponent {
   async verVentasVendedor(vendedor: string, fecha?: string) {
     this.selectedVendor = vendedor;
     this.vendorDate = fecha || new Date().toISOString().slice(0, 10);
-    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(vendedor, this.vendorDate);
+    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(vendedor, this.vendorDate, this.sucursal);
   }
 
   //Navegacion de fechas en modal vendedor
@@ -118,14 +148,14 @@ export class AdminComponent {
     const d = new Date(this.vendorDate);
     d.setDate(d.getDate() - 1);
     this.vendorDate = d.toISOString().slice(0, 10);
-    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(this.selectedVendor, this.vendorDate);
+    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(this.selectedVendor, this.vendorDate, this.sucursal);
   }
 
   async vendorDateNext() {
     const d = new Date(this.vendorDate);
     d.setDate(d.getDate() + 1);
     this.vendorDate = d.toISOString().slice(0, 10);
-    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(this.selectedVendor, this.vendorDate);
+    this.vendorSales = await this.productSvc.fetchVendorSalesByDate(this.selectedVendor, this.vendorDate, this.sucursal);
   }
 
   cerrarVentasVendedor() {
@@ -238,13 +268,13 @@ export class AdminComponent {
     try {
       const catName = this.newCat || this.editProd?.category || '';
       if (this.editProd) {
-        await this.productSvc.update(this.editProd.id, this.newName, this.newCat, this.newImg || this.editProd.image);
-        await this.productSvc.updateStock(this.editProd.name, this.newStock, this.newDesc || undefined);
+        await this.productSvc.update(this.editProd.id, this.newName, this.newCat, this.newImg || this.editProd.image, this.sucursal);
+        await this.productSvc.updateStock(this.editProd.name, this.newStock, this.newDesc || undefined, this.sucursal);
         this.msg = 'Producto actualizado';
       } else {
-        await this.productSvc.add(this.newName, this.newCat, this.newImg || '');
+        await this.productSvc.add(this.newName, this.newCat, this.newImg || '', this.sucursal);
         if (catName) {
-          await this.productSvc.updateStock(catName, 0, this.newDesc || undefined);
+          await this.productSvc.updateStock(catName, 0, this.newDesc || undefined, this.sucursal);
         }
         this.msg = 'Producto creado';
       }
@@ -298,7 +328,7 @@ export class AdminComponent {
 
   async eliminar(id: number) {
     if (confirm('¿Eliminar este producto?')) {
-      await this.productSvc.delete(id);
+      await this.productSvc.delete(id, this.sucursal);
       if (this.editProd?.id === id) this.limpiarForm();
     }
   }
@@ -315,7 +345,7 @@ export class AdminComponent {
 
   async abrirCategorias() {
     this.tab = 'categorias';
-    this.categorias = await this.productSvc.fetchAllCategories();
+    this.categorias = await this.productSvc.fetchAllCategories(this.sucursal);
     this.catMsg = ''; this.catErr = '';
   }
 
@@ -336,13 +366,13 @@ export class AdminComponent {
         await this.productSvc.updateCategory(this.catEdit.id, { nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc });
         this.catMsg = 'Categoría actualizada';
       } else {
-        await this.productSvc.createCategory({ nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc });
+        await this.productSvc.createCategory({ nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc, sucursal: this.sucursal });
         this.catMsg = 'Categoría creada';
       }
       this.cerrarCatModal();
-      this.categorias = await this.productSvc.fetchAllCategories();
-      if (this.tab === 'productos') await this.productSvc.fetchProducts();
-      if (this.tab === 'ventas') await this.productSvc.fetchInventory();
+      this.categorias = await this.productSvc.fetchAllCategories(this.sucursal);
+      if (this.tab === 'productos') await this.productSvc.fetchProducts(this.sucursal);
+      if (this.tab === 'ventas') await this.productSvc.fetchInventory(this.sucursal);
     } catch (err: any) {
       this.catErr = err.error?.error || 'Error al guardar';
     }
@@ -354,21 +384,21 @@ export class AdminComponent {
   async abrirInforme(mes?: string) {
     this.tab = 'informe';
     this.informeMes = mes || new Date().toISOString().slice(0, 7);
-    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes);
+    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes, this.sucursal);
   }
 
   async informeMesPrev() {
     const [y, m] = this.informeMes.split('-').map(Number);
     const d = new Date(y, m - 2, 1);
     this.informeMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes);
+    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes, this.sucursal);
   }
 
   async informeMesNext() {
     const [y, m] = this.informeMes.split('-').map(Number);
     const d = new Date(y, m, 1);
     this.informeMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes);
+    this.informeData = await this.productSvc.fetchInformeMensual(this.informeMes, this.sucursal);
   }
 
   analyticsData: any = null;
@@ -540,8 +570,8 @@ export class AdminComponent {
     if (!confirm(`¿Eliminar la categoría "${name}" y todos sus productos asociados?`)) return;
     try {
       await this.productSvc.deleteCategory(id);
-      this.categorias = await this.productSvc.fetchAllCategories();
-      await this.productSvc.fetchProducts();
+      this.categorias = await this.productSvc.fetchAllCategories(this.sucursal);
+      await this.productSvc.fetchProducts(this.sucursal);
       this.catMsg = 'Categoría eliminada';
     } catch { this.catErr = 'Error al eliminar'; }
   }
@@ -583,7 +613,7 @@ export class AdminComponent {
 
   async abrirApartados() {
     this.tab = 'apartados';
-    this.apartados = await this.productSvc.fetchApartados();
+    this.apartados = await this.productSvc.fetchApartados(this.sucursal);
     this.apMsg = ''; this.apErr = '';
   }
 
@@ -625,11 +655,12 @@ export class AdminComponent {
           abono: this.apAbono,
           saldo: this.apSaldo,
           comentario: this.apComentario,
+          sucursal: this.sucursal,
         });
         this.apMsg = 'Apartado creado';
       }
       this.cerrarApModal();
-      this.apartados = await this.productSvc.fetchApartados();
+      this.apartados = await this.productSvc.fetchApartados(this.sucursal);
     } catch (err: any) {
       this.apErr = err.error?.error || 'Error al guardar';
     }
@@ -639,7 +670,7 @@ export class AdminComponent {
     if (!confirm('¿Eliminar este apartado?')) return;
     try {
       await this.productSvc.deleteApartado(id);
-      this.apartados = await this.productSvc.fetchApartados();
+      this.apartados = await this.productSvc.fetchApartados(this.sucursal);
       this.apMsg = 'Apartado eliminado';
     } catch { this.apErr = 'Error al eliminar'; }
   }
@@ -658,7 +689,7 @@ export class AdminComponent {
         estado,
         comentario: ap.comentario,
       });
-      this.apartados = await this.productSvc.fetchApartados();
+      this.apartados = await this.productSvc.fetchApartados(this.sucursal);
     } catch { this.apErr = 'Error al actualizar estado'; }
   }
 
@@ -741,11 +772,11 @@ export class AdminComponent {
 
   async contCargar() {
     this.contLoading = true;
-    this.contabilidadData = await this.productSvc.fetchContabilidad(this.contabilidadMes || undefined);
+    this.contabilidadData = await this.productSvc.fetchContabilidad(this.contabilidadMes || undefined, this.sucursal);
     this.contMovimientos = this.contabilidadData?.movimientos || [];
     this.contCategorias = this.contabilidadData?.categorias || [];
     this.contResumen = this.contabilidadData?.resumen || null;
-    this.contInforme = this.contabilidadMes ? await this.productSvc.fetchInformeMensual(this.contabilidadMes) : null;
+    this.contInforme = this.contabilidadMes ? await this.productSvc.fetchInformeMensual(this.contabilidadMes, this.sucursal) : null;
     this.contMsg = ''; this.contErr = '';
     this.contLoading = false;
     this.cdr.detectChanges();
@@ -818,7 +849,7 @@ export class AdminComponent {
         await this.productSvc.updateMovimiento(this.contEdit.id, data);
         this.contMsg = 'Movimiento actualizado';
       } else {
-        await this.productSvc.createMovimiento(data);
+        await this.productSvc.createMovimiento({ ...data, sucursal: this.sucursal });
         this.contMsg = 'Movimiento registrado';
       }
       this.cerrarContModal();
@@ -842,7 +873,7 @@ export class AdminComponent {
     try {
       await this.productSvc.createCategoriaContable({ nombre, tipo: this.contTipo, color: this.contColorCat });
       this.contNuevaCat = '';
-      this.contCategorias = (await this.productSvc.fetchContabilidad(this.contabilidadMes || undefined))?.categorias || this.contCategorias;
+      this.contCategorias = (await this.productSvc.fetchContabilidad(this.contabilidadMes || undefined, this.sucursal))?.categorias || this.contCategorias;
       const nuevo = this.contCategorias.find(c => c.nombre.toLowerCase() === nombre.toLowerCase());
       if (nuevo) this.contCategoria = nuevo.id;
       this.contMsg = 'Categoría creada';
@@ -965,7 +996,7 @@ export class AdminComponent {
 
   async eliminarVenta(id: number, name: string) {
     if (!confirm(`¿Eliminar la venta de "${name}"? El stock se restaurará.`)) return;
-    await this.productSvc.deleteSale(id);
+    await this.productSvc.deleteSale(id, this.sucursal);
     this.abrirCierre();
   }
 
@@ -984,7 +1015,7 @@ export class AdminComponent {
       cambio: this.editSaleData.cambio,
       paymentMethod: this.editSaleData.paymentMethod,
       comentario: this.editSaleData.comentario,
-    });
+    }, this.sucursal);
     this.cerrarEditarVenta();
     this.abrirCierre();
   }
@@ -1143,7 +1174,7 @@ export class AdminComponent {
     }
 
     const items = this.cart.map(i => ({ name: i.name, quantity: i.quantity, comentario: i.comentario }));
-    const ok = await this.productSvc.sellCart(items, metodo, this.vTotal, recibido, pagos);
+    const ok = await this.productSvc.sellCart(items, metodo, this.vTotal, recibido, pagos, this.sucursal);
     if (ok) {
       this.vMsg = `Venta finalizada — ${this.cartTotal} artículo(s)`;
       this.vErr = '';
@@ -1161,7 +1192,7 @@ export class AdminComponent {
   async abrirCierre() {
     this.tab = 'cierre';
     this.cierreLoading = true;
-    await this.productSvc.fetchCierre();
+    await this.productSvc.fetchCierre(this.sucursal);
     const c = this.productSvc.cierre;
     this.cajaAbierta = !!c?.cajaAbierta;
     this.cierreSales = c?.ventas || [];
@@ -1172,7 +1203,7 @@ export class AdminComponent {
   }
 
   async handleAbrirCaja() {
-    const ok = await this.productSvc.abrirCaja();
+    const ok = await this.productSvc.abrirCaja(this.sucursal);
     if (ok) {
       this.cajaAbierta = true;
       this.abrirCierre();
@@ -1183,7 +1214,7 @@ export class AdminComponent {
 
   async confirmarCierre() {
     if (!confirm('¿Confirmar el cierre de caja del día de hoy? Esta acción no se puede deshacer.')) return;
-    const ok = await this.productSvc.confirmarCierre();
+    const ok = await this.productSvc.confirmarCierre(this.sucursal);
     if (ok) {
       this.cierreConfirmado = true;
       this.abrirCierre();
@@ -1195,12 +1226,12 @@ export class AdminComponent {
   async toggleHistorialCierres() {
     this.mostrarHistorial = !this.mostrarHistorial;
     if (this.mostrarHistorial && !this.historialCierres.length) {
-      this.historialCierres = await this.productSvc.fetchCierres();
+      this.historialCierres = await this.productSvc.fetchCierres(this.sucursal);
     }
   }
 
   async verCierreFecha(fecha: string) {
-    const res = await this.productSvc.fetchSalesByDate(fecha);
+    const res = await this.productSvc.fetchSalesByDate(fecha, this.sucursal);
     this.verCierreFechaData = { fecha, ventas: res.length, articulos: res.reduce((s, r) => s + Number(r.quantity), 0), total: res.reduce((s, r) => s + Number(r.total), 0) };
     this.verCierreDetalle = res;
   }

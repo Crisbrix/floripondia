@@ -1,7 +1,14 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+﻿import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+function paramsCon(sucursal?: string, extra?: { [k: string]: string | undefined }) {
+  let p = new HttpParams();
+  if (sucursal) p = p.set('sucursal', sucursal);
+  if (extra) for (const [k, v] of Object.entries(extra)) if (v) p = p.set(k, v);
+  return p;
+}
 
 export interface Product {
   id: number;
@@ -26,6 +33,7 @@ export interface Sale {
   vendedor: string;
   comentario?: string;
   grupoId?: string;
+  sucursal?: string;
 }
 
 export interface CartItem {
@@ -68,137 +76,138 @@ export class ProductService {
     return this.sales.reduce((s, v) => s + v.total, 0);
   }
 
-  async fetchProducts() {
+  async fetchProducts(sucursal?: string) {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${this.api}/productos`));
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/productos`, { params: paramsCon(sucursal) }));
       this.all = res;
     } catch { this.all = []; }
   }
 
-  async fetchSales() {
+  async fetchSales(sucursal?: string) {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas`));
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas`, { params: paramsCon(sucursal) }));
       this.sales = res;
     } catch { this.sales = []; }
   }
 
-  async fetchInventory() {
+  async fetchInventory(sucursal?: string) {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${this.api}/inventario`));
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/inventario`, { params: paramsCon(sucursal) }));
       this.inventory = res;
     } catch { this.inventory = []; }
   }
 
-  async fetchStats() {
+  async fetchStats(sucursal?: string) {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/stats`));
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/stats`, { params: paramsCon(sucursal) }));
       if (!res.ventasPorVendedor) res.ventasPorVendedor = [];
       this.stats = res;
     } catch { this.stats = null; }
   }
 
   //CRUD productos
-  async add(name: string, category: string, image: string) {
+  async add(name: string, category: string, image: string, sucursal?: string) {
     await firstValueFrom(
-      this.http.post(`${this.api}/productos`, { nombre: name, categoria: category, imagen: image })
+      this.http.post(`${this.api}/productos`, { nombre: name, categoria: category, imagen: image, sucursal })
     );
-    await this.fetchProducts();
+    await this.fetchProducts(sucursal);
   }
 
-  async update(id: number, name: string, category: string, image: string) {
+  async update(id: number, name: string, category: string, image: string, sucursal?: string) {
     await firstValueFrom(
-      this.http.put(`${this.api}/productos/${id}`, { nombre: name, categoria: category, imagen: image })
+      this.http.put(`${this.api}/productos/${id}`, { nombre: name, categoria: category, imagen: image, sucursal })
     );
-    await this.fetchProducts();
+    await this.fetchProducts(sucursal);
   }
 
-  async delete(id: number) {
+  async delete(id: number, sucursal?: string) {
     await firstValueFrom(this.http.delete(`${this.api}/productos/${id}`));
-    await this.fetchProducts();
+    await this.fetchProducts(sucursal);
   }
 
   //Actualiza stock de inventario
-  async updateStock(name: string, stock: number, descripcion?: string) {
+  async updateStock(name: string, stock: number, descripcion?: string, sucursal?: string) {
     const body: any = {};
     if (stock >= 0) body.stock = stock;
     if (descripcion !== undefined) body.descripcion = descripcion;
+    body.sucursal = sucursal;
     await firstValueFrom(this.http.patch(`${this.api}/inventario/${encodeURIComponent(name)}`, body));
-    await this.fetchInventory();
-    await this.fetchProducts();
+    await this.fetchInventory(sucursal);
+    await this.fetchProducts(sucursal);
   }
 
   lastError = '';
 
   //Confirma cierre de caja
-  async confirmarCierre() {
+  async confirmarCierre(sucursal?: string) {
     try {
-      await firstValueFrom(this.http.post(`${this.api}/ventas/cierre/confirmar`, {}));
+      await firstValueFrom(this.http.post(`${this.api}/ventas/cierre/confirmar`, { sucursal }));
       return true;
     } catch { return false; }
   }
 
   //Historial de cierres
-  async fetchCierres(): Promise<any[]> {
+  async fetchCierres(sucursal?: string): Promise<any[]> {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierres`));
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierres`, { params: paramsCon(sucursal) }));
       return res;
     } catch { return []; }
   }
 
   //CRUD ventas
-  async deleteSale(id: number) {
+  async deleteSale(id: number, sucursal?: string) {
     await firstValueFrom(this.http.delete(`${this.api}/ventas/${id}`));
-    await this.fetchSales();
-    await this.fetchInventory();
+    await this.fetchSales(sucursal);
+    await this.fetchInventory(sucursal);
   }
 
-  async updateSale(id: number, data: any) {
+  async updateSale(id: number, data: any, sucursal?: string) {
     await firstValueFrom(this.http.put(`${this.api}/ventas/${id}`, data));
-    await this.fetchSales();
+    await this.fetchSales(sucursal);
   }
   cierre: any = null;
 
   //Ventas por vendedor y fecha (modal vendedor)
-  async fetchVendorSalesByDate(nombre: string, fecha: string): Promise<Sale[]> {
+  async fetchVendorSalesByDate(nombre: string, fecha: string, sucursal?: string): Promise<Sale[]> {
     try {
       return await firstValueFrom(
-        this.http.get<Sale[]>(`${this.api}/ventas/vendedor`, { params: { nombre, fecha } })
+        this.http.get<Sale[]>(`${this.api}/ventas/vendedor`, { params: paramsCon(sucursal, { nombre, fecha }) })
       );
     } catch { return []; }
   }
 
   //Ventas filtradas por fecha
-  async fetchSalesByDate(fecha: string): Promise<any[]> {
+  async fetchSalesByDate(fecha: string, sucursal?: string): Promise<any[]> {
     try {
-      return await firstValueFrom(this.http.get<any[]>(`${this.api}/ventas`, { params: { fecha } }));
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/ventas`, { params: paramsCon(sucursal, { fecha }) }));
     } catch { return []; }
   }
 
   //Estado del cierre actual
-  async fetchCierre() {
+  async fetchCierre(sucursal?: string) {
     try {
-      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierre`));
+      const res: any = await firstValueFrom(this.http.get(`${this.api}/ventas/cierre`, { params: paramsCon(sucursal) }));
       this.cierre = res;
     } catch { this.cierre = null; }
   }
 
   //Abre caja
-  async abrirCaja() {
+  async abrirCaja(sucursal?: string) {
     try {
-      await firstValueFrom(this.http.post(`${this.api}/ventas/caja/abrir`, {}));
+      await firstValueFrom(this.http.post(`${this.api}/ventas/caja/abrir`, { sucursal }));
       return true;
     } catch { return false; }
   }
 
   //Venta multiple con carrito
-  async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0, pagos?: { metodo: string; monto: number }[]): Promise<boolean> {
+  async sellCart(items: { name: string; quantity: number; comentario?: string }[], metodo_pago: string, total: number = 0, recibido: number = 0, pagos?: { metodo: string; monto: number }[], sucursal?: string): Promise<boolean> {
     try {
       this.lastError = '';
       await firstValueFrom(
-        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido, pagos })
+        this.http.post(`${this.api}/inventario/sell-cart`, { items, metodo_pago, total, recibido, pagos, sucursal })
       );
-      await this.fetchInventory();
-      await this.fetchSales();
+      await this.fetchInventory(sucursal);
+      await this.fetchSales(sucursal);
       return true;
     } catch (err: any) {
       this.lastError = err.error?.error || err.message || 'Error desconocido';
@@ -207,13 +216,13 @@ export class ProductService {
   }
 
   //CRUD categorias
-  async fetchAllCategories() {
+  async fetchAllCategories(sucursal?: string) {
     try {
-      return await firstValueFrom(this.http.get<any[]>(`${this.api}/categorias`));
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/categorias`, { params: paramsCon(sucursal) }));
     } catch { return []; }
   }
 
-  async createCategory(data: { nombre: string; stock?: number; color?: string; descripcion?: string }) {
+  async createCategory(data: { nombre: string; stock?: number; color?: string; descripcion?: string; sucursal?: string }) {
     await firstValueFrom(this.http.post(`${this.api}/categorias`, data));
   }
 
@@ -226,9 +235,9 @@ export class ProductService {
   }
 
   //CRUD apartados
-  async fetchApartados(): Promise<any[]> {
+  async fetchApartados(sucursal?: string): Promise<any[]> {
     try {
-      return await firstValueFrom(this.http.get<any[]>(`${this.api}/apartados`));
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/apartados`, { params: paramsCon(sucursal) }));
     } catch { return []; }
   }
 
@@ -245,9 +254,9 @@ export class ProductService {
   }
 
   //Informe mensual
-  async fetchInformeMensual(mes: string): Promise<any> {
+  async fetchInformeMensual(mes: string, sucursal?: string): Promise<any> {
     try {
-      return await firstValueFrom(this.http.get(`${this.api}/ventas/informe-mensual`, { params: { mes } }));
+      return await firstValueFrom(this.http.get(`${this.api}/ventas/informe-mensual`, { params: paramsCon(sucursal, { mes }) }));
     } catch { return null; }
   }
 
@@ -264,12 +273,9 @@ export class ProductService {
   }
 
   //Contabilidad
-  async fetchContabilidad(mes?: string): Promise<any> {
+  async fetchContabilidad(mes?: string, sucursal?: string): Promise<any> {
     try {
-      if (mes) {
-        return await firstValueFrom(this.http.get(`${this.api}/contabilidad`, { params: { mes } }));
-      }
-      return await firstValueFrom(this.http.get(`${this.api}/contabilidad`));
+      return await firstValueFrom(this.http.get(`${this.api}/contabilidad`, { params: paramsCon(sucursal, { mes }) }));
     } catch (e: any) {
       console.error('fetchContabilidad error:', e?.status, '| body:', JSON.stringify(e?.error ?? e?.message));
       return null;
@@ -302,9 +308,9 @@ export class ProductService {
   }
 
   //Analytics global
-  async fetchAnalytics(): Promise<any> {
+  async fetchAnalytics(sucursal?: string): Promise<any> {
     try {
-      return await firstValueFrom(this.http.get(`${this.api}/ventas/analytics`));
+      return await firstValueFrom(this.http.get(`${this.api}/ventas/analytics`, { params: paramsCon(sucursal) }));
     } catch (e: any) {
       return null;
     }

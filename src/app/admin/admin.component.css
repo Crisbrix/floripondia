@@ -2215,3 +2215,107 @@
   .pv-metodo-btn { font-size: 0.6rem; padding: 10px 2px; }
   .pv-cash-field input { font-size: 0.9rem; }
 }
+
+/*Selector de local en la sidebar*/
+.sucursal-selector {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+.sucursal-selector button {
+  flex: 1;
+  padding: 6px 4px;
+  border: 1px solid #f0f0f0;
+  background: #fafafa;
+  color: #888;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.sucursal-selector button.active {
+  background: #555;
+  color: #fff;
+  border-color: #555;
+}
+
+/*Modal obligatorio de eleccion de local*/
+.sucursal-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.sucursal-modal-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+.sucursal-modal-title {
+  font-family: 'Pacifico', cursive;
+  font-size: 1.35rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+.sucursal-modal-sub {
+  font-size: 0.85rem;
+  color: #888;
+  margin-bottom: 20px;
+}
+.sucursal-modal-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sucursal-opt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px;
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sucursal-opt:hover {
+  border-color: #555;
+  background: #fafafa;
+}
+.sucursal-opt-name {
+  font-weight: 800;
+  font-size: 1rem;
+  color: #333;
+}
+.sucursal-opt-desc {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/*Tema Floripondia For Men: negro + amarillo*/
+.admin-layout.for-men .sidebar {
+  background: #111;
+  border-right-color: #222;
+}
+.admin-layout.for-men .sidebar-logo { color: #FFD700; }
+.admin-layout.for-men .sidebar-header,
+.admin-layout.for-men .sidebar-footer { border-color: #222; }
+.admin-layout.for-men .sidebar-nav button { color: #ccc; }
+.admin-layout.for-men .sidebar-nav button:hover { background: #222; color: #fff; }
+.admin-layout.for-men .sidebar-nav button.active { background: #FFD700; color: #111; }
+.admin-layout.for-men .btn-primary { background: #111; }
+.admin-layout.for-men .sucursal-selector button.active { background: #FFD700; color: #111; border-color: #FFD700; }
+.admin-layout.for-men .melsus-btn .nav-icon { color: #FFD700; }
+.admin-layout.for-men .melsus-btn.active .nav-icon { color: #111; }
+.admin-layout.for-men .sidebar-user { color: #999; }
+.admin-layout.for-men .sidebar-logout { border-color: #333; color: #ccc; }

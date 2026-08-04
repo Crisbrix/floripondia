@@ -1,4 +1,4 @@
-<div class="admin-layout">
+<div class="admin-layout" [class.for-men]="sucursal === 'for-men'">
   @if (!sidebarOpen) {
     <button class="mobile-toggle" (click)="sidebarOpen = true">
       <span></span><span></span><span></span>
@@ -11,6 +11,14 @@
     <div class="sidebar-header">
       @if (sidebarOpen) {
         <span class="sidebar-logo">Floripondía</span>
+        <div class="sucursal-selector">
+          <button [class.active]="sucursal === 'floripondia'" (click)="elegirSucursal('floripondia')">
+            Floripondía
+          </button>
+          <button [class.active]="sucursal === 'for-men'" (click)="elegirSucursal('for-men')">
+            For Men
+          </button>
+        </div>
       }
       <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen">
         @if (sidebarOpen) {
@@ -1373,4 +1381,23 @@
       </section>
     }
   </main>
+
+  @if (!sucursal) {
+    <div class="sucursal-modal">
+      <div class="sucursal-modal-card">
+        <div class="sucursal-modal-title">Elige el local donde vas a trabajar</div>
+        <p class="sucursal-modal-sub">Cada local tiene su propio inventario, caja y ventas.</p>
+        <div class="sucursal-modal-opts">
+          <button class="sucursal-opt" (click)="elegirSucursal('floripondia')">
+            <span class="sucursal-opt-name">Floripondía</span>
+            <span class="sucursal-opt-desc">Tienda principal</span>
+          </button>
+          <button class="sucursal-opt" (click)="elegirSucursal('for-men')">
+            <span class="sucursal-opt-name">Floripondia For Men</span>
+            <span class="sucursal-opt-desc">Local para caballeros</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
