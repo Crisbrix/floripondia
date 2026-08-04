@@ -1062,6 +1062,10 @@ export class AdminComponent {
   get esTransferencia() {
     return ['nequi', 'daviplata', 'addi'].includes(this.paymentMethod);
   }
+  //Pagos donde el monto recibido es exacto (no aplica "cuánto pagó")
+  get esPagoExacto() {
+    return this.esTransferencia || this.paymentMethod === 'tarjeta';
+  }
 
   seleccionarMetodo(m: string) {
     this.paymentMethod = m;
@@ -1162,7 +1166,7 @@ export class AdminComponent {
     }
 
     let metodo = this.paymentMethod;
-    let recibido = this.esTransferencia ? this.vTotal : this.vRecibido;
+    let recibido = this.esPagoExacto ? this.vTotal : this.vRecibido;
     let pagos: { metodo: string; monto: number }[] | undefined;
 
     if (this.pagoCombinado) {
@@ -1177,7 +1181,7 @@ export class AdminComponent {
       }
       metodo = 'combinado';
       recibido = this.vTotal;
-    } else if (!this.esTransferencia) {
+    } else if (!this.esPagoExacto) {
       if (this.vRecibido <= 0) {
         this.vErr = 'Ingresa cuánto pagaron'; return;
       }

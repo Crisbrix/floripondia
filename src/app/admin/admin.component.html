@@ -355,7 +355,7 @@
                     <label>Total $</label>
                     <div class="pv-total-val">${{ vTotal.toLocaleString() }}</div>
                   </div>
-                  @if (!esTransferencia && !pagoCombinado) {
+                  @if (!esPagoExacto && !pagoCombinado) {
                     <div class="pv-cash-field">
                       <label>Pagó $</label>
                       <input type="number" min="0" [(ngModel)]="vRecibido" placeholder="0" />
