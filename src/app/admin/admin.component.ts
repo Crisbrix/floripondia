@@ -19,7 +19,7 @@ import Chart from 'chart.js/auto';
 export class AdminComponent {
   sidebarOpen = true;
   //Pestaña activa del panel admin
-  private _tab: 'productos' | 'categorias' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' | 'contabilidad' = 'productos';
+  private _tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' | 'contabilidad' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -30,10 +30,10 @@ export class AdminComponent {
 
   showProdModal = false;
   newName = '';
-  newCat = '';
   newImg = '';
   newDesc = '';
   newStock = 0;
+  newColor = '#E1BEE7';
   editProd: Product | null = null;
   msg = '';
   err = '';
@@ -97,7 +97,6 @@ export class AdminComponent {
     else if (t === 'apartados') await this.abrirApartados();
     else if (t === 'contabilidad') await this.contCargar();
     else if (t === 'informe') await this.abrirInforme(this.informeMes);
-    else if (t === 'categorias') await this.abrirCategorias();
   }
 
   async loadData() {
@@ -119,14 +118,6 @@ export class AdminComponent {
   get inventory() { return this.productSvc.inventory; }
   stats: Stats | null = null;
   get user() { return this.auth.getSession(); }
-  categorias: any[] = [];
-  catModal = false;
-  catEdit: any = null;
-  catNombre = '';
-  catColor = '#E1BEE7';
-  catDesc = '';
-  catMsg = '';
-  catErr = '';
 
   chartInstances: Chart[] = [];
   pNombre = '';
@@ -275,20 +266,16 @@ export class AdminComponent {
     this.chartInstances = [];
   }
 
-  //Guarda o actualiza producto
+  //Guarda o actualiza producto (con stock y color propios)
   async guardarProd() {
     if (!this.newName) { this.err = 'El nombre es obligatorio'; return; }
     try {
-      const catName = this.newCat || this.editProd?.category || '';
+      const color = this.newColor || '#E1BEE7';
       if (this.editProd) {
-        await this.productSvc.update(this.editProd.id, this.newName, this.newCat, this.newImg || this.editProd.image, this.sucursal);
-        await this.productSvc.updateStock(catName, this.newStock, this.newDesc || undefined, this.sucursal);
+        await this.productSvc.update(this.editProd.id, this.newName, this.newImg || this.editProd.image, color, this.newStock, this.newDesc || undefined, this.sucursal);
         this.msg = 'Producto actualizado';
       } else {
-        await this.productSvc.add(this.newName, this.newCat, this.newImg || '', this.sucursal);
-        if (catName) {
-          await this.productSvc.updateStock(catName, 0, this.newDesc || undefined, this.sucursal);
-        }
+        await this.productSvc.add(this.newName, this.newImg || '', color, this.newStock, this.newDesc || undefined, this.sucursal);
         this.msg = 'Producto creado';
       }
       this.limpiarForm();
@@ -317,10 +304,10 @@ export class AdminComponent {
   nuevoProd() {
     this.editProd = null;
     this.newName = '';
-    this.newCat = '';
     this.newImg = '';
     this.newDesc = '';
     this.newStock = 0;
+    this.newColor = '#E1BEE7';
     this.msg = '';
     this.err = '';
     this.showProdModal = true;
@@ -330,10 +317,10 @@ export class AdminComponent {
     const inv = this.inventory.find(i => i.name === p.name);
     this.editProd = p;
     this.newName = p.name;
-    this.newCat = p.category;
     this.newImg = p.image;
-    this.newDesc = inv?.descripcion || '';
+    this.newDesc = inv?.descripcion || p.descripcion || '';
     this.newStock = p.stock;
+    this.newColor = p.color || '#E1BEE7';
     this.msg = '';
     this.err = '';
     this.showProdModal = true;
@@ -349,46 +336,11 @@ export class AdminComponent {
   limpiarForm() {
     this.editProd = null;
     this.newName = '';
-    this.newCat = '';
     this.newImg = '';
     this.newDesc = '';
     this.newStock = 0;
+    this.newColor = '#E1BEE7';
     this.showProdModal = false;
-  }
-
-  async abrirCategorias() {
-    this.tab = 'categorias';
-    this.categorias = await this.productSvc.fetchAllCategories(this.sucursal);
-    this.catMsg = ''; this.catErr = '';
-  }
-
-  abrirCatModal(edit?: any) {
-    this.catEdit = edit || null;
-    this.catNombre = edit?.name || '';
-    this.catColor = edit?.color || '#E1BEE7';
-    this.catDesc = edit?.descripcion || '';
-    this.catMsg = ''; this.catErr = '';
-    this.catModal = true;
-  }
-  cerrarCatModal() { this.catModal = false; this.catEdit = null; }
-
-  async guardarCat() {
-    if (!this.catNombre) { this.catErr = 'El nombre es obligatorio'; return; }
-    try {
-      if (this.catEdit) {
-        await this.productSvc.updateCategory(this.catEdit.id, { nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc });
-        this.catMsg = 'Categoría actualizada';
-      } else {
-        await this.productSvc.createCategory({ nombre: this.catNombre, color: this.catColor, descripcion: this.catDesc, sucursal: this.sucursal });
-        this.catMsg = 'Categoría creada';
-      }
-      this.cerrarCatModal();
-      this.categorias = await this.productSvc.fetchAllCategories(this.sucursal);
-      if (this.tab === 'productos') await this.productSvc.fetchProducts(this.sucursal);
-      if (this.tab === 'ventas') await this.productSvc.fetchInventory(this.sucursal);
-    } catch (err: any) {
-      this.catErr = err.error?.error || 'Error al guardar';
-    }
   }
 
   informeMes = '';
@@ -577,16 +529,6 @@ export class AdminComponent {
         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { boxWidth: 12, padding: 10 } } }, scales: { y: { beginAtZero: true, grid: { color: '#f5f5f5' } } } },
       });
     }
-  }
-
-  async eliminarCat(id: number, name: string) {
-    if (!confirm(`¿Eliminar la categoría "${name}" y todos sus productos asociados?`)) return;
-    try {
-      await this.productSvc.deleteCategory(id);
-      this.categorias = await this.productSvc.fetchAllCategories(this.sucursal);
-      await this.productSvc.fetchProducts(this.sucursal);
-      this.catMsg = 'Categoría eliminada';
-    } catch { this.catErr = 'Error al eliminar'; }
   }
 
   //Carga lista de usuarios

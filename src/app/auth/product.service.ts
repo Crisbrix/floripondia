@@ -105,17 +105,17 @@ export class ProductService {
     } catch { this.stats = null; }
   }
 
-  //CRUD productos
-  async add(name: string, category: string, image: string, sucursal?: string) {
+  //CRUD productos (stock, color y descripcion propios)
+  async add(name: string, image: string, color: string, stock: number, descripcion?: string, sucursal?: string) {
     await firstValueFrom(
-      this.http.post(`${this.api}/productos`, { nombre: name, categoria: category, imagen: image, sucursal })
+      this.http.post(`${this.api}/productos`, { nombre: name, imagen: image, color, stock, descripcion, sucursal })
     );
     await this.fetchProducts(sucursal);
   }
 
-  async update(id: number, name: string, category: string, image: string, sucursal?: string) {
+  async update(id: number, name: string, image: string, color: string, stock: number, descripcion?: string, sucursal?: string) {
     await firstValueFrom(
-      this.http.put(`${this.api}/productos/${id}`, { nombre: name, categoria: category, imagen: image, sucursal })
+      this.http.put(`${this.api}/productos/${id}`, { nombre: name, imagen: image, color, stock, descripcion, sucursal })
     );
     await this.fetchProducts(sucursal);
   }

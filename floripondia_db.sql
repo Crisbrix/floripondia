@@ -20,7 +20,9 @@ CREATE TABLE usuarios (
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------
--- 2. CATEGORÍAS (inventario)
+-- 2. CATEGORÍAS — SOLO RESPALDO (el stock vive en productos)
+--    La app ya no las usa para inventario; se conserva la tabla
+--    como copia histórica. No borrar.
 -- -----------------------------------------------------------
 CREATE TABLE categorias (
   id    INT         AUTO_INCREMENT PRIMARY KEY,
@@ -33,7 +35,7 @@ CREATE TABLE categorias (
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------
--- 3. PRODUCTOS (catálogo virtual, opcional)
+-- 3. PRODUCTOS (catálogo + inventario: stock propio)
 -- -----------------------------------------------------------
 CREATE TABLE productos (
   id         INT          AUTO_INCREMENT PRIMARY KEY,
@@ -42,8 +44,9 @@ CREATE TABLE productos (
   sucursal   VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
   imagen     VARCHAR(255) NOT NULL DEFAULT '',
   color      VARCHAR(7)   NOT NULL DEFAULT '#FFFFFF',
-  creado     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (categoria) REFERENCES categorias(nombre) ON UPDATE CASCADE
+  stock      INT          NOT NULL DEFAULT 0,
+  descripcion TEXT,
+  creado     DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 -- -----------------------------------------------------------
@@ -82,7 +85,7 @@ CREATE INDEX idx_productos_categoria ON productos(categoria);
 INSERT INTO usuarios (email, nombre, password, role) VALUES
   ('admin@floripondia.co', 'Admin', '$2b$10$oo77YmQPdEZTSopu5vaLYe5uoPh99YFKWTYOCGYjuHYTIZs0oET9O', 'admin');
 
--- Categorías con stock inicial
+-- Categorías (respaldo histórico; el stock real va en productos)
 INSERT INTO categorias (nombre, stock, color) VALUES
   ('Chaquetas',       8,  '#FFF9C4'),
   ('Sacos',           9,  '#BBDEFB'),
@@ -107,30 +110,30 @@ INSERT INTO categorias (nombre, stock, color) VALUES
   ('Pulseras',        8,  '#F3E5F5'),
   ('Correas',        12,  '#FFF9C4');
 
--- Productos de catálogo (cada categoría es un producto)
-INSERT INTO productos (nombre, categoria, imagen, color) VALUES
-  ('Chaquetas',       'Chaquetas',       '', '#FFF9C4'),
-  ('Sacos',           'Sacos',           '', '#BBDEFB'),
-  ('Jeanes',          'Jeanes',          '', '#E1BEE7'),
-  ('Pantalones',      'Pantalones',      '', '#F8BBD0'),
-  ('Pañoletas',       'Pañoletas',       '', '#C8E6C9'),
-  ('Pantalonetas',    'Pantalonetas',    '', '#FFE0B2'),
-  ('Faldas / Vestidos','Faldas / Vestidos','', '#F8BBD0'),
-  ('Corsés',          'Corsés',          '', '#E1BEE7'),
-  ('Blusas',          'Blusas',          '', '#F8BBD0'),
-  ('Básicas',         'Básicas',         '', '#FFFFFF'),
-  ('Bodies',          'Bodies',          '', '#F3E5F5'),
-  ('Tenis',           'Tenis',           '', '#BBDEFB'),
-  ('Sombreros',       'Sombreros',       '', '#FFF9C4'),
-  ('Camisetas',       'Camisetas',       '', '#C8E6C9'),
-  ('Gorras',          'Gorras',          '', '#FFF9C4'),
-  ('Medias',          'Medias',          '', '#E1BEE7'),
-  ('Aretes',          'Aretes',          '', '#FFE0B2'),
-  ('Collares',        'Collares',        '', '#F8BBD0'),
-  ('Bolsos',          'Bolsos',          '', '#BBDEFB'),
-  ('Caimanes',        'Caimanes',        '', '#C8E6C9'),
-  ('Pulseras',        'Pulseras',        '', '#F3E5F5'),
-  ('Correas',         'Correas',         '', '#FFF9C4');
+-- Productos con stock propio (cada producto es su propia línea)
+INSERT INTO productos (nombre, categoria, imagen, color, stock) VALUES
+  ('Chaquetas',       'Chaquetas',       '', '#FFF9C4',  8),
+  ('Sacos',           'Sacos',           '', '#BBDEFB',  9),
+  ('Jeanes',          'Jeanes',          '', '#E1BEE7', 16),
+  ('Pantalones',      'Pantalones',      '', '#F8BBD0', 15),
+  ('Pañoletas',       'Pañoletas',       '', '#C8E6C9',  3),
+  ('Pantalonetas',    'Pantalonetas',    '', '#FFE0B2',  5),
+  ('Faldas / Vestidos','Faldas / Vestidos','', '#F8BBD0', 14),
+  ('Corsés',          'Corsés',          '', '#E1BEE7',  7),
+  ('Blusas',          'Blusas',          '', '#F8BBD0', 16),
+  ('Básicas',         'Básicas',         '', '#FFFFFF', 11),
+  ('Bodies',          'Bodies',          '', '#F3E5F5',  5),
+  ('Tenis',           'Tenis',           '', '#BBDEFB',  2),
+  ('Sombreros',       'Sombreros',       '', '#FFF9C4',  2),
+  ('Camisetas',       'Camisetas',       '', '#C8E6C9',  6),
+  ('Gorras',          'Gorras',          '', '#FFF9C4',  4),
+  ('Medias',          'Medias',          '', '#E1BEE7',  2),
+  ('Aretes',          'Aretes',          '', '#FFE0B2', 39),
+  ('Collares',        'Collares',        '', '#F8BBD0',  9),
+  ('Bolsos',          'Bolsos',          '', '#BBDEFB',  7),
+  ('Caimanes',        'Caimanes',        '', '#C8E6C9', 16),
+  ('Pulseras',        'Pulseras',        '', '#F3E5F5',  8),
+  ('Correas',         'Correas',         '', '#FFF9C4', 12);
 
 -- -----------------------------------------------------------
 -- 5. CIERRES DE CAJA
