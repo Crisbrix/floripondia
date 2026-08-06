@@ -1117,6 +1117,7 @@
           <div class="cierre-resumen">
             <div class="rep-card"><span class="rep-num">{{ cierreResumen?.transacciones ?? cierreSales.length }}</span><span class="rep-label">Ventas hoy</span></div>
             <div class="rep-card"><span class="rep-num">${{ cierreTotal.toLocaleString() }}</span><span class="rep-label">Total vendido</span></div>
+            <div class="rep-card"><span class="rep-num">${{ (cierreTotal + cierreApartadosTotal).toLocaleString() }}</span><span class="rep-label">Ventas + abonos</span></div>
             <div class="rep-card"><span class="rep-num">{{ cierreResumen?.articulos ?? 0 }}</span><span class="rep-label">Artículos vendidos</span></div>
           </div>
 

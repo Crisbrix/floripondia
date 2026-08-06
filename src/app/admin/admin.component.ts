@@ -934,6 +934,7 @@ export class AdminComponent {
           labels: dias,
           datasets: [
             { label: 'Ventas', data: diario.slice().reverse().map((d: any) => d.ventas), borderColor: '#C8E6C9', backgroundColor: 'rgba(200,230,201,0.15)', fill: true, tension: 0.3, pointRadius: 2 },
+            { label: 'Apartados', data: diario.slice().reverse().map((d: any) => d.abonos), borderColor: '#B39DDB', backgroundColor: 'rgba(179,157,219,0.15)', fill: false, tension: 0.3, pointRadius: 2 },
             { label: 'Gastos', data: diario.slice().reverse().map((d: any) => d.gastos), borderColor: '#F8BBD0', backgroundColor: 'rgba(248,187,208,0.15)', fill: true, tension: 0.3, pointRadius: 2 },
             { label: 'Neto', data: diario.slice().reverse().map((d: any) => d.neto), borderColor: '#BBDEFB', backgroundColor: 'transparent', tension: 0.3, pointRadius: 2 },
           ],
