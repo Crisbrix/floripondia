@@ -253,6 +253,11 @@ export class ProductService {
     await firstValueFrom(this.http.delete(`${this.api}/apartados/${id}`));
   }
 
+  //Registra un abono (pago) sobre un apartado
+  async abonarApartado(id: number, data: { monto: number; metodoPago: string; sucursal?: string }) {
+    await firstValueFrom(this.http.post(`${this.api}/apartados/${id}/abono`, data));
+  }
+
   //Informe mensual
   async fetchInformeMensual(mes: string, sucursal?: string): Promise<any> {
     try {

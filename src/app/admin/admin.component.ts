@@ -567,6 +567,45 @@ export class AdminComponent {
   apMsg = '';
   apErr = '';
 
+  /*Modal de abono (chulito): registra cuanto paga del saldo pendiente*/
+  abonoModal = false;
+  abonoApartado: any = null;
+  abonoMonto = 0;
+  abonoMetodo = 'efectivo';
+  abonoMsg = '';
+  abonoErr = '';
+
+  abrirAbonoModal(ap: any) {
+    this.abonoApartado = ap;
+    this.abonoMonto = Number(ap.saldo) || 0;
+    this.abonoMetodo = ap.metodoPago || 'efectivo';
+    this.abonoMsg = ''; this.abonoErr = '';
+    this.abonoModal = true;
+  }
+  cerrarAbonoModal() { this.abonoModal = false; this.abonoApartado = null; }
+
+  async registrarAbono() {
+    if (!this.abonoApartado) return;
+    const monto = Number(this.abonoMonto) || 0;
+    if (monto <= 0) { this.abonoErr = 'Ingresa cuánto va a abonar'; return; }
+    if (monto > Number(this.abonoApartado.saldo)) {
+      this.abonoErr = `El abono no puede superar el saldo ($ ${Number(this.abonoApartado.saldo).toLocaleString()})`;
+      return;
+    }
+    try {
+      await this.productSvc.abonarApartado(this.abonoApartado.id, {
+        monto,
+        metodoPago: this.abonoMetodo,
+        sucursal: this.sucursal,
+      });
+      this.abonoMsg = `Abono de $${monto.toLocaleString()} registrado`;
+      this.cerrarAbonoModal();
+      this.apartados = await this.productSvc.fetchApartados(this.sucursal);
+    } catch (err: any) {
+      this.abonoErr = err.error?.error || 'Error al registrar el abono';
+    }
+  }
+
   async abrirApartados() {
     this.tab = 'apartados';
     this.apartados = await this.productSvc.fetchApartados(this.sucursal);
