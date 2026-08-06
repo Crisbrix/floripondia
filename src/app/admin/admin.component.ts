@@ -562,6 +562,7 @@ export class AdminComponent {
   apProducto = '';
   apAbono = 0;
   apSaldo = 0;
+  apMetodoPago = 'efectivo';
   apComentario = '';
   apMsg = '';
   apErr = '';
@@ -580,6 +581,7 @@ export class AdminComponent {
     this.apProducto = edit?.producto || '';
     this.apAbono = edit?.abono || 0;
     this.apSaldo = edit?.saldo || 0;
+    this.apMetodoPago = edit?.metodoPago || 'efectivo';
     this.apComentario = edit?.comentario || '';
     this.apMsg = ''; this.apErr = '';
     this.apModal = true;
@@ -599,6 +601,7 @@ export class AdminComponent {
           saldo: this.apSaldo,
           estado: this.apEdit.estado,
           comentario: this.apComentario,
+          metodoPago: this.apMetodoPago,
         });
         this.apMsg = 'Apartado actualizado';
       } else {
@@ -610,6 +613,7 @@ export class AdminComponent {
           abono: this.apAbono,
           saldo: this.apSaldo,
           comentario: this.apComentario,
+          metodoPago: this.apMetodoPago,
           sucursal: this.sucursal,
         });
         this.apMsg = 'Apartado creado';
@@ -936,6 +940,10 @@ export class AdminComponent {
       .filter(m => m.metodo_pago === 'efectivo')
       .reduce((s, m) => s + Number(m.total), 0);
   }
+  cierreApartadosMetodos: any[] = [];
+  get cierreApartadosTotal() {
+    return this.cierreApartadosMetodos.reduce((s, m) => s + Number(m.total || 0), 0);
+  }
   get cierreTransferTotal() {
     return this.cierrePorMetodoArr
       .filter(m => ['nequi', 'daviplata', 'addi'].includes(m.metodo_pago))
@@ -1157,6 +1165,7 @@ export class AdminComponent {
     this.cierreSales = c?.ventas || [];
     this.cierreResumen = c?.resumen || null;
     this.cierrePorMetodoArr = c?.metodos || [];
+    this.cierreApartadosMetodos = c?.apartados?.metodos || [];
     this.cierreConfirmado = !!c?.confirmado;
     this.cierreLoading = false;
   }

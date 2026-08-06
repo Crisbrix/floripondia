@@ -1539,6 +1539,27 @@
   text-transform: capitalize;
 }
 
+.cierre-abonos-card {
+  background: linear-gradient(135deg, #F3E5F5, #E1BEE7);
+  border: none;
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+.cierre-abonos-card .cierre-otros-label {
+  color: #8e24aa;
+}
+.cierre-abonos-card .cierre-otros-valor {
+  color: #6a1b9a;
+  font-size: 1.8rem;
+}
+.cierre-abonos-card .cierre-otros-det {
+  color: #8e24aa;
+}
+.cierre-abonos-card .cierre-otros-det:last-child {
+  margin-top: 6px;
+}
+
 .cierre-confirmado-badge {
   display: inline-flex;
   align-items: center;
@@ -2412,6 +2433,10 @@
 .admin-layout.for-men .cont-resumen-card { background: #181818; border-color: #2a2a2a; }
 .admin-layout.for-men .rep-vend-card { background: #181818; color: #fff; border-color: #2a2a2a; }
 .admin-layout.for-men .cierre-efectivo-box { background: #181818; color: #fff; border-color: #2a2a2a; }
+.admin-layout.for-men .cierre-abonos-card { background: #1f1b24; }
+.admin-layout.for-men .cierre-abonos-card .cierre-otros-label,
+.admin-layout.for-men .cierre-abonos-card .cierre-otros-valor,
+.admin-layout.for-men .cierre-abonos-card .cierre-otros-det { color: #ce93d8; }
 .admin-layout.for-men .perfil-body { background: #181818; color: #fff; }
 .admin-layout.for-men .perfil-body input { background: #1f1f1f; color: #fff; border-color: #333; }
 .admin-layout.for-men .melsus-section { --accent: #FFD700; }

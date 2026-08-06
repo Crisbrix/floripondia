@@ -167,6 +167,23 @@ CREATE TABLE apartados (
   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- Historial de abonos de apartados: cada pago con su metodo y fecha
+-- (alimenta el cuadro de "abonos de apartados" del cierre)
+CREATE TABLE apartados_abono (
+  id           INT          AUTO_INCREMENT PRIMARY KEY,
+  apartado_id  INT          NOT NULL,
+  monto        DECIMAL(12,0) NOT NULL DEFAULT 0,
+  metodo_pago  VARCHAR(20)  NOT NULL DEFAULT 'efectivo',
+  fecha        DATE         NOT NULL,
+  vendedor_id  INT          NOT NULL,
+  sucursal     VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
+  creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_aa_apartado (apartado_id),
+  INDEX idx_aa_fecha_suc (fecha, sucursal),
+  FOREIGN KEY (apartado_id) REFERENCES apartados(id) ON UPDATE CASCADE,
+  FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 -- -----------------------------------------------------------
 -- 7. APERTURAS DE CAJA
 -- -----------------------------------------------------------
@@ -239,6 +256,20 @@ ALTER TABLE contabilidad ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'flori
 ALTER TABLE cierres ADD COLUMN sucursal VARCHAR(20) NOT NULL DEFAULT 'floripondia';
 ALTER TABLE cierres DROP INDEX fecha;
 ALTER TABLE cierres ADD UNIQUE KEY uq_cierre_fecha_suc (fecha, sucursal);
+
+-- Historial de abonos de apartados (para bases existentes)
+CREATE TABLE IF NOT EXISTS apartados_abono (
+  id           INT          AUTO_INCREMENT PRIMARY KEY,
+  apartado_id  INT          NOT NULL,
+  monto        DECIMAL(12,0) NOT NULL DEFAULT 0,
+  metodo_pago  VARCHAR(20)  NOT NULL DEFAULT 'efectivo',
+  fecha        DATE         NOT NULL,
+  vendedor_id  INT          NOT NULL,
+  sucursal     VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
+  creado_en    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_aa_apartado (apartado_id),
+  INDEX idx_aa_fecha_suc (fecha, sucursal)
+);
 
 -- Tablas de contabilidad (para bases con el esquema anterior)
 CREATE TABLE IF NOT EXISTS contabilidad_categorias (

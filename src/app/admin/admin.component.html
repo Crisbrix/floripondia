@@ -404,6 +404,16 @@
                 </select>
                 <input type="number" min="0" placeholder="Abono $" [(ngModel)]="apAbono" />
                 <input type="number" min="0" placeholder="Saldo $" [(ngModel)]="apSaldo" />
+                <div class="pv-metodo">
+                  <label>Método de pago</label>
+                  <div class="pv-metodo-opts">
+                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'efectivo'" (click)="apMetodoPago = 'efectivo'">Efectivo</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'tarjeta'" (click)="apMetodoPago = 'tarjeta'">Tarjeta</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'nequi'" (click)="apMetodoPago = 'nequi'">Nequi</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'daviplata'" (click)="apMetodoPago = 'daviplata'">Daviplata</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'addi'" (click)="apMetodoPago = 'addi'">Addi</button>
+                  </div>
+                </div>
                 <textarea class="modal-textarea" placeholder="Comentario (opcional)" [(ngModel)]="apComentario"></textarea>
                 <div class="modal-btns">
                   <button class="btn-primary" (click)="guardarAp()">{{ apEdit ? 'Actualizar' : 'Crear' }}</button>
@@ -443,6 +453,12 @@
                     <span class="ap-label">Abono</span>
                     <span class="ap-val ap-val-monto">${{ (+ap.abono).toLocaleString() }}</span>
                   </div>
+                  @if (ap.metodoPago) {
+                    <div class="ap-info">
+                      <span class="ap-label">Método</span>
+                      <span class="ap-val">{{ ap.metodoPago }}</span>
+                    </div>
+                  }
                   @if (ap.saldo > 0) {
                     <div class="ap-info">
                       <span class="ap-label">Saldo</span>
@@ -1072,6 +1088,17 @@
           <div class="cierre-efectivo-box">
             <span class="cierre-efectivo-label">Efectivo en caja</span>
             <span class="cierre-efectivo-monto">${{ cierreCashTotal.toLocaleString() }}</span>
+          </div>
+
+          <div class="cierre-otros-card cierre-abonos-card">
+            <span class="cierre-otros-label">Abonos de apartados (plata que entró)</span>
+            <span class="cierre-otros-valor">${{ cierreApartadosTotal.toLocaleString() }}</span>
+            @for (m of cierreApartadosMetodos; track m.metodo_pago) {
+              <span class="cierre-otros-det">{{ m.metodo_pago }}: ${{ (+m.total).toLocaleString() }}</span>
+            }
+            @if (!cierreApartadosMetodos.length) {
+              <span class="cierre-otros-det">Sin abonos hoy</span>
+            }
           </div>
 
           <div class="cierre-otros">
