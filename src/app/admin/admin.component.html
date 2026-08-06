@@ -652,7 +652,8 @@
             <div class="rep-card"><span class="rep-num">${{ contResumen.totalInversion.toLocaleString() }}</span><span class="rep-label">Inversión</span></div>
             <div class="rep-card"><span class="rep-num">${{ contResumen.totalGastos.toLocaleString() }}</span><span class="rep-label">Gastos</span></div>
             <div class="rep-card"><span class="rep-num">${{ contResumen.gastosDiarios.toLocaleString() }}</span><span class="rep-label">Gastos diarios</span></div>
-            <div class="rep-card"><span class="rep-num">${{ contResumen.totalVentas.toLocaleString() }}</span><span class="rep-label">Ventas</span></div>
+            <div class="rep-card"><span class="rep-num">${{ contResumen.totalVentas.toLocaleString() }}</span><span class="rep-label">Ingresos totales</span></div>
+            <div class="rep-card"><span class="rep-num">${{ contResumen.totalAbonos.toLocaleString() }}</span><span class="rep-label">Abonos apartados</span></div>
             <div class="rep-card"><span class="rep-num" [class.rep-balance-neg]="contResumen.balance < 0" [class.rep-balance-pos]="contResumen.balance >= 0">${{ contResumen.balance.toLocaleString() }}</span><span class="rep-label">Balance</span></div>
           </div>
 
