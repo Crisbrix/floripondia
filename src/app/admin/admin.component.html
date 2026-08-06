@@ -1214,6 +1214,38 @@
             </div>
           </div>
 
+          @if (cierreAbonosLista.length) {
+            <div class="cierre-lista">
+              <h3>Abonos de apartados del día</h3>
+              <div class="cierre-tabla-wrap">
+                <table class="cierre-tabla">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Cliente</th>
+                      <th>Producto</th>
+                      <th>Monto</th>
+                      <th>Método</th>
+                      <th>Vendedor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (ab of cierreAbonosLista; track ab.id) {
+                      <tr>
+                        <td>{{ ab.id }}</td>
+                        <td>{{ ab.cliente }}</td>
+                        <td>{{ ab.producto }}</td>
+                        <td>${{ (+ab.monto).toLocaleString() }}</td>
+                        <td>{{ ab.paymentMethod }}</td>
+                        <td>{{ ab.vendedor }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
           @if (editSaleId) {
             <div class="modal-overlay" (click)="cerrarEditarVenta()">
               <div class="modal-card" (click)="$event.stopPropagation()">

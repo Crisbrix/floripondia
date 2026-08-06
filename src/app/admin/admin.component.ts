@@ -985,6 +985,7 @@ export class AdminComponent {
       .reduce((s, m) => s + Number(m.total), 0);
   }
   cierreApartadosMetodos: any[] = [];
+  cierreAbonosLista: any[] = [];
   get cierreApartadosTotal() {
     return this.cierreApartadosMetodos.reduce((s, m) => s + Number(m.total || 0), 0);
   }
@@ -1210,6 +1211,7 @@ export class AdminComponent {
     this.cierreResumen = c?.resumen || null;
     this.cierrePorMetodoArr = c?.metodos || [];
     this.cierreApartadosMetodos = c?.apartados?.metodos || [];
+    this.cierreAbonosLista = c?.apartados?.lista || [];
     this.cierreConfirmado = !!c?.confirmado;
     this.cierreLoading = false;
   }
