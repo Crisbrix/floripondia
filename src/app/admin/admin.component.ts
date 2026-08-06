@@ -590,6 +590,11 @@ export class AdminComponent {
 
   async guardarAp() {
     if (!this.apClienteNombre || !this.apProducto) { this.apErr = 'Nombre del cliente y producto requeridos'; return; }
+    //Si ya pagó todo el saldo, el apartado queda completado
+    const esCompleto = Number(this.apSaldo) <= 0;
+    const estadoFinal = this.apEdit?.estado === 'cancelado'
+      ? 'cancelado'
+      : esCompleto ? 'completado' : 'pendiente';
     try {
       if (this.apEdit) {
         await this.productSvc.updateApartado(this.apEdit.id, {
@@ -599,7 +604,7 @@ export class AdminComponent {
           producto: this.apProducto,
           abono: this.apAbono,
           saldo: this.apSaldo,
-          estado: this.apEdit.estado,
+          estado: estadoFinal,
           comentario: this.apComentario,
           metodoPago: this.apMetodoPago,
         });

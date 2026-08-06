@@ -164,6 +164,7 @@ CREATE TABLE apartados (
   vendedor_id     INT         NOT NULL,
   estado          VARCHAR(20) NOT NULL DEFAULT 'pendiente',
   comentario      TEXT,
+  metodo_pago     VARCHAR(20) NOT NULL DEFAULT 'efectivo',
   FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -270,6 +271,9 @@ CREATE TABLE IF NOT EXISTS apartados_abono (
   INDEX idx_aa_apartado (apartado_id),
   INDEX idx_aa_fecha_suc (fecha, sucursal)
 );
+
+-- El apartado recuerda su ultimo metodo de pago
+ALTER TABLE apartados ADD COLUMN metodo_pago VARCHAR(20) NOT NULL DEFAULT 'efectivo';
 
 -- Tablas de contabilidad (para bases con el esquema anterior)
 CREATE TABLE IF NOT EXISTS contabilidad_categorias (
