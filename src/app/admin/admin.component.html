@@ -1428,6 +1428,7 @@
                       <th>Monto</th>
                       <th>Método</th>
                       <th>Vendedor</th>
+                      <th>Acción</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1439,6 +1440,13 @@
                         <td>${{ (+ab.monto).toLocaleString() }}</td>
                         <td>{{ ab.paymentMethod }}</td>
                         <td>{{ ab.vendedor }}</td>
+                        <td class="cierre-acciones">
+                          @if (isAdmin) {
+                            <button class="cierre-btn cierre-btn-del" (click)="eliminarAbonoCierre(ab)" title="Eliminar abono">
+                              <i class="fa-solid fa-trash"></i>
+                            </button>
+                          }
+                        </td>
                       </tr>
                     }
                   </tbody>

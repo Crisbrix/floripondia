@@ -258,6 +258,11 @@ export class ProductService {
     await firstValueFrom(this.http.post(`${this.api}/apartados/${id}/abono`, data));
   }
 
+  //Elimina un abono individual
+  async deleteAbono(abonoId: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/apartados/abono/${abonoId}`));
+  }
+
   //Informe mensual
   async fetchInformeMensual(mes: string, sucursal?: string): Promise<any> {
     try {

@@ -1375,6 +1375,14 @@ export class AdminComponent {
     } catch { alert('Error al eliminar'); }
   }
 
+  async eliminarAbonoCierre(ab: any) {
+    if (!confirm(`¿Eliminar este abono de $${(+ab.monto).toLocaleString()} de ${ab.cliente}? Se devolverá el saldo al apartado.`)) return;
+    try {
+      await this.productSvc.deleteAbono(ab.id);
+      this.abrirCierre();
+    } catch { alert('Error al eliminar el abono'); }
+  }
+
   async confirmarCierre() {
     if (!confirm('¿Confirmar el cierre de caja del día de hoy? Esta acción no se puede deshacer.')) return;
     const ok = await this.productSvc.confirmarCierre(this.sucursal);
