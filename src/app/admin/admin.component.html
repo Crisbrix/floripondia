@@ -672,19 +672,37 @@
               }
 
               @if (devStep === 2) {
-                <h2>¿Cambia por otra prenda?</h2>
-                <p class="dev-hint">Selecciona la prenda nueva o presiona "Sin cambio" si solo es devolución</p>
-                <div class="dev-prod-grid">
-                  @for (item of inventory; track item.name) {
-                    <button class="pv-card dev-prod-card" [class.selected]="devProductoNuevo === item.name" (click)="seleccionarProdNuevo(item.name)">
-                      <span class="pv-card-top" [style.background]="item.color">
-                        <span class="pv-icono" [innerHTML]="iconoProducto(item.name)"></span>
-                      </span>
-                      <span class="pv-card-body">
-                        <span class="pv-name">{{ item.name }}</span>
-                        <span class="pv-stock" [class.bajo]="item.stock <= 3">{{ item.stock }} en stock</span>
-                      </span>
-                    </button>
+                <h2>¿Por qué prendas cambia?</h2>
+                <p class="dev-hint">Selecciona las prendas de cambio (puedes varias). Al tocar una se agrega al carrito.</p>
+                <div class="dev-step2-layout">
+                  <div class="dev-prod-grid dev-prod-grid-cambio">
+                    @for (item of inventory; track item.name) {
+                      <button class="pv-card dev-prod-card" [class.agotado]="item.stock === 0" (click)="agregarCambio(item.name)">
+                        <span class="pv-card-top" [style.background]="item.color">
+                          <span class="pv-icono" [innerHTML]="iconoProducto(item.name)"></span>
+                        </span>
+                        <span class="pv-card-body">
+                          <span class="pv-name">{{ item.name }}</span>
+                          <span class="pv-stock" [class.bajo]="item.stock <= 3">{{ item.stock }} en stock</span>
+                        </span>
+                      </button>
+                    }
+                  </div>
+                  @if (devCarritoCambio.length) {
+                    <div class="dev-cambio-cart">
+                      <div class="dev-cambio-cart-head">Prendas de cambio</div>
+                      @for (item of devCarritoCambio; track item.name) {
+                        <div class="dev-cambio-row">
+                          <span class="dev-cambio-dot" [style.background]="item.color"></span>
+                          <span class="dev-cambio-name">{{ item.name }}</span>
+                          <div class="dev-cambio-qty">
+                            <button class="pv-qty-btn" (click)="quitarCambio(item.name)">−</button>
+                            <span class="pv-qty-num">{{ item.quantity }}</span>
+                            <button class="pv-qty-btn" (click)="agregarCambio(item.name)">+</button>
+                          </div>
+                        </div>
+                      }
+                    </div>
                   }
                 </div>
                 <div class="dev-step-actions">
@@ -692,7 +710,11 @@
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
                     Atrás
                   </button>
-                  <button class="btn-primary" (click)="skipCambio()">Sin cambio — solo devolución</button>
+                  @if (devCarritoCambio.length) {
+                    <button class="btn-primary" (click)="devStep = 3">Continuar ({{ devCarritoCambio.length }} prenda(s))</button>
+                  } @else {
+                    <button class="btn-primary" (click)="skipCambio()">Sin cambio — solo devolución</button>
+                  }
                 </div>
               }
 
@@ -701,12 +723,16 @@
                 <div class="dev-resumen">
                   <div class="dev-resumen-item">
                     <span class="dev-resumen-label">Devolvió</span>
-                    <span class="dev-resumen-val">{{ devProductoOriginal }}</span>
+                    <span class="dev-resumen-val">{{ devProductoOriginal }} x{{ devCantidad }}</span>
                   </div>
-                  @if (devProductoNuevo) {
+                  @if (devCarritoCambio.length) {
                     <div class="dev-resumen-item">
                       <span class="dev-resumen-label">Cambio por</span>
-                      <span class="dev-resumen-val">{{ devProductoNuevo }}</span>
+                      <span class="dev-resumen-val">
+                        @for (p of devCarritoCambio; track p.name; let last = $last) {
+                          {{ p.name }}{{ p.quantity > 1 ? ' x' + p.quantity : '' }}{{ last ? '' : ', ' }}
+                        }
+                      </span>
                     </div>
                   } @else {
                     <div class="dev-resumen-item">
@@ -756,7 +782,15 @@
                   <tr>
                     <td>{{ d.id }}</td>
                     <td>{{ d.productoOriginal }}</td>
-                    <td>{{ d.productoNuevo || '—' }}</td>
+                    <td>
+                      @if (d.productosNuevo?.length) {
+                        @for (p of d.productosNuevo; track p.name) {
+                          <span class="dev-tag">{{ p.name }}{{ p.quantity > 1 ? ' x' + p.quantity : '' }}</span>
+                        }
+                      } @else {
+                        <span style="color:#ccc">—</span>
+                      }
+                    </td>
                     <td>{{ d.cantidad }}</td>
                     <td>${{ (+d.diferenciaPrecio).toLocaleString() }}</td>
                     <td>{{ d.motivo || '—' }}</td>

@@ -2557,6 +2557,24 @@
 .dev-prod-card.selected { border-color: #7B1FA2 !important; box-shadow: 0 0 0 3px rgba(123,31,162,0.15); transform: scale(0.97); }
 .dev-prod-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 .dev-step-actions { display: flex; gap: 10px; justify-content: space-between; margin-top: 16px; }
+.dev-step2-layout { display: flex; gap: 14px; max-height: 400px; }
+.dev-prod-grid-cambio { flex: 1; max-height: none; overflow-y: auto; }
+.dev-cambio-cart {
+  width: 220px; flex-shrink: 0;
+  background: #f9f5fc; border-radius: 12px; padding: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+  max-height: 340px; overflow-y: auto;
+}
+.dev-cambio-cart-head { font-weight: 700; font-size: 0.85rem; color: #7B1FA2; padding-bottom: 6px; border-bottom: 1px solid #e0d4ea; }
+.dev-cambio-row { display: flex; align-items: center; gap: 8px; }
+.dev-cambio-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dev-cambio-name { flex: 1; font-size: 0.82rem; color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dev-cambio-qty { display: flex; align-items: center; gap: 4px; }
+.dev-tag {
+  display: inline-block; background: #f3e5f5; color: #7B1FA2;
+  font-size: 0.75rem; padding: 2px 8px; border-radius: 8px;
+  margin: 1px 2px; font-weight: 500;
+}
 .dev-resumen {
   background: #f9f5fc; border-radius: 12px; padding: 14px 18px;
   margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;

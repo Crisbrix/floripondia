@@ -328,7 +328,7 @@ export class ProductService {
     } catch { return []; }
   }
 
-  async createDevolucion(data: { ventaId?: number; productoOriginal: string; productoNuevo?: string; cantidad?: number; diferenciaPrecio?: number; motivo?: string; sucursal?: string }) {
+  async createDevolucion(data: { ventaId?: number; productoOriginal: string; productosNuevo?: { name: string; quantity: number }[]; cantidad?: number; diferenciaPrecio?: number; motivo?: string; sucursal?: string }) {
     await firstValueFrom(this.http.post(`${this.api}/devoluciones`, data));
   }
 

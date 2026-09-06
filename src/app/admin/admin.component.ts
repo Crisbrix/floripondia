@@ -750,7 +750,7 @@ export class AdminComponent {
   devModal = false;
   devVentaId: number | null = null;
   devProductoOriginal = '';
-  devProductoNuevo = '';
+  devCarritoCambio: { name: string; quantity: number; color: string }[] = [];
   devCantidad = 1;
   devDiferencia = 0;
   devMotivo = '';
@@ -767,7 +767,7 @@ export class AdminComponent {
   abrirDevModal() {
     this.devVentaId = null;
     this.devProductoOriginal = '';
-    this.devProductoNuevo = '';
+    this.devCarritoCambio = [];
     this.devCantidad = 1;
     this.devDiferencia = 0;
     this.devMotivo = '';
@@ -779,21 +779,39 @@ export class AdminComponent {
 
   seleccionarProdOriginal(name: string) {
     this.devProductoOriginal = name;
+    this.devCarritoCambio = [];
     this.devStep = 2;
   }
 
-  seleccionarProdNuevo(name: string) {
-    this.devProductoNuevo = name;
-    this.devStep = 3;
+  agregarCambio(name: string) {
+    const inv = this.inventory.find(i => i.name === name);
+    if (!inv) return;
+    const existente = this.devCarritoCambio.find(i => i.name === name);
+    if (existente) {
+      existente.quantity++;
+    } else {
+      this.devCarritoCambio.push({ name, quantity: 1, color: inv.color });
+    }
+  }
+
+  quitarCambio(name: string) {
+    const idx = this.devCarritoCambio.findIndex(i => i.name === name);
+    if (idx !== -1) {
+      if (this.devCarritoCambio[idx].quantity > 1) {
+        this.devCarritoCambio[idx].quantity--;
+      } else {
+        this.devCarritoCambio.splice(idx, 1);
+      }
+    }
   }
 
   skipCambio() {
-    this.devProductoNuevo = '';
+    this.devCarritoCambio = [];
     this.devStep = 3;
   }
 
-  volverStep1() { this.devStep = 1; this.devProductoOriginal = ''; this.devProductoNuevo = ''; }
-  volverStep2() { this.devStep = 2; this.devProductoNuevo = ''; }
+  volverStep1() { this.devStep = 1; this.devProductoOriginal = ''; this.devCarritoCambio = []; }
+  volverStep2() { this.devStep = 2; }
 
   async guardarDevolucion() {
     if (!this.devProductoOriginal) { this.devErr = 'Selecciona el producto devuelto'; return; }
@@ -802,7 +820,7 @@ export class AdminComponent {
       await this.productSvc.createDevolucion({
         ventaId: this.devVentaId || undefined,
         productoOriginal: this.devProductoOriginal,
-        productoNuevo: this.devProductoNuevo || undefined,
+        productosNuevo: this.devCarritoCambio.map(p => ({ name: p.name, quantity: p.quantity })),
         cantidad: this.devCantidad,
         diferenciaPrecio: this.devDiferencia,
         motivo: this.devMotivo || undefined,
