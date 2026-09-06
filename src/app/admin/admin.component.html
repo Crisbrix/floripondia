@@ -1442,6 +1442,9 @@
                         <td>{{ ab.vendedor }}</td>
                         <td class="cierre-acciones">
                           @if (isAdmin) {
+                            <button class="cierre-btn cierre-btn-edit" (click)="abrirEditarAbono(ab)" title="Editar abono">
+                              <i class="fa-solid fa-pen"></i>
+                            </button>
                             <button class="cierre-btn cierre-btn-del" (click)="eliminarAbonoCierre(ab)" title="Eliminar abono">
                               <i class="fa-solid fa-trash"></i>
                             </button>
@@ -1563,6 +1566,35 @@
                   <div class="modal-btns">
                     <button class="btn-primary" (click)="guardarEditarVenta()">Guardar</button>
                     <button class="btn-sec" (click)="cerrarEditarVenta()">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (editAbonoModal && editAbonoData) {
+            <div class="modal-overlay" (click)="cerrarEditarAbono()">
+              <div class="modal-card" (click)="$event.stopPropagation()">
+                <button class="modal-close" (click)="cerrarEditarAbono()">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h2>Editar abono — {{ editAbonoData.cliente }}</h2>
+                <div class="modal-form">
+                  <label>Producto</label>
+                  <input type="text" [value]="editAbonoData.producto" disabled />
+                  <label>Monto $</label>
+                  <input type="number" min="0" [(ngModel)]="editAbonoMonto" />
+                  <label>Método de pago</label>
+                  <div class="pv-metodo-opts">
+                    <button type="button" class="pv-metodo-btn" [class.act]="editAbonoMetodo === 'efectivo'" (click)="editAbonoMetodo = 'efectivo'">Efectivo</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="editAbonoMetodo === 'tarjeta'" (click)="editAbonoMetodo = 'tarjeta'">Tarjeta</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="editAbonoMetodo === 'nequi'" (click)="editAbonoMetodo = 'nequi'">Nequi</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="editAbonoMetodo === 'daviplata'" (click)="editAbonoMetodo = 'daviplata'">Daviplata</button>
+                    <button type="button" class="pv-metodo-btn" [class.act]="editAbonoMetodo === 'addi'" (click)="editAbonoMetodo = 'addi'">Addi</button>
+                  </div>
+                  <div class="modal-btns">
+                    <button class="btn-primary" (click)="guardarEditarAbono()">Guardar</button>
+                    <button class="btn-sec" (click)="cerrarEditarAbono()">Cancelar</button>
                   </div>
                 </div>
               </div>

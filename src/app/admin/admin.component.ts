@@ -1383,6 +1383,31 @@ export class AdminComponent {
     } catch { alert('Error al eliminar el abono'); }
   }
 
+  editAbonoModal = false;
+  editAbonoData: any = null;
+  editAbonoMonto = 0;
+  editAbonoMetodo = 'efectivo';
+
+  abrirEditarAbono(ab: any) {
+    this.editAbonoData = ab;
+    this.editAbonoMonto = Number(ab.monto) || 0;
+    this.editAbonoMetodo = ab.paymentMethod || 'efectivo';
+    this.editAbonoModal = true;
+  }
+  cerrarEditarAbono() { this.editAbonoModal = false; this.editAbonoData = null; }
+
+  async guardarEditarAbono() {
+    if (!this.editAbonoData) return;
+    try {
+      await this.productSvc.updateAbono(this.editAbonoData.id, {
+        monto: this.editAbonoMonto,
+        metodoPago: this.editAbonoMetodo,
+      });
+      this.cerrarEditarAbono();
+      this.abrirCierre();
+    } catch { alert('Error al guardar el abono'); }
+  }
+
   async confirmarCierre() {
     if (!confirm('¿Confirmar el cierre de caja del día de hoy? Esta acción no se puede deshacer.')) return;
     const ok = await this.productSvc.confirmarCierre(this.sucursal);

@@ -263,6 +263,11 @@ export class ProductService {
     await firstValueFrom(this.http.delete(`${this.api}/apartados/abono/${abonoId}`));
   }
 
+  //Edita un abono individual (monto y método)
+  async updateAbono(abonoId: number, data: { monto: number; metodoPago: string }) {
+    await firstValueFrom(this.http.put(`${this.api}/apartados/abono/${abonoId}`, data));
+  }
+
   //Informe mensual
   async fetchInformeMensual(mes: string, sucursal?: string): Promise<any> {
     try {
