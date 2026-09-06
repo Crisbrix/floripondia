@@ -14,7 +14,7 @@
       }
       <button class="sidebar-toggle" (click)="sidebarOpen = !sidebarOpen">
         @if (sidebarOpen) {
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <i class="fa-solid fa-xmark"></i>
         } @else {
           <span></span><span></span><span></span>
         }
@@ -23,75 +23,53 @@
 
     <nav class="sidebar-nav">
       <button [class.active]="tab === 'productos'" (click)="tab = 'productos'">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-bag-shopping"></i></span>
         @if (sidebarOpen) { <span>Productos</span> }
       </button>
       @if (isAdmin) {
         <button [class.active]="tab === 'usuarios'" (click)="tab = 'usuarios'">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </span>
+          <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
           @if (sidebarOpen) { <span>Usuarios</span> }
         </button>
       }
       <button [class.active]="tab === 'ventas'" (click)="tab = 'ventas'">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-dollar-sign"></i></span>
         @if (sidebarOpen) { <span>Vender</span> }
       </button>
       @if (isAdmin) {
         <button [class.active]="tab === 'reportes'" (click)="abrirReportes()">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          </span>
+          <span class="nav-icon"><i class="fa-solid fa-chart-bar"></i></span>
           @if (sidebarOpen) { <span>Reportes</span> }
         </button>
         <button [class.active]="tab === 'informe'" (click)="abrirInforme()">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </span>
+          <span class="nav-icon"><i class="fa-solid fa-file-arrow-down"></i></span>
           @if (sidebarOpen) { <span>Informe mensual</span> }
         </button>
       }
       <button [class.active]="tab === 'apartados'" (click)="abrirApartados()">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-file-lines"></i></span>
         @if (sidebarOpen) { <span>Apartados</span> }
       </button>
       @if (isAdmin) {
         <button [class.active]="tab === 'contabilidad'" (click)="abrirContabilidad()">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18"/><line x1="7" y1="15" x2="11" y2="15"/></svg>
-          </span>
+          <span class="nav-icon"><i class="fa-solid fa-credit-card"></i></span>
           @if (sidebarOpen) { <span>Contabilidad</span> }
         </button>
       }
       <button class="melsus-btn" [class.active]="tab === 'melsus'" (click)="abrirMelsus()">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21a9 9 0 0 1 18 0"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-gem"></i></span>
         @if (sidebarOpen) { <span class="melsus-label">Melsus</span> }
       </button>
       <button [class.active]="tab === 'devoluciones'" (click)="abrirDevoluciones()">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-rotate-left"></i></span>
         @if (sidebarOpen) { <span>Devoluciones</span> }
       </button>
       <button [class.active]="tab === 'cierre'" (click)="abrirCierre()">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-lock"></i></span>
         @if (sidebarOpen) { <span>Cierre</span> }
       </button>
       <button [class.active]="tab === 'perfil'" (click)="abrirPerfil()">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </span>
+        <span class="nav-icon"><i class="fa-solid fa-user"></i></span>
         @if (sidebarOpen) { <span>Perfil</span> }
       </button>
     </nav>
@@ -119,7 +97,7 @@
           <div class="modal-overlay" (click)="limpiarForm()">
             <div class="modal-card" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="limpiarForm()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
               <h2>{{ editProd ? 'Editar producto' : 'Nuevo producto' }}</h2>
               <div class="modal-form">
@@ -167,11 +145,11 @@
                 }
                 <div class="prod-card-acc">
                   <button class="prod-edit" (click)="editar(p)">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <i class="fa-solid fa-pen"></i>
                     Editar
                   </button>
                   <button class="prod-del" (click)="eliminar(p.id)">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <i class="fa-solid fa-trash"></i>
                     Eliminar
                   </button>
                 </div>
@@ -250,13 +228,13 @@
         <div class="pv-right" [class.pv-cart-hidden]="!cartOpen">
           <div class="pv-cart">
             <div class="pv-cart-head">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              <i class="fa-solid fa-cart-shopping"></i>
               <span>Carrito</span>
               @if (cart.length) {
                 <span class="pv-cart-badge">{{ cartTotal }}</span>
               }
               <button class="pv-cart-head-close" (click)="cartOpen = false">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
 
@@ -309,19 +287,19 @@
                   <label>Método de pago</label>
                   <div class="pv-metodo-opts">
                     <button class="pv-metodo-btn" [class.act]="paymentMethod === 'efectivo'" (click)="seleccionarMetodo('efectivo')">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                      <i class="fa-solid fa-money-bill"></i>
                       Efectivo
                     </button>
                     <button class="pv-metodo-btn" [class.act]="paymentMethod === 'tarjeta'" (click)="seleccionarMetodo('tarjeta')">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                      <i class="fa-solid fa-credit-card"></i>
                       Tarjeta
                     </button>
                     <button class="pv-metodo-btn" [class.act]="esTransferencia && !pagoCombinado" (click)="seleccionarMetodo('nequi')">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                      <i class="fa-solid fa-arrow-right-arrow-left"></i>
                       Transf.
                     </button>
                     <button class="pv-metodo-btn" [class.act]="pagoCombinado" (click)="activarPagoCombinado()">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/><line x1="6" y1="15" x2="10" y2="15"/><line x1="14" y1="15" x2="18" y2="15"/></svg>
+                      <i class="fa-solid fa-layer-group"></i>
                       Combinado
                     </button>
                   </div>
@@ -364,7 +342,7 @@
                 </div>
 
                 <button class="pv-finalizar" (click)="finalizarVenta()">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <i class="fa-solid fa-check"></i>
                   Finalizar venta
                 </button>
               </div>
@@ -373,7 +351,7 @@
         </div>
 
         <button class="pv-cart-btn" (click)="cartOpen = !cartOpen">
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <i class="fa-solid fa-cart-shopping"></i>
           @if (cartTotal > 0) {
             <span class="pv-cart-badge">{{ cartTotal }}</span>
           }
@@ -395,7 +373,7 @@
           <div class="modal-overlay" (click)="cerrarApModal()">
             <div class="modal-card" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarApModal()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
               <h2>{{ apEdit ? 'Editar apartado' : 'Nuevo apartado' }}</h2>
               <div class="modal-form">
@@ -434,7 +412,7 @@
           <div class="modal-overlay" (click)="cerrarAbonoModal()">
             <div class="modal-card" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarAbonoModal()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
               <h2>Registrar abono — {{ abonoApartado.clienteNombre }}</h2>
               @if (abonoMsg) { <div class="admin-ok">{{ abonoMsg }}</div> }
@@ -523,18 +501,18 @@
                 <div class="ap-acc">
                   @if (ap.estado === 'pendiente') {
                     <button class="ap-btn ap-btn-comp" (click)="abrirAbonoModal(ap)" title="Registrar abono">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      <i class="fa-solid fa-check"></i>
                     </button>
                     <button class="ap-btn ap-btn-can" (click)="cambiarEstadoAp(ap.id, 'cancelado')" title="Cancelar">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                      <i class="fa-solid fa-xmark"></i>
                     </button>
                   }
                   <button class="ap-btn ap-btn-edit" (click)="abrirApModal(ap)" title="Editar">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <i class="fa-solid fa-pen"></i>
                   </button>
                   @if (isAdmin) {
                     <button class="ap-btn ap-btn-del" (click)="eliminarAp(ap.id)" title="Eliminar">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      <i class="fa-solid fa-trash"></i>
                     </button>
                   }
                 </div>
@@ -576,7 +554,7 @@
             <input type="number" min="0" placeholder="Total $" [(ngModel)]="melsusTotal" />
             <textarea class="modal-textarea" placeholder="Comentario (opcional)" [(ngModel)]="melsusComentario"></textarea>
             <button class="melsus-reg-btn" (click)="registrarMelsus()">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <i class="fa-solid fa-check"></i>
               Registrar venta
             </button>
           </div>
@@ -613,7 +591,7 @@
                       <td>{{ v.fecha?.slice(0, 10) }}</td>
                       <td>
                         <button class="cierre-btn cierre-btn-del" (click)="eliminarMelsus(v.id)" title="Eliminar">
-                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          <i class="fa-solid fa-trash"></i>
                         </button>
                       </td>
                     </tr>
@@ -642,7 +620,7 @@
           <div class="modal-overlay" (click)="cerrarDevModal()">
             <div class="modal-card dev-modal" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarDevModal()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
 
               <div class="dev-steps">
@@ -707,7 +685,7 @@
                 </div>
                 <div class="dev-step-actions">
                   <button class="btn-sec" (click)="volverStep1()">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    <i class="fa-solid fa-chevron-left"></i>
                     Atrás
                   </button>
                   @if (devCarritoCambio.length) {
@@ -750,7 +728,7 @@
                   <textarea class="modal-textarea" placeholder="Ej: No le quedó talla, llegó defectuoso, se arrepintió..." [(ngModel)]="devMotivo"></textarea>
                   <div class="dev-step-actions">
                     <button class="btn-sec" (click)="volverStep2()">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                      <i class="fa-solid fa-chevron-left"></i>
                       Atrás
                     </button>
                     <button class="btn-primary" (click)="guardarDevolucion()">Registrar devolución</button>
@@ -798,7 +776,7 @@
                     <td>{{ d.fecha }}</td>
                     <td>
                       <button class="cierre-btn cierre-btn-del" (click)="eliminarDevolucion(d.id)" title="Eliminar">
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <i class="fa-solid fa-trash"></i>
                       </button>
                     </td>
                   </tr>
@@ -824,11 +802,11 @@
 
         <div class="vend-detalle-date">
           <button class="vend-date-btn" (click)="contMesPrev()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <i class="fa-solid fa-chevron-left"></i>
           </button>
           <span class="vend-date-label">{{ contabilidadMes || 'Todo el historial' }}</span>
           <button class="vend-date-btn" (click)="contMesNext()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <i class="fa-solid fa-chevron-right"></i>
           </button>
           @if (contabilidadMes) {
             <button class="btn-sec vend-todo-btn" (click)="abrirContabilidad('')">Ver todo</button>
@@ -934,7 +912,7 @@
           <div class="modal-overlay" (click)="cerrarContModal()">
             <div class="modal-card" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarContModal()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
               <h2>{{ contEdit ? 'Editar movimiento' : 'Nuevo movimiento' }}</h2>
               <div class="modal-form">
@@ -991,10 +969,10 @@
                 <span class="cont-item-monto" [class.monto-gasto]="m.tipo === 'gasto'" [class.monto-inv]="m.tipo === 'inversion'">${{ (+m.monto).toLocaleString() }}</span>
                 <div class="cont-item-acc">
                   <button class="prod-edit" (click)="abrirContModal(m)">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    <i class="fa-solid fa-pen"></i>
                   </button>
                   <button class="prod-del" (click)="eliminarCont(m.id)">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
               </div>
@@ -1116,16 +1094,16 @@
             <div class="modal-overlay" (click)="cerrarVentasVendedor()">
               <div class="modal-card vend-detalle-card" (click)="$event.stopPropagation()">
                 <button class="modal-close" (click)="cerrarVentasVendedor()">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <i class="fa-solid fa-xmark"></i>
                 </button>
                 <h2>Ventas de {{ selectedVendor }}</h2>
                 <div class="vend-detalle-date">
                   <button class="vend-date-btn" (click)="vendorDatePrev()">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    <i class="fa-solid fa-chevron-left"></i>
                   </button>
                   <span class="vend-date-label">{{ vendorDate }}</span>
                   <button class="vend-date-btn" (click)="vendorDateNext()">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+                    <i class="fa-solid fa-chevron-right"></i>
                   </button>
                 </div>
                 <div class="vend-detalle-lista">
@@ -1167,11 +1145,11 @@
         <h1>Informe mensual</h1>
         <div class="vend-detalle-date">
           <button class="vend-date-btn" (click)="informeMesPrev()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            <i class="fa-solid fa-chevron-left"></i>
           </button>
           <span class="vend-date-label">{{ informeMes }}</span>
           <button class="vend-date-btn" (click)="informeMesNext()">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+            <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
 
@@ -1296,10 +1274,10 @@
           <div class="admin-ok" style="text-align:center;padding:2rem">Cargando...</div>
         } @else if (!cajaAbierta) {
           <div style="text-align:center;padding:3rem 1rem">
-            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:1rem"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <i class="fa-solid fa-lock" style="font-size:48px;color:#ccc;margin-bottom:1rem"></i>
             <p style="color:#bbb;font-size:1rem;margin-bottom:1.5rem">La caja está cerrada. Ábrela para registrar ventas.</p>
             <button class="btn-primary" style="padding:14px 32px;font-size:1rem" (click)="handleAbrirCaja()">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:8px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <i class="fa-solid fa-lock" style="vertical-align:middle;margin-right:8px"></i>
               Abrir caja
             </button>
           </div>
@@ -1393,10 +1371,10 @@
                       <td>{{ sale.comentario || '—' }}</td>
                       <td class="cierre-acciones">
                         <button class="cierre-btn cierre-btn-edit" (click)="abrirEditarVenta(sale)" title="Editar">
-                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                          <i class="fa-solid fa-pen"></i>
                         </button>
                         <button class="cierre-btn cierre-btn-del" (click)="eliminarVenta(sale.id, sale.productName)" title="Eliminar">
-                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                          <i class="fa-solid fa-trash"></i>
                         </button>
                       </td>
                     </tr>
@@ -1469,10 +1447,10 @@
                         <td>{{ ap.vendedor }}</td>
                         <td class="cierre-acciones">
                           <button class="cierre-btn cierre-btn-edit" (click)="abrirCierreApModal(ap)" title="Editar">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <i class="fa-solid fa-pen"></i>
                           </button>
                           <button class="cierre-btn cierre-btn-del" (click)="eliminarCierreAp(ap.id)" title="Eliminar">
-                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            <i class="fa-solid fa-trash"></i>
                           </button>
                         </td>
                       </tr>
@@ -1487,7 +1465,7 @@
             <div class="modal-overlay" (click)="cerrarCierreApModal()">
               <div class="modal-card" (click)="$event.stopPropagation()">
                 <button class="modal-close" (click)="cerrarCierreApModal()">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <i class="fa-solid fa-xmark"></i>
                 </button>
                 <h2>Editar apartado #{{ cierreApEdit.id }}</h2>
                 <div class="modal-form">
@@ -1526,7 +1504,7 @@
             <div class="modal-overlay" (click)="cerrarEditarVenta()">
               <div class="modal-card" (click)="$event.stopPropagation()">
                 <button class="modal-close" (click)="cerrarEditarVenta()">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <i class="fa-solid fa-xmark"></i>
                 </button>
                 <h2>Editar venta #{{ editSaleId }}</h2>
                 <div class="modal-form">
@@ -1554,14 +1532,14 @@
 
           @if (cierreConfirmado) {
             <div class="cierre-confirmado-badge">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <i class="fa-solid fa-check"></i>
               Cierre confirmado — {{ cierreConfirmado ? 'hoy' : '' }}
             </div>
           }
           @if (isAdmin && !cierreConfirmado) {
             <div class="cierre-accion">
               <button class="btn-primary" (click)="confirmarCierre()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <i class="fa-solid fa-check"></i>
                 Confirmar cierre de caja
               </button>
             </div>
@@ -1569,7 +1547,7 @@
         }
         <div style="margin-top:20px;text-align:center">
           <button class="btn-sec" (click)="toggleHistorialCierres()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <i class="fa-solid fa-clock"></i>
             Historial de cierres
           </button>
         </div>
@@ -1578,7 +1556,7 @@
           <div class="modal-overlay" (click)="toggleHistorialCierres()">
             <div class="modal-card" style="max-width:800px;max-height:90vh;overflow-y:auto" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="toggleHistorialCierres()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
               <h2>Historial de cierres</h2>
               @if (historialCierres.length) {
@@ -1606,7 +1584,7 @@
           <div class="modal-overlay" (click)="cerrarVerCierreFecha()">
             <div class="modal-card" style="max-width:800px;max-height:90vh;overflow-y:auto" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarVerCierreFecha()">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <i class="fa-solid fa-xmark"></i>
               </button>
               <h2>Ventas del {{ verCierreFechaData.fecha }}</h2>
               <div style="display:flex;gap:12px;margin:12px 0;flex-wrap:wrap">
@@ -1645,7 +1623,7 @@
         <h1>Mi Perfil</h1>
         <div class="perfil-card">
           <div class="perfil-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <i class="fa-solid fa-user" style="font-size:32px"></i>
           </div>
           <div class="perfil-body">
             <div class="perfil-field">

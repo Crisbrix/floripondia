@@ -1193,34 +1193,34 @@ export class AdminComponent {
 
   iconoProducto(nombre: string): SafeHtml {
     if (this.iconCache.has(nombre)) return this.iconCache.get(nombre)!;
-    const svg = (path: string, vb = '0 0 24 24') =>
-      `<svg viewBox="${vb}" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${path}</svg>`;
+    const fa = (icon: string) =>
+      `<i class="fa-solid fa-${icon}" style="font-size:18px"></i>`;
     const mapa: Record<string, string> = {
-      Chaquetas:  svg('<path d="M7 5l-5 4v14h8v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6h8V9l-5-4"/><path d="M7 5V3a2 2 0 0 1 2-2h2"/><path d="M17 5V3a2 2 0 0 0-2-2h-2"/>'),
-      Sacos:      svg('<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>'),
-      Jeanes:     svg('<path d="M6 2L4 6v16h7V10h2v12h7V6l-2-4"/><line x1="4" y1="10" x2="20" y2="10"/>'),
-      Pantalones: svg('<path d="M6 2L4 6v16h7V10h2v12h7V6l-2-4"/><line x1="4" y1="10" x2="20" y2="10"/>'),
-      Pañoletas:  svg('<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>'),
-      Pantalonetas: svg('<path d="M6 2l-2 6v8h6V8h4v8h6V8l-2-6"/><circle cx="9" cy="4" r="1"/><circle cx="15" cy="4" r="1"/>'),
-      'Faldas / Vestidos': svg('<path d="M6 2l-3 6a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4l-3-6"/><line x1="12" y1="12" x2="12" y2="22"/><path d="M9 22h6"/>'),
-      Corsés:     svg('<path d="M8 2l-2 4v3c0 4 3 7 6 9 3-2 6-5 6-9V6l-2-4"/><path d="M8 9h8"/><path d="M8 13h8"/>'),
-      Blusas:     svg('<path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/><path d="M4 8v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M8 2v4"/><path d="M16 2v4"/>'),
-      Básicas:    svg('<path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/><path d="M4 8v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>'),
-      Bodies:     svg('<path d="M6 2L3 6v3a5 5 0 0 0 5 5h8a5 5 0 0 0 5-5V6l-3-4"/><line x1="12" y1="14" x2="12" y2="22"/><path d="M9 22h6"/>'),
-      Tenis:      svg('<path d="M4 12a8 8 0 0 1 16 0"/><path d="M4 12a4 4 0 0 0 8 0"/><path d="M16 12a4 4 0 0 0 8 0"/><line x1="8" y1="16" x2="16" y2="16"/><line x1="10" y1="18" x2="14" y2="18"/>'),
-      Sombreros:  svg('<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M6 6v3a6 6 0 0 0 12 0V6"/><line x1="9" y1="6" x2="9" y2="15"/><line x1="15" y1="6" x2="15" y2="15"/>'),
-      Camisetas:  svg('<path d="M4 8V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/><path d="M4 8v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/>'),
-      Gorras:     svg('<path d="M12 3a9 9 0 0 1 9 9v3h-2v-3a7 7 0 0 0-14 0v3H3v-3a9 9 0 0 1 9-9z"/><path d="M3 15h18v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2z"/>'),
-      Medias:     svg('<path d="M8 2v12l-3 4a3 3 0 0 0 6 0l-3-4V2"/><path d="M16 2v12l-3 4a3 3 0 0 0 6 0l-3-4V2"/>'),
-      Aretes:     svg('<circle cx="12" cy="4" r="3"/><circle cx="6" cy="16" r="4"/><circle cx="18" cy="16" r="4"/><line x1="9" y1="6" x2="6" y2="12"/><line x1="15" y1="6" x2="18" y2="12"/>'),
-      Collares:   svg('<path d="M6 20L4 8a4 4 0 0 1 8 0l-2 12"/><path d="M18 20l-2-12a4 4 0 0 1 8 0l-2 12"/><path d="M10 14h4"/><circle cx="12" cy="18" r="3"/>'),
-      Bolsos:     svg('<rect x="4" y="8" width="16" height="14" rx="3"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/><line x1="12" y1="14" x2="12" y2="18"/>'),
-      Caimanes:   svg('<path d="M4 16l3-3 5 3 5-3 3 3"/><path d="M4 20V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14"/>'),
-      Pulseras:   svg('<circle cx="16" cy="12" r="5"/><circle cx="8" cy="12" r="3"/><line x1="11" y1="12" x2="13" y2="12"/>'),
-      Correas:    svg('<rect x="3" y="10" width="18" height="4" rx="2"/><circle cx="7" cy="12" r="1.5" fill="currentColor"/><circle cx="17" cy="12" r="1.5" fill="currentColor"/>'),
+      Chaquetas:    fa('vest'),
+      Sacos:        fa('shirt'),
+      Jeanes:       fa('vest-patches'),
+      Pantalones:   fa('vest-patches'),
+      Pañoletas:    fa('mattress-pillow'),
+      Pantalonetas: fa('shorts'),
+      'Faldas / Vestidos': fa('vest'),
+      Corsés:       fa('vest'),
+      Blusas:       fa('shirt'),
+      Básicas:      fa('shirt'),
+      Bodies:       fa('vest'),
+      Tenis:        fa('shoe-prints'),
+      Sombreros:    fa('hat-cowboy-side'),
+      Camisetas:    fa('shirt'),
+      Gorras:       fa('hat-wizard'),
+      Medias:       fa('socks'),
+      Aretes:       fa('ring'),
+      Collares:     fa('necklace'),
+      Bolsos:       fa('bag-shopping'),
+      Caimanes:     fa('link'),
+      Pulseras:     fa('circle-half-stroke'),
+      Correas:      fa('belt'),
     };
-    const svgStr = mapa[nombre] || svg('<circle cx="12" cy="12" r="6"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>');
-    const safe = this.sanitizer.bypassSecurityTrustHtml(svgStr);
+    const faStr = mapa[nombre] || fa('tag');
+    const safe = this.sanitizer.bypassSecurityTrustHtml(faStr);
     this.iconCache.set(nombre, safe);
     return safe;
   }
