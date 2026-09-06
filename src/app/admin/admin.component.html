@@ -371,38 +371,95 @@
 
         @if (apModal) {
           <div class="modal-overlay" (click)="cerrarApModal()">
-            <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-card ap-modal" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarApModal()">
                 <i class="fa-solid fa-xmark"></i>
               </button>
-              <h2>{{ apEdit ? 'Editar apartado' : 'Nuevo apartado' }}</h2>
-              <div class="modal-form">
-                <input type="text" placeholder="Nombre del cliente" [(ngModel)]="apClienteNombre" />
-                <input type="tel" placeholder="Celular" [(ngModel)]="apClienteCelular" />
-                <input type="email" placeholder="Correo (opcional)" [(ngModel)]="apClienteCorreo" />
-                <select [(ngModel)]="apProducto">
-                  <option value="">-- Producto --</option>
-                  @for (inv of inventory; track inv.name) {
-                    <option [value]="inv.name">{{ inv.name }}</option>
-                  }
-                </select>
-                <input type="number" min="0" placeholder="Abono $" [(ngModel)]="apAbono" />
-                <input type="number" min="0" placeholder="Saldo $" [(ngModel)]="apSaldo" />
-                <div class="pv-metodo">
-                  <label>Método de pago</label>
-                  <div class="pv-metodo-opts">
-                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'efectivo'" (click)="apMetodoPago = 'efectivo'">Efectivo</button>
-                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'tarjeta'" (click)="apMetodoPago = 'tarjeta'">Tarjeta</button>
-                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'nequi'" (click)="apMetodoPago = 'nequi'">Nequi</button>
-                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'daviplata'" (click)="apMetodoPago = 'daviplata'">Daviplata</button>
-                    <button type="button" class="pv-metodo-btn" [class.act]="apMetodoPago === 'addi'" (click)="apMetodoPago = 'addi'">Addi</button>
+              <h2><i class="fa-solid fa-file-lines" style="margin-right:8px"></i>{{ apEdit ? 'Editar apartado' : 'Nuevo apartado' }}</h2>
+
+              <div class="ap-form-section">
+                <div class="ap-section-title"><i class="fa-solid fa-user"></i> Datos del cliente</div>
+                <div class="ap-form-row">
+                  <div class="ap-field">
+                    <label for="ap-nombre">Nombre completo *</label>
+                    <input id="ap-nombre" type="text" placeholder="Ej: María López" [(ngModel)]="apClienteNombre" />
+                  </div>
+                  <div class="ap-field">
+                    <label for="ap-celular">Celular</label>
+                    <input id="ap-celular" type="tel" placeholder="Ej: 313 483 4606" [(ngModel)]="apClienteCelular" />
                   </div>
                 </div>
-                <textarea class="modal-textarea" placeholder="Comentario (opcional)" [(ngModel)]="apComentario"></textarea>
-                <div class="modal-btns">
-                  <button class="btn-primary" (click)="guardarAp()">{{ apEdit ? 'Actualizar' : 'Crear' }}</button>
-                  <button class="btn-sec" (click)="cerrarApModal()">Cancelar</button>
+                <div class="ap-field">
+                  <label for="ap-correo">Correo electrónico <span class="ap-optional">(opcional)</span></label>
+                  <input id="ap-correo" type="email" placeholder="Ej: maria@email.com" [(ngModel)]="apClienteCorreo" />
                 </div>
+              </div>
+
+              <div class="ap-form-section">
+                <div class="ap-section-title"><i class="fa-solid fa-bag-shopping"></i> Producto</div>
+                <div class="ap-product-grid">
+                  @for (inv of inventory; track inv.name) {
+                    <button class="pv-card ap-prod-card" [class.selected]="apProducto === inv.name" [class.agotado]="inv.stock === 0" (click)="apProducto = inv.name">
+                      <span class="pv-card-top" [style.background]="inv.color">
+                        <span class="pv-icono" [innerHTML]="iconoProducto(inv.name)"></span>
+                      </span>
+                      <span class="pv-card-body">
+                        <span class="pv-name">{{ inv.name }}</span>
+                        <span class="pv-stock" [class.bajo]="inv.stock <= 3">{{ inv.stock }} en stock</span>
+                      </span>
+                    </button>
+                  }
+                </div>
+                @if (!apProducto) {
+                  <p class="ap-hint">Selecciona un producto de la lista</p>
+                }
+              </div>
+
+              <div class="ap-form-section">
+                <div class="ap-section-title"><i class="fa-solid fa-dollar-sign"></i> Montos</div>
+                <div class="ap-form-row">
+                  <div class="ap-field">
+                    <label for="ap-abono">Abono inicial $</label>
+                    <input id="ap-abono" type="number" min="0" placeholder="0" [(ngModel)]="apAbono" />
+                  </div>
+                  <div class="ap-field">
+                    <label for="ap-saldo">Saldo pendiente $</label>
+                    <input id="ap-saldo" type="number" min="0" placeholder="0" [(ngModel)]="apSaldo" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="ap-form-section">
+                <div class="ap-section-title"><i class="fa-solid fa-credit-card"></i> Método de pago del abono</div>
+                <div class="pv-metodo-opts ap-metodo-grid">
+                  <button type="button" class="pv-metodo-btn ap-met-btn" [class.act]="apMetodoPago === 'efectivo'" (click)="apMetodoPago = 'efectivo'">
+                    <i class="fa-solid fa-money-bill"></i> Efectivo
+                  </button>
+                  <button type="button" class="pv-metodo-btn ap-met-btn" [class.act]="apMetodoPago === 'tarjeta'" (click)="apMetodoPago = 'tarjeta'">
+                    <i class="fa-solid fa-credit-card"></i> Tarjeta
+                  </button>
+                  <button type="button" class="pv-metodo-btn ap-met-btn" [class.act]="apMetodoPago === 'nequi'" (click)="apMetodoPago = 'nequi'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Nequi
+                  </button>
+                  <button type="button" class="pv-metodo-btn ap-met-btn" [class.act]="apMetodoPago === 'daviplata'" (click)="apMetodoPago = 'daviplata'">
+                    <i class="fa-solid fa-mobile-screen-button"></i> Daviplata
+                  </button>
+                  <button type="button" class="pv-metodo-btn ap-met-btn" [class.act]="apMetodoPago === 'addi'" (click)="apMetodoPago = 'addi'">
+                    <i class="fa-solid fa-hand-holding-dollar"></i> Addi
+                  </button>
+                </div>
+              </div>
+
+              <div class="ap-form-section">
+                <div class="ap-section-title"><i class="fa-solid fa-comment"></i> Nota <span class="ap-optional">(opcional)</span></div>
+                <textarea class="modal-textarea ap-textarea" placeholder="Ej: Le queda grande, viene por otro color, entrega el viernes..." [(ngModel)]="apComentario"></textarea>
+              </div>
+
+              <div class="modal-btns">
+                <button class="btn-primary" (click)="guardarAp()">
+                  <i class="fa-solid fa-check" style="margin-right:6px"></i>{{ apEdit ? 'Actualizar' : 'Crear apartado' }}
+                </button>
+                <button class="btn-sec" (click)="cerrarApModal()">Cancelar</button>
               </div>
             </div>
           </div>
