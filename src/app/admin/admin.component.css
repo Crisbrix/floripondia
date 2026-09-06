@@ -479,8 +479,10 @@
   background: #fff;
   border-radius: 20px;
   padding: 32px;
-  width: 400px;
+  width: 420px;
   max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
   position: relative;
   box-shadow: 0 12px 40px rgba(0,0,0,0.12);
   animation: modalSlide 0.25s ease;
@@ -2594,19 +2596,19 @@
 .dev-field-label:first-of-type { margin-top: 8px; }
 
 /* ── Apartados form ── */
-.ap-form .ap-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.ap-form .ap-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
 .ap-form label { font-size: 0.85rem; font-weight: 600; color: #555; }
 .ap-optional { font-weight: 400; color: #bbb; font-size: 0.78rem; }
 .ap-form input,
 .ap-form select,
-.ap-form textarea { width: 100%; box-sizing: border-box; font-size: 0.95rem; padding: 14px 16px; border-radius: 12px; border: 1.5px solid #e0e0e0; background: #fafafa; color: #333; transition: border-color 0.2s; }
+.ap-form textarea { width: 100%; box-sizing: border-box; font-size: 0.9rem; padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e0e0e0; background: #fafafa; color: #333; transition: border-color 0.2s; }
 .ap-form input:focus,
 .ap-form select:focus,
 .ap-form textarea:focus { border-color: #7B1FA2; background: #fff; outline: none; }
 .ap-form select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
 .ap-form .pv-metodo-opts { display: flex; flex-wrap: wrap; gap: 8px; }
-.ap-form .pv-metodo-btn { flex: 1; min-width: 0; font-size: 0.82rem; padding: 14px 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.ap-form textarea.modal-textarea { min-height: 80px; resize: vertical; }
+.ap-form .pv-metodo-btn { flex: 1; min-width: 0; font-size: 0.78rem; padding: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.ap-form textarea.modal-textarea { min-height: 60px; resize: vertical; }
 
 /* For Men theme */
 .admin-layout.for-men .ap-form label { color: #aaa; }
