@@ -320,4 +320,19 @@ export class ProductService {
       return null;
     }
   }
+
+  //Devoluciones / Cambios
+  async fetchDevoluciones(sucursal?: string, fecha?: string): Promise<any[]> {
+    try {
+      return await firstValueFrom(this.http.get<any[]>(`${this.api}/devoluciones`, { params: paramsCon(sucursal, { fecha }) }));
+    } catch { return []; }
+  }
+
+  async createDevolucion(data: { ventaId?: number; productoOriginal: string; productoNuevo?: string; cantidad?: number; diferenciaPrecio?: number; motivo?: string; sucursal?: string }) {
+    await firstValueFrom(this.http.post(`${this.api}/devoluciones`, data));
+  }
+
+  async deleteDevolucion(id: number) {
+    await firstValueFrom(this.http.delete(`${this.api}/devoluciones/${id}`));
+  }
 }

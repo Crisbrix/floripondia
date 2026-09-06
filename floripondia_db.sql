@@ -224,7 +224,26 @@ INSERT INTO contabilidad_categorias (nombre, tipo, color) VALUES
   ('Otros',                 'gasto', '#BBBBBB');
 
 -- -----------------------------------------------------------
--- 9. CONTABILIDAD — movimientos
+-- 9. DEVOLUCIONES / CAMBIOS
+-- -----------------------------------------------------------
+CREATE TABLE IF NOT EXISTS devoluciones (
+  id                INT          AUTO_INCREMENT PRIMARY KEY,
+  venta_id          INT,
+  producto_original VARCHAR(120) NOT NULL,
+  producto_nuevo    VARCHAR(120),
+  cantidad          INT          NOT NULL DEFAULT 1,
+  diferencia_precio DECIMAL(12,0) NOT NULL DEFAULT 0,
+  motivo            TEXT,
+  sucursal          VARCHAR(20)  NOT NULL DEFAULT 'floripondia',
+  fecha             DATE         NOT NULL,
+  vendedor_id       INT          NOT NULL,
+  creado_en         DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (venta_id) REFERENCES ventas(id) ON UPDATE CASCADE ON DELETE SET NULL,
+  FOREIGN KEY (vendedor_id) REFERENCES usuarios(id) ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- -----------------------------------------------------------
+-- 10. CONTABILIDAD — movimientos
 -- -----------------------------------------------------------
 CREATE TABLE contabilidad (
   id           INT          AUTO_INCREMENT PRIMARY KEY,

@@ -19,7 +19,7 @@ import Chart from 'chart.js/auto';
 export class AdminComponent {
   sidebarOpen = true;
   //Pestaña activa del panel admin
-  private _tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' | 'contabilidad' = 'productos';
+  private _tab: 'productos' | 'usuarios' | 'reportes' | 'ventas' | 'perfil' | 'cierre' | 'apartados' | 'informe' | 'melsus' | 'contabilidad' | 'devoluciones' = 'productos';
   get tab() { return this._tab; }
   set tab(v) {
     if (this._tab === 'ventas' && v !== 'ventas') this.cartOpen = false;
@@ -97,6 +97,7 @@ export class AdminComponent {
     else if (t === 'apartados') await this.abrirApartados();
     else if (t === 'contabilidad') await this.contCargar();
     else if (t === 'informe') await this.abrirInforme(this.informeMes);
+    else if (t === 'devoluciones') await this.abrirDevoluciones();
   }
 
   async loadData() {
@@ -744,6 +745,70 @@ export class AdminComponent {
     } catch { this.melsusErr = 'Error al eliminar'; }
   }
 
+  //Devoluciones / Cambios
+  devoluciones: any[] = [];
+  devModal = false;
+  devVentaId: number | null = null;
+  devProductoOriginal = '';
+  devProductoNuevo = '';
+  devCantidad = 1;
+  devDiferencia = 0;
+  devMotivo = '';
+  devMsg = '';
+  devErr = '';
+
+  async abrirDevoluciones() {
+    this.tab = 'devoluciones';
+    this.devoluciones = await this.productSvc.fetchDevoluciones(this.sucursal);
+    this.devMsg = ''; this.devErr = '';
+  }
+
+  abrirDevModal() {
+    this.devVentaId = null;
+    this.devProductoOriginal = '';
+    this.devProductoNuevo = '';
+    this.devCantidad = 1;
+    this.devDiferencia = 0;
+    this.devMotivo = '';
+    this.devMsg = ''; this.devErr = '';
+    this.devModal = true;
+  }
+  cerrarDevModal() { this.devModal = false; }
+
+  async guardarDevolucion() {
+    if (!this.devProductoOriginal) { this.devErr = 'Selecciona el producto devuelto'; return; }
+    if (this.devCantidad <= 0) { this.devErr = 'La cantidad debe ser mayor a 0'; return; }
+    try {
+      await this.productSvc.createDevolucion({
+        ventaId: this.devVentaId || undefined,
+        productoOriginal: this.devProductoOriginal,
+        productoNuevo: this.devProductoNuevo || undefined,
+        cantidad: this.devCantidad,
+        diferenciaPrecio: this.devDiferencia,
+        motivo: this.devMotivo || undefined,
+        sucursal: this.sucursal,
+      });
+      this.devMsg = 'Devolución registrada';
+      this.cerrarDevModal();
+      this.devoluciones = await this.productSvc.fetchDevoluciones(this.sucursal);
+      await this.productSvc.fetchInventory(this.sucursal);
+      await this.productSvc.fetchProducts(this.sucursal);
+    } catch (err: any) {
+      this.devErr = err.error?.error || 'Error al registrar la devolución';
+    }
+  }
+
+  async eliminarDevolucion(id: number) {
+    if (!confirm('¿Eliminar esta devolución? El stock se revertirá.')) return;
+    try {
+      await this.productSvc.deleteDevolucion(id);
+      this.devoluciones = await this.productSvc.fetchDevoluciones(this.sucursal);
+      await this.productSvc.fetchInventory(this.sucursal);
+      await this.productSvc.fetchProducts(this.sucursal);
+      this.devMsg = 'Devolución eliminada';
+    } catch { this.devErr = 'Error al eliminar'; }
+  }
+
   //Contabilidad — inversiones, gastos y balance del local
   contabilidadData: any = null;
   contabilidadMes = '';
@@ -987,6 +1052,7 @@ export class AdminComponent {
   }
   cierreApartadosMetodos: any[] = [];
   cierreAbonosLista: any[] = [];
+  cierreApartadosHoy: any[] = [];
   get cierreApartadosTotal() {
     return this.cierreApartadosMetodos.reduce((s, m) => s + Number(m.total || 0), 0);
   }
@@ -1213,6 +1279,7 @@ export class AdminComponent {
     this.cierrePorMetodoArr = c?.metodos || [];
     this.cierreApartadosMetodos = c?.apartados?.metodos || [];
     this.cierreAbonosLista = c?.apartados?.lista || [];
+    this.cierreApartadosHoy = c?.apartadosHoy || [];
     this.cierreConfirmado = !!c?.confirmado;
     this.cierreLoading = false;
   }
@@ -1225,6 +1292,49 @@ export class AdminComponent {
     } else {
       alert('Error al abrir la caja');
     }
+  }
+
+  //Editar apartado desde el cierre
+  cierreApEdit: any = null;
+  cierreApModal = false;
+
+  abrirCierreApModal(ap: any) {
+    this.cierreApEdit = { ...ap };
+    this.cierreApModal = true;
+  }
+  cerrarCierreApModal() { this.cierreApModal = false; this.cierreApEdit = null; }
+
+  async guardarCierreAp() {
+    if (!this.cierreApEdit) return;
+    const ap = this.cierreApEdit;
+    if (!ap.clienteNombre || !ap.producto) { this.devErr = 'Nombre y producto requeridos'; return; }
+    const esCompleto = Number(ap.saldo) <= 0;
+    const estadoFinal = esCompleto ? 'completado' : (ap.estado || 'pendiente');
+    try {
+      await this.productSvc.updateApartado(ap.id, {
+        clienteNombre: ap.clienteNombre,
+        clienteCelular: ap.clienteCelular,
+        clienteCorreo: ap.clienteCorreo,
+        producto: ap.producto,
+        abono: ap.abono,
+        saldo: ap.saldo,
+        estado: estadoFinal,
+        comentario: ap.comentario,
+        metodoPago: ap.metodoPago,
+      });
+      this.cerrarCierreApModal();
+      this.abrirCierre();
+    } catch (err: any) {
+      alert(err.error?.error || 'Error al guardar');
+    }
+  }
+
+  async eliminarCierreAp(id: number) {
+    if (!confirm('¿Eliminar este apartado?')) return;
+    try {
+      await this.productSvc.deleteApartado(id);
+      this.abrirCierre();
+    } catch { alert('Error al eliminar'); }
   }
 
   async confirmarCierre() {
