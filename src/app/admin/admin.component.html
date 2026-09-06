@@ -640,32 +640,97 @@
 
         @if (devModal) {
           <div class="modal-overlay" (click)="cerrarDevModal()">
-            <div class="modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-card dev-modal" (click)="$event.stopPropagation()">
               <button class="modal-close" (click)="cerrarDevModal()">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
-              <h2>Registrar devolución / cambio</h2>
-              <div class="modal-form">
-                <select [(ngModel)]="devProductoOriginal">
-                  <option value="">-- Producto devuelto --</option>
-                  @for (inv of inventory; track inv.name) {
-                    <option [value]="inv.name">{{ inv.name }} (stock: {{ inv.stock }})</option>
-                  }
-                </select>
-                <select [(ngModel)]="devProductoNuevo">
-                  <option value="">-- Sin cambio (solo devolución) --</option>
-                  @for (inv of inventory; track inv.name) {
-                    <option [value]="inv.name">{{ inv.name }} (stock: {{ inv.stock }})</option>
-                  }
-                </select>
-                <input type="number" min="1" placeholder="Cantidad" [(ngModel)]="devCantidad" />
-                <input type="number" min="0" placeholder="Diferencia de precio $ (positivo = paga más, negativo = se le devuelve)" [(ngModel)]="devDiferencia" />
-                <textarea class="modal-textarea" placeholder="Motivo de la devolución" [(ngModel)]="devMotivo"></textarea>
-                <div class="modal-btns">
-                  <button class="btn-primary" (click)="guardarDevolucion()">Registrar</button>
-                  <button class="btn-sec" (click)="cerrarDevModal()">Cancelar</button>
-                </div>
+
+              <div class="dev-steps">
+                <span class="dev-step-dot" [class.active]="devStep === 1" [class.done]="devStep > 1">1</span>
+                <span class="dev-step-line" [class.done]="devStep > 1"></span>
+                <span class="dev-step-dot" [class.active]="devStep === 2" [class.done]="devStep > 2">2</span>
+                <span class="dev-step-line" [class.done]="devStep > 2"></span>
+                <span class="dev-step-dot" [class.active]="devStep === 3">3</span>
               </div>
+
+              @if (devStep === 1) {
+                <h2>¿Qué prenda devolvieron?</h2>
+                <p class="dev-hint">Selecciona la prenda que el cliente está devolviendo</p>
+                <div class="dev-prod-grid">
+                  @for (item of inventory; track item.name) {
+                    <button class="pv-card dev-prod-card" [class.selected]="devProductoOriginal === item.name" (click)="seleccionarProdOriginal(item.name)">
+                      <span class="pv-card-top" [style.background]="item.color">
+                        <span class="pv-icono" [innerHTML]="iconoProducto(item.name)"></span>
+                      </span>
+                      <span class="pv-card-body">
+                        <span class="pv-name">{{ item.name }}</span>
+                        <span class="pv-stock" [class.bajo]="item.stock <= 3">{{ item.stock }} en stock</span>
+                      </span>
+                    </button>
+                  }
+                </div>
+              }
+
+              @if (devStep === 2) {
+                <h2>¿Cambia por otra prenda?</h2>
+                <p class="dev-hint">Selecciona la prenda nueva o presiona "Sin cambio" si solo es devolución</p>
+                <div class="dev-prod-grid">
+                  @for (item of inventory; track item.name) {
+                    <button class="pv-card dev-prod-card" [class.selected]="devProductoNuevo === item.name" (click)="seleccionarProdNuevo(item.name)">
+                      <span class="pv-card-top" [style.background]="item.color">
+                        <span class="pv-icono" [innerHTML]="iconoProducto(item.name)"></span>
+                      </span>
+                      <span class="pv-card-body">
+                        <span class="pv-name">{{ item.name }}</span>
+                        <span class="pv-stock" [class.bajo]="item.stock <= 3">{{ item.stock }} en stock</span>
+                      </span>
+                    </button>
+                  }
+                </div>
+                <div class="dev-step-actions">
+                  <button class="btn-sec" (click)="volverStep1()">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                    Atrás
+                  </button>
+                  <button class="btn-primary" (click)="skipCambio()">Sin cambio — solo devolución</button>
+                </div>
+              }
+
+              @if (devStep === 3) {
+                <h2>Detalles de la devolución</h2>
+                <div class="dev-resumen">
+                  <div class="dev-resumen-item">
+                    <span class="dev-resumen-label">Devolvió</span>
+                    <span class="dev-resumen-val">{{ devProductoOriginal }}</span>
+                  </div>
+                  @if (devProductoNuevo) {
+                    <div class="dev-resumen-item">
+                      <span class="dev-resumen-label">Cambio por</span>
+                      <span class="dev-resumen-val">{{ devProductoNuevo }}</span>
+                    </div>
+                  } @else {
+                    <div class="dev-resumen-item">
+                      <span class="dev-resumen-label">Tipo</span>
+                      <span class="dev-resumen-val dev-solo-dev">Solo devolución (sin cambio)</span>
+                    </div>
+                  }
+                </div>
+                <div class="modal-form">
+                  <label class="dev-field-label">¿Cuántas prendas devolvió?</label>
+                  <input type="number" min="1" placeholder="Ej: 1" [(ngModel)]="devCantidad" />
+                  <label class="dev-field-label">¿Hay diferencia de precio?</label>
+                  <input type="number" placeholder="Ej: 15000 (si paga más) o -10000 (si se le devuelve)" [(ngModel)]="devDiferencia" />
+                  <label class="dev-field-label">Motivo (opcional)</label>
+                  <textarea class="modal-textarea" placeholder="Ej: No le quedó talla, llegó defectuoso, se arrepintió..." [(ngModel)]="devMotivo"></textarea>
+                  <div class="dev-step-actions">
+                    <button class="btn-sec" (click)="volverStep2()">
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                      Atrás
+                    </button>
+                    <button class="btn-primary" (click)="guardarDevolucion()">Registrar devolución</button>
+                  </div>
+                </div>
+              }
             </div>
           </div>
         }

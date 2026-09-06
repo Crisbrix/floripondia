@@ -2529,3 +2529,41 @@
 /*---- Cierre (caja) ----*/
 .admin-layout.for-men .cierre-efectivo-label,
 .admin-layout.for-men .cierre-efectivo-monto { color: #8fd39c; }
+
+/*---- Devoluciones modal ----*/
+.dev-modal { max-width: 700px; max-height: 90vh; overflow-y: auto; }
+.dev-modal h2 { margin-bottom: 4px; }
+.dev-hint { color: #999; font-size: 0.88rem; margin: 0 0 16px; }
+.dev-steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 20px; }
+.dev-step-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700;
+  background: #eee; color: #bbb; transition: all 0.25s;
+}
+.dev-step-dot.active { background: #E1BEE7; color: #7B1FA2; transform: scale(1.15); }
+.dev-step-dot.done { background: #C8E6C9; color: #2E7D32; }
+.dev-step-line { width: 40px; height: 2px; background: #eee; transition: background 0.25s; }
+.dev-step-line.done { background: #C8E6C9; }
+.dev-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 4px 0 12px;
+}
+.dev-prod-card { cursor: pointer; transition: all 0.15s; border: 2px solid transparent !important; }
+.dev-prod-card.selected { border-color: #7B1FA2 !important; box-shadow: 0 0 0 3px rgba(123,31,162,0.15); transform: scale(0.97); }
+.dev-prod-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.dev-step-actions { display: flex; gap: 10px; justify-content: space-between; margin-top: 16px; }
+.dev-resumen {
+  background: #f9f5fc; border-radius: 12px; padding: 14px 18px;
+  margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px;
+}
+.dev-resumen-item { display: flex; align-items: center; gap: 10px; }
+.dev-resumen-label { font-size: 0.8rem; color: #999; min-width: 80px; }
+.dev-resumen-val { font-weight: 600; color: #444; }
+.dev-solo-dev { color: #999; font-weight: 400; font-style: italic; }
+.dev-field-label { font-size: 0.82rem; color: #888; margin-bottom: 4px; display: block; }
+.dev-field-label:first-of-type { margin-top: 8px; }

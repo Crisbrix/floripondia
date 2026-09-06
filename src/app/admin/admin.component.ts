@@ -756,6 +756,7 @@ export class AdminComponent {
   devMotivo = '';
   devMsg = '';
   devErr = '';
+  devStep: 1 | 2 | 3 = 1;
 
   async abrirDevoluciones() {
     this.tab = 'devoluciones';
@@ -771,9 +772,28 @@ export class AdminComponent {
     this.devDiferencia = 0;
     this.devMotivo = '';
     this.devMsg = ''; this.devErr = '';
+    this.devStep = 1;
     this.devModal = true;
   }
   cerrarDevModal() { this.devModal = false; }
+
+  seleccionarProdOriginal(name: string) {
+    this.devProductoOriginal = name;
+    this.devStep = 2;
+  }
+
+  seleccionarProdNuevo(name: string) {
+    this.devProductoNuevo = name;
+    this.devStep = 3;
+  }
+
+  skipCambio() {
+    this.devProductoNuevo = '';
+    this.devStep = 3;
+  }
+
+  volverStep1() { this.devStep = 1; this.devProductoOriginal = ''; this.devProductoNuevo = ''; }
+  volverStep2() { this.devStep = 2; this.devProductoNuevo = ''; }
 
   async guardarDevolucion() {
     if (!this.devProductoOriginal) { this.devErr = 'Selecciona el producto devuelto'; return; }
