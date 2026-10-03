@@ -1,16 +1,16 @@
 <!--Barra de navegacion principal-->
-<nav>
+<nav [class.scrolled]="isScrolled">
   <div class="container nav-content">
     <a routerLink="/" class="logo">Floripondía</a>
 
     <!--Links de navegacion para desktop-->
     <div class="links">
-      <a routerLink="/">Inicio</a>
-      <a routerLink="/catalogo">Catálogo</a>
-      <a routerLink="/nosotras">Nosotras</a>
-      <a routerLink="/contacto">Contacto</a>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Inicio</a>
+      <a routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+      <a routerLink="/nosotras" routerLinkActive="active">Nosotras</a>
+      <a routerLink="/contacto" routerLinkActive="active">Contacto</a>
       @if (user?.role === 'admin' || user?.role === 'vendedor') {
-        <a routerLink="/admin">Admin</a>
+        <a routerLink="/admin" routerLinkActive="active">Admin</a>
       }
     </div>
 
@@ -20,12 +20,12 @@
         <span class="user-name">{{ user.nombre }}</span>
         <button class="logout-btn" (click)="logout()">Salir</button>
       } @else {
-        <a routerLink="/login" class="login-btn">Iniciar sesión</a>
+        <a routerLink="/login" class="login-btn flor-shine">Iniciar sesión</a>
       }
     </div>
 
     <!--Boton hamburguesa para movil-->
-    <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen">
+    <button class="hamburger" (click)="menuOpen = !menuOpen" [class.active]="menuOpen" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
   </div>

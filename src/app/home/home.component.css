@@ -1,6 +1,8 @@
 .hero {
+  position: relative;
+  overflow: hidden;
   text-align: center;
-  padding: 110px 20px 80px;
+  padding: 110px 20px 90px;
 }
 .hero h1 {
   font-family: 'Pacifico', cursive;
@@ -13,7 +15,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: rainbow 4s ease infinite;
+  animation: titleIn 0.9s var(--ease-spring) both,
+             rainbow 4s ease infinite;
+}
+@keyframes titleIn {
+  0% { opacity: 0; transform: translateY(70px) scale(0.85) rotate(-3deg); }
+  60% { opacity: 1; transform: translateY(-8px) scale(1.03) rotate(1deg); }
+  100% { opacity: 1; transform: none; }
 }
 @keyframes rainbow {
   0% { background-position: 0% 50%; }
@@ -25,23 +33,63 @@
   letter-spacing: 4px;
   text-transform: uppercase;
   margin-top: 4px;
+  opacity: 0;
+  animation: florFadeUp 0.7s 0.75s var(--ease-out) forwards;
+}
+
+/*Petalo que suben lentamente detas del hero*/
+.petals {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.petal {
+  position: absolute;
+  bottom: -40px;
+  opacity: 0;
+  animation: petalRise 9s ease-in-out infinite;
+}
+@keyframes petalRise {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  15% { opacity: 0.65; }
+  50% {
+    transform: translate(-18px, -70px) rotate(170deg);
+  }
+  85% { opacity: 0.5; }
+  100% {
+    opacity: 0;
+    transform: translate(30px, -150px) rotate(340deg);
+  }
+}
+
+/*Indicador de scroll con rebote*/
+.scroll-hint {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  margin-left: -12px;
+  color: #ccc;
+  font-size: 1.1rem;
+  opacity: 0;
+  animation: florFadeIn 0.6s 1.4s forwards, scrollBob 1.6s 1.4s ease-in-out infinite;
+}
+.scroll-hint:hover { color: #F48FB1; }
+@keyframes scrollBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(9px); }
 }
 
 .poster {
   padding: 30px 16px;
   max-width: 1100px;
   margin: 0 auto;
-  opacity: 0;
-  transform: translateY(60px);
-  transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.poster.reveal {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .poster-inner {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 50px;
@@ -49,11 +97,26 @@
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 0.4s ease;
 }
 .poster-inner:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 44px rgba(0,0,0,0.09);
+}
+
+/*Brillo que barre la tarjeta al pasar el mouse*/
+.poster-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 32%, rgba(255,255,255,0.55) 50%, transparent 68%);
+  transform: translateX(-130%);
+  transition: transform 0.9s var(--ease-out);
+  pointer-events: none;
+}
+.poster-inner:hover::after {
+  transform: translateX(130%);
 }
 
 .poster-visual {
@@ -98,10 +161,19 @@
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
+.poster-btn .arrow {
+  display: inline-block;
+  transition: transform 0.3s var(--ease-spring);
+}
 .poster-btn:hover {
-  border-color: #ccc;
-  background: #fafafa;
+  border-color: var(--pink);
+  background: var(--pink-soft);
+  color: #555;
   transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(248,187,208,0.45);
+}
+.poster-btn:hover .arrow {
+  transform: translateX(6px);
 }
 
 .reverse {
@@ -109,9 +181,10 @@
 }
 
 @media (max-width: 700px) {
-  .hero { padding: 70px 16px 50px; }
+  .hero { padding: 70px 16px 70px; }
   .hero h1 { font-size: 2.8rem; line-height: 1.4; }
   .hero p { font-size: 0.85rem; letter-spacing: 3px; }
+  .petal { font-size: 1rem !important; }
 
   .poster { padding: 16px 12px; }
 

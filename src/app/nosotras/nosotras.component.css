@@ -1,6 +1,7 @@
 .hero-nos {
   text-align: center;
   padding: 80px 20px 50px;
+  animation: florFadeUp 0.7s var(--ease-out) both;
 }
 .hero-nos h1 {
   font-family: 'Pacifico', cursive;
@@ -26,10 +27,18 @@
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+  transition: box-shadow 0.4s ease, transform 0.4s var(--ease-out);
+}
+.story-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.08);
 }
 .story-visual {
   flex: 1;
   min-height: 360px;
+  background: linear-gradient(135deg, #F8BBD0, #FFF9C4, #BBDEFB, #F8BBD0);
+  background-size: 300% 300%;
+  animation: florGradient 10s ease infinite;
 }
 .story-text {
   flex: 1;
@@ -69,15 +78,20 @@
   padding: 32px 20px;
   border-radius: 20px;
   text-align: center;
-  transition: transform 0.3s;
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s;
 }
 .value-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px) rotate(-1deg);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.09);
 }
 .value-icon {
   font-size: 2rem;
   display: block;
   margin-bottom: 12px;
+  transition: transform 0.3s var(--ease-spring);
+}
+.value-card:hover .value-icon {
+  animation: florBounce 0.7s var(--ease-spring);
 }
 .value-card h3 {
   font-size: 1.1rem;
@@ -118,6 +132,14 @@
   font-weight: 600;
   font-size: 0.9rem;
   cursor: default;
+  transition: all 0.3s var(--ease-spring);
+}
+.social-links span:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: #fff;
+  border-color: var(--pink);
+  color: #E57BA0;
+  box-shadow: 0 10px 22px rgba(248,187,208,0.5);
 }
 
 @media (max-width: 700px) {

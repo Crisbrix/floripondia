@@ -1,7 +1,7 @@
 @if (router.url !== '/admin') {
   <app-navbar />
 }
-<main>
+<main [class.page-enter]="pageAnim">
   <router-outlet />
 </main>
 @if (router.url !== '/admin') {

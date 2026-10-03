@@ -1,21 +1,39 @@
 <!--Hero principal-->
 <section class="hero">
+  <!--Petalo que flotan detrás del titulo-->
+  <div class="petals" aria-hidden="true">
+    @for (p of petals; track p.left) {
+      <span
+        class="petal"
+        [style.left]="p.left"
+        [style.fontSize]="p.size"
+        [style.color]="p.color"
+        [style.animation-delay.s]="p.delay"
+      >{{ p.glyph }}</span>
+    }
+  </div>
+
   <div class="hero-content">
     <h1>Floripondía</h1>
     <p>boutique</p>
   </div>
+
+  <!--Indicador de scroll-->
+  <a class="scroll-hint" href="#categorias" aria-label="Bajar al contenido">
+    <i class="fa-solid fa-chevron-down"></i>
+  </a>
 </section>
 
 <!--Categorias con efecto poster-->
 @for (cat of categories; track cat.name; let i = $index) {
-  <section class="poster" #poster>
+  <section class="poster" [attr.id]="i === 0 ? 'categorias' : null" [appReveal]="i % 2 !== 0 ? 'right' : 'left'">
     <div class="poster-inner" [class.reverse]="i % 2 !== 0">
       <div class="poster-visual" [style.background]="'url(' + cat.image + '), ' + cat.color" [style.backgroundSize]="'cover'" [style.backgroundPosition]="'center'" [style.backgroundBlendMode]="'overlay'">
       </div>
       <div class="poster-info">
         <h2>{{ cat.name }}</h2>
         <p>{{ cat.desc }}</p>
-        <a href="#" class="poster-btn">Ver todo</a>
+        <a href="#" class="poster-btn flor-shine">Ver todo <span class="arrow">&rarr;</span></a>
       </div>
     </div>
   </section>

@@ -1,38 +1,27 @@
-import { Component, ElementRef, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ProductService } from '../auth/product.service';
+import { RevealDirective } from '../shared/reveal.directive';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [RevealDirective],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements AfterViewInit {
-  @ViewChildren('poster', { read: ElementRef }) posters!: QueryList<ElementRef>;
+export class HomeComponent {
+  //Petalo decorativos del hero
+  readonly petals = [
+    { glyph: '❀', left: '8%', delay: 0, size: '1.6rem', color: '#F8BBD0' },
+    { glyph: '✿', left: '22%', delay: 2.4, size: '1.1rem', color: '#CE93D8' },
+    { glyph: '❁', left: '45%', delay: 4.1, size: '1.4rem', color: '#90CAF9' },
+    { glyph: '❀', left: '63%', delay: 1.3, size: '1rem', color: '#FFF176' },
+    { glyph: '✿', left: '78%', delay: 3.2, size: '1.7rem', color: '#F48FB1' },
+    { glyph: '❁', left: '91%', delay: 5, size: '1.2rem', color: '#B39DDB' }
+  ];
 
   constructor(private productSvc: ProductService) {
     this.productSvc.fetchProducts();
-  }
-
-  //Activa animacion de aparicion con IntersectionObserver
-  ngAfterViewInit() {
-    this.observePosters();
-    this.posters.changes.subscribe(() => this.observePosters());
-  }
-
-  private observePosters() {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            (entry.target as HTMLElement).classList.add('reveal');
-          }
-        }
-      },
-      { threshold: 0.2 }
-    );
-    this.posters.forEach(p => observer.observe(p.nativeElement));
   }
 
   //Mapea productos a categorias para la vista

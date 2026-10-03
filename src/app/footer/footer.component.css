@@ -10,9 +10,16 @@ footer {
   padding-bottom: 30px;
 }
 .footer-brand h3 {
-  font-size: 1.4rem;
-  color: var(--text);
+  font-family: 'Pacifico', cursive;
+  font-size: 1.6rem;
   margin-bottom: 8px;
+  background: linear-gradient(90deg, #F48FB1, #CE93D8, #90CAF9, #FFF176, #F48FB1);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: florGradient 6s ease infinite;
 }
 .footer-brand p { color: var(--text-light); }
 .footer-links h4, .footer-social h4 {
@@ -24,9 +31,12 @@ footer {
   display: block;
   color: var(--text-light);
   margin-bottom: 6px;
-  transition: color 0.2s;
+  transition: color 0.3s, transform 0.3s var(--ease-out);
 }
-.footer-links a:hover { color: var(--text); }
+.footer-links a:hover {
+  color: var(--text);
+  transform: translateX(7px);
+}
 .footer-social p { color: var(--text-light); }
 .footer-bottom {
   text-align: center;

@@ -1,6 +1,7 @@
 .cata-header {
   text-align: center;
   padding: 60px 20px 30px;
+  animation: florFadeUp 0.7s var(--ease-out) both;
 }
 .cata-header h1 {
   font-family: 'Pacifico', cursive;
@@ -47,22 +48,29 @@
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s var(--ease-out);
   text-align: left;
 }
 .filter-btn:hover {
   background: #f8f8f8;
   color: #555;
+  transform: translateX(5px);
 }
 .filter-btn.active {
-  background: #f5f5f5;
+  background: linear-gradient(90deg, var(--pink-soft), var(--violet-soft));
   color: #444;
+  box-shadow: 0 4px 14px rgba(248,187,208,0.4);
+}
+.filter-btn.active .dot {
+  transform: scale(1.35);
+  box-shadow: 0 0 0 4px rgba(248,187,208,0.35);
 }
 .dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
 }
 
 .grid {
@@ -73,23 +81,38 @@
 }
 
 .card {
+  position: relative;
   background: #fff;
   border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.35s var(--ease-out), box-shadow 0.35s;
   box-shadow: 0 2px 12px rgba(0,0,0,0.04);
 }
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.1);
+}
+
+/*Brillo que barre la tarjeta*/
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.5) 50%, transparent 65%);
+  transform: translateX(-130%);
+  transition: transform 0.8s var(--ease-out);
+  pointer-events: none;
+}
+.card:hover::after {
+  transform: translateX(130%);
 }
 
 .card-img {
   height: 240px;
-  transition: transform 0.4s;
+  transition: transform 0.5s var(--ease-out);
 }
 .card:hover .card-img {
-  transform: scale(1.05);
+  transform: scale(1.07);
 }
 
 .card-body {
@@ -99,11 +122,26 @@
   font-size: 1rem;
   color: #444;
   margin-bottom: 4px;
+  transition: color 0.25s;
+}
+.card:hover .card-body h4 {
+  color: #E57BA0;
 }
 .stock-badge {
   font-size: 0.8rem;
   color: #bbb;
   font-weight: 600;
+}
+.stock-badge::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #A5D6A7;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: florPulse 2s ease-in-out infinite;
 }
 
 @media (max-width: 700px) {
@@ -127,6 +165,7 @@
     border-radius: 20px;
     background: #f9f9f9;
   }
+  .filter-btn:hover { transform: none; }
   .filter-btn.active {
     background: #eee;
   }

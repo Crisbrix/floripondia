@@ -6,41 +6,27 @@
 
 <!--Tarjetas de contacto-->
 <section class="contact-cards">
-  <a href="https://wa.me/573134834606" target="_blank" class="contact-card" style="background: #FFF9C4">
-    <span class="contact-icon">
-      <i class="fa-brands fa-whatsapp" style="font-size:28px;color:#555"></i>
-    </span>
-    <h3>WhatsApp:</h3>
-    <span class="contact-link">313 483 4606</span>
-  </a>
-
-  <a href="https://instagram.com/floripondia_boutique" target="_blank" class="contact-card" style="background: #FCE4EC">
-    <span class="contact-icon">
-      <i class="fa-brands fa-instagram" style="font-size:28px;color:#555"></i>
-    </span>
-    <h3>Instagram</h3>
-    <span class="contact-link">&#64;floripondia_boutique</span>
-  </a>
-
-  <a href="mailto:hola&#64;floripondia.co" target="_blank" class="contact-card" style="background: #E3F2FD">
-    <span class="contact-icon">
-      <i class="fa-solid fa-envelope" style="font-size:28px;color:#555"></i>
-    </span>
-    <h3>Email</h3>
-    <span class="contact-link">hola&#64;floripondia.co</span>
-  </a>
+  @for (ch of channels; track ch.title; let i = $index) {
+    <a [href]="ch.href" target="_blank" class="contact-card" [style.background]="ch.bg" [appReveal]="'up'" [revealDelay]="i * 120">
+      <span class="contact-icon">
+        <i [class]="ch.icon" style="font-size:28px;color:#555"></i>
+      </span>
+      <h3>{{ ch.title }}</h3>
+      <span class="contact-link">{{ ch.link }}</span>
+    </a>
+  }
 </section>
 
 <!--Formulario de contacto-->
 <section class="contact-form-section">
-  <div class="form-card">
+  <div class="form-card" [appReveal]="'flip'">
     <h2>Escríbenos</h2>
     <p>Cuéntanos qué buscas o si tienes alguna pregunta</p>
     <div class="contact-form">
       <input type="text" placeholder="Tu nombre" [(ngModel)]="nombre" />
       <input type="email" placeholder="Tu correo" [(ngModel)]="correo" />
       <textarea rows="4" placeholder="Escribe tu mensaje..." [(ngModel)]="mensaje"></textarea>
-      <button type="button" (click)="enviarWhatsApp()">Enviar mensaje</button>
+      <button type="button" class="flor-shine" (click)="enviarWhatsApp()">Enviar mensaje</button>
     </div>
   </div>
 </section>

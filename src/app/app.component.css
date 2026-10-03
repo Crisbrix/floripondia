@@ -1,3 +1,19 @@
 main {
   min-height: calc(100vh - 200px);
 }
+
+/*Entrada animada de cada pagina al navegar*/
+main.page-enter {
+  animation: florPageIn 0.55s var(--ease-out) both;
+}
+
+@keyframes florPageIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -6,6 +6,11 @@ nav {
   top: 0;
   z-index: 100;
   border-bottom: 1px solid #f0f0f0;
+  transition: box-shadow 0.35s ease, padding 0.35s ease;
+  animation: florFadeDown 0.5s var(--ease-out) both;
+}
+nav.scrolled {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.07);
 }
 .nav-content {
   display: flex;
@@ -13,21 +18,50 @@ nav {
   align-items: center;
 }
 .logo {
+  display: inline-block;
   font-family: 'Pacifico', cursive;
   font-size: 1.8rem;
   color: #555;
   letter-spacing: 1px;
+  transition: color 0.3s ease;
+}
+.logo:hover {
+  color: #F48FB1;
+  animation: florWiggle 0.6s ease;
 }
 
-/*Links de escritorio*/
+/*Links de escritorio con subrayado animado*/
 .links { display: flex; gap: 28px; }
 .links a {
+  position: relative;
   color: #999;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: color 0.2s;
+  padding-bottom: 4px;
+  transition: color 0.3s;
 }
-.links a:hover { color: #555; }
+.links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--violet));
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s var(--ease-out);
+}
+.links a:hover,
+.links a.active {
+  color: #555;
+}
+.links a:hover::after,
+.links a.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
 
 /*Seccion de autenticacion*/
 .auth-section {
@@ -39,20 +73,24 @@ nav {
   font-size: 0.85rem;
   color: #888;
   font-weight: 600;
+  animation: florFadeIn 0.4s ease both;
 }
 .login-btn {
+  display: inline-block;
   padding: 8px 20px;
   border: 2px solid #eee;
   border-radius: 30px;
   color: #888;
   font-weight: 600;
   font-size: 0.85rem;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
 .login-btn:hover {
-  border-color: #ccc;
-  background: #fafafa;
+  border-color: var(--violet);
+  background: linear-gradient(90deg, var(--pink-soft), var(--violet-soft));
   color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(225,190,231,0.5);
 }
 .logout-btn {
   padding: 6px 16px;
@@ -62,11 +100,12 @@ nav {
   color: #bbb;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.25s;
 }
 .logout-btn:hover {
-  border-color: #ccc;
-  color: #888;
+  border-color: var(--pink);
+  color: #e57ba0;
+  transform: translateY(-1px);
 }
 
 /*Menu movil*/
@@ -104,8 +143,9 @@ nav {
   border-radius: 2px;
   transition: all 0.3s;
 }
+.hamburger:hover span { background: #F48FB1; }
 .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
 /*Overlay del menu*/
@@ -113,11 +153,12 @@ nav {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(3px);
   z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.25s ease;
 }
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -134,20 +175,35 @@ nav {
   gap: 20px;
   min-width: 260px;
   position: relative;
-  animation: slideUp 0.3s ease;
+  animation: menuPop 0.4s var(--ease-spring);
   box-shadow: 0 8px 40px rgba(0,0,0,0.1);
 }
-@keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes menuPop {
+  from { transform: scale(0.85) translateY(24px); opacity: 0; }
+  60% { transform: scale(1.02) translateY(0); opacity: 1; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
 }
+.overlay-menu > * {
+  animation: florFadeUp 0.45s var(--ease-out) backwards;
+}
+.overlay-menu > *:nth-child(1) { animation-delay: 0.05s; }
+.overlay-menu > *:nth-child(2) { animation-delay: 0.1s; }
+.overlay-menu > *:nth-child(3) { animation-delay: 0.15s; }
+.overlay-menu > *:nth-child(4) { animation-delay: 0.2s; }
+.overlay-menu > *:nth-child(5) { animation-delay: 0.25s; }
+.overlay-menu > *:nth-child(6) { animation-delay: 0.3s; }
+.overlay-menu > *:nth-child(7) { animation-delay: 0.35s; }
+.overlay-menu > *:nth-child(8) { animation-delay: 0.4s; }
+.overlay-menu > *:nth-child(9) { animation-delay: 0.45s; }
+.overlay-menu > *:nth-child(10) { animation-delay: 0.5s; }
+
 .overlay-menu a {
   font-size: 1.2rem;
   color: #555;
   font-weight: 600;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.2s;
 }
-.overlay-menu a:hover { color: #333; }
+.overlay-menu a:hover { color: #F48FB1; transform: scale(1.06); }
 
 .close-btn {
   position: absolute;
@@ -159,6 +215,11 @@ nav {
   color: #999;
   cursor: pointer;
   padding: 4px 8px;
+  transition: transform 0.3s var(--ease-spring), color 0.2s;
+}
+.close-btn:hover {
+  color: #F48FB1;
+  transform: rotate(90deg) scale(1.1);
 }
 
 /*Responsive movil*/

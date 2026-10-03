@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { ProductService } from '../auth/product.service';
+import { RevealDirective } from '../shared/reveal.directive';
 
 @Component({
   selector: 'app-catalogo',
   standalone: true,
-  imports: [],
+  imports: [RevealDirective],
   templateUrl: './catalogo.component.html',
   styleUrl: './catalogo.component.css'
 })

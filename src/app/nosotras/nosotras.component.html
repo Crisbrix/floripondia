@@ -6,8 +6,8 @@
 
 <!--Historia de la marca-->
 <section class="story">
-  <div class="story-card">
-    <div class="story-visual" style="background: linear-gradient(135deg, #F8BBD0, #FFF9C4)"></div>
+  <div class="story-card" appReveal="left">
+    <div class="story-visual"></div>
     <div class="story-text">
       <h2>Nuestra Historia</h2>
       <p>
@@ -25,24 +25,24 @@
 
 <!--Valores de la marca-->
 <section class="values">
-  <h2>Lo que nos mueve</h2>
+  <h2 appReveal="up">Lo que nos mueve</h2>
   <div class="values-grid">
-    <div class="value-card" style="background: #FFF9C4">
+    <div class="value-card" style="background: #FFF9C4" appReveal="up" [revealDelay]="0">
       <span class="value-icon">✿</span>
       <h3>Hecho con amor</h3>
       <p>Cada prenda se piensa con dedicación y cuidado por los detalles.</p>
     </div>
-    <div class="value-card" style="background: #FCE4EC">
+    <div class="value-card" style="background: #FCE4EC" appReveal="up" [revealDelay]="100">
       <span class="value-icon">✦</span>
       <h3>Colores que inspiran</h3>
       <p>Creemos en el poder del color para transformar el día.</p>
     </div>
-    <div class="value-card" style="background: #E3F2FD">
+    <div class="value-card" style="background: #E3F2FD" appReveal="up" [revealDelay]="200">
       <span class="value-icon">♡</span>
       <h3>Para todas</h3>
       <p>Vendemos pensando en cuerpos reales, diversos y únicos.</p>
     </div>
-    <div class="value-card" style="background: #F3E5F5">
+    <div class="value-card" style="background: #F3E5F5" appReveal="up" [revealDelay]="300">
       <span class="value-icon">☆</span>
       <h3>Sostenibilidad</h3>
       <p>Pequeños gestos, grandes cambios. Cuidamos el planeta.</p>
@@ -52,7 +52,7 @@
 
 <!--Llamado a la accion redes-->
 <section class="cta-nos">
-  <div class="cta-nos-content">
+  <div class="cta-nos-content" appReveal="zoom">
     <h2>¿Quieres ser parte?</h2>
     <p>Síguenos en redes y descubre las novedades antes que nadie.</p>
     <div class="social-links">
