@@ -25,7 +25,7 @@
   <div class="grid">
     @for (product of filtered; track product.id; let i = $index) {
       <div class="card" [appReveal]="'zoom'" [revealDelay]="(i % 8) * 70">
-        <div class="card-img" [style.background]="'url(' + product.image + '), ' + product.color" [style.backgroundSize]="'cover'" [style.backgroundPosition]="'center'" [style.backgroundBlendMode]="'overlay'"></div>
+        <div class="card-img" [style.--img]="'url(' + product.image + ')'"></div>
         <div class="card-body">
           <h4>{{ product.name }}</h4>
           <span class="stock-badge">Stock: {{ product.stock }}</span>
