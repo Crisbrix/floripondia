@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { AuthService, User } from '../auth/auth.service';
 import { ProductService, Product, Stats } from '../auth/product.service';
+import { RevealDirective } from '../shared/reveal.directive';
 import Chart from 'chart.js/auto';
 
 //Chart.js auto-importa y registra todos los componentes
@@ -12,7 +13,7 @@ import Chart from 'chart.js/auto';
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RevealDirective],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })

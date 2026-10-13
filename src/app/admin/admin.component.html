@@ -132,8 +132,8 @@
         }
 
         <div class="prod-grid">
-          @for (p of products; track p.id) {
-            <div class="prod-card">
+          @for (p of products; track p.id; let i = $index) {
+            <div class="prod-card" [appReveal]="'zoom'" [revealDelay]="(i % 8) * 60">
               <div class="prod-card-top" [style.background]="p.color">
                 <span class="prod-card-stock">{{ p.stock }}</span>
               </div>
@@ -475,8 +475,8 @@
 
         @if (apartados.length) {
           <div class="prod-grid">
-            @for (ap of apartados; track ap.id) {
-              <div class="ap-card" [class.ap-pendiente]="ap.estado === 'pendiente'" [class.ap-completado]="ap.estado === 'completado'" [class.ap-cancelado]="ap.estado === 'cancelado'">
+            @for (ap of apartados; track ap.id; let i = $index) {
+              <div class="ap-card" [appReveal]="'zoom'" [revealDelay]="(i % 8) * 60" [class.ap-pendiente]="ap.estado === 'pendiente'" [class.ap-completado]="ap.estado === 'completado'" [class.ap-cancelado]="ap.estado === 'cancelado'">
                 <div class="ap-head">
                   <span class="ap-cliente">{{ ap.clienteNombre }}</span>
                   <span class="ap-estado" [class.estado-pend]="ap.estado === 'pendiente'" [class.estado-comp]="ap.estado === 'completado'" [class.estado-can]="ap.estado === 'cancelado'">{{ ap.estado }}</span>
@@ -987,8 +987,8 @@
 
         @if (contMovsFiltrados.length) {
           <div class="cont-lista">
-            @for (m of contMovsFiltrados; track m.id) {
-              <div class="cont-item">
+            @for (m of contMovsFiltrados; track m.id; let i = $index) {
+              <div class="cont-item" [appReveal]="'left'" [revealDelay]="i * 50 > 400 ? 400 : i * 50">
                 <div class="cont-item-left">
                   <span class="cont-item-badge" [class.tipo-gasto]="m.tipo === 'gasto'" [class.tipo-inv]="m.tipo === 'inversion'">{{ m.tipo === 'gasto' ? 'Gasto' : 'Inversión' }}</span>
                   @if (m.es_diario) { <span class="cont-item-diario">Diario</span> }
@@ -1021,12 +1021,19 @@
 
         @if (stats) {
           <div class="rep-resumen">
-            <div class="rep-card"><span class="rep-num">{{ stats.resumen.ventas }}</span><span class="rep-label">Ventas totales</span></div>
-            <div class="rep-card"><span class="rep-num">${{ stats.resumen.monto.toLocaleString() }}</span><span class="rep-label">Total vendido</span></div>
-            <div class="rep-card"><span class="rep-num">{{ stats.resumen.ventasHoy }}</span><span class="rep-label">Ventas hoy</span></div>
-            <div class="rep-card"><span class="rep-num">${{ stats.resumen.ingresosHoy.toLocaleString() }}</span><span class="rep-label">Ingresos hoy</span></div>
-            <div class="rep-card"><span class="rep-num">{{ stats.resumen.productos }}</span><span class="rep-label">Productos</span></div>
-            <div class="rep-card"><span class="rep-num">{{ stats.resumen.stockBajo }}</span><span class="rep-label">Stock bajo</span></div>
+            @for (card of [
+              { num: stats.resumen.ventas, label: 'Ventas totales' },
+              { num: '$' + stats.resumen.monto.toLocaleString(), label: 'Total vendido' },
+              { num: stats.resumen.ventasHoy, label: 'Ventas hoy' },
+              { num: '$' + stats.resumen.ingresosHoy.toLocaleString(), label: 'Ingresos hoy' },
+              { num: stats.resumen.productos, label: 'Productos' },
+              { num: stats.resumen.stockBajo, label: 'Stock bajo' }
+            ]; track card.label; let i = $index) {
+              <div class="rep-card" [appReveal]="'zoom'" [revealDelay]="i * 60">
+                <span class="rep-num">{{ card.num }}</span>
+                <span class="rep-label">{{ card.label }}</span>
+              </div>
+            }
           </div>
 
           <div class="rep-charts">
@@ -1314,10 +1321,17 @@
           </div>
         } @else {
           <div class="cierre-resumen">
-            <div class="rep-card"><span class="rep-num">{{ cierreResumen?.transacciones ?? cierreSales.length }}</span><span class="rep-label">Ventas hoy</span></div>
-            <div class="rep-card"><span class="rep-num">${{ cierreTotal.toLocaleString() }}</span><span class="rep-label">Total vendido</span></div>
-            <div class="rep-card"><span class="rep-num">${{ (cierreTotal + cierreApartadosTotal).toLocaleString() }}</span><span class="rep-label">Ventas + abonos</span></div>
-            <div class="rep-card"><span class="rep-num">{{ cierreResumen?.articulos ?? 0 }}</span><span class="rep-label">Artículos vendidos</span></div>
+            @for (card of [
+              { num: cierreResumen?.transacciones ?? cierreSales.length, label: 'Ventas hoy' },
+              { num: '$' + cierreTotal.toLocaleString(), label: 'Total vendido' },
+              { num: '$' + (cierreTotal + cierreApartadosTotal).toLocaleString(), label: 'Ventas + abonos' },
+              { num: cierreResumen?.articulos ?? 0, label: 'Artículos vendidos' }
+            ]; track card.label; let i = $index) {
+              <div class="rep-card" [appReveal]="'zoom'" [revealDelay]="i * 60">
+                <span class="rep-num">{{ card.num }}</span>
+                <span class="rep-label">{{ card.label }}</span>
+              </div>
+            }
           </div>
 
           <div class="cierre-efectivo-box">
@@ -1360,8 +1374,8 @@
           <div class="cierre-metodos">
             <h3>Detalle por método de pago</h3>
             <div class="cierre-metodos-grid">
-              @for (m of cierrePorMetodoArr; track m.metodo_pago) {
-                <div class="cierre-metodo-card">
+              @for (m of cierrePorMetodoArr; track m.metodo_pago; let i = $index) {
+                <div class="cierre-metodo-card" [appReveal]="'zoom'" [revealDelay]="i * 60">
                   <span class="cierre-metodo-nombre">{{ m.metodo_pago }}</span>
                   <span class="cierre-metodo-ventas">{{ m.cantidad }} venta(s)</span>
                   <span class="cierre-metodo-total">${{ (+m.total).toLocaleString() }}</span>
