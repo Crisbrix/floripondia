@@ -53,7 +53,7 @@ export class AdminComponent {
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer
   ) {
-    this.sucursal = (sessionStorage.getItem('sucursal_activa') as any) || '';
+    this.sucursal = (sessionStorage.getItem('sucursal_activa') as any) || 'floripondia';
     if (this.sucursal) this.loadData();
     if (!this.isAdmin && (this.tab === 'reportes' || this.tab === 'usuarios')) {
       this.tab = 'productos';
@@ -749,6 +749,8 @@ export class AdminComponent {
   //Devoluciones / Cambios
   devoluciones: any[] = [];
   devModal = false;
+  // Cierre — total de devoluciones del día (refunds que salen del cajón)
+  cierreDevolucionesTotal = 0;
   devVentaId: number | null = null;
   devProductoOriginal = '';
   devCarritoCambio: { name: string; quantity: number; color: string }[] = [];
@@ -1086,7 +1088,8 @@ export class AdminComponent {
   cajaAbierta = false;
   get cierreTotal() {
     if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
-    return this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
+    const base = this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
+    return base - this.cierreDevolucionesTotal;
   }
   get cierreCashTotal() {
     return this.cierrePorMetodoArr
@@ -1324,6 +1327,15 @@ export class AdminComponent {
     this.cierreAbonosLista = c?.apartados?.lista || [];
     this.cierreApartadosHoy = c?.apartadosHoy || [];
     this.cierreConfirmado = !!c?.confirmado;
+
+    // Cargar devoluciones del día para incluirlas en el cierre
+    const hoy = new Date().toISOString().slice(0, 10);
+    this.devoluciones = await this.productSvc.fetchDevoluciones(this.sucursal, hoy);
+    this.cierreDevolucionesTotal = this.devoluciones.reduce(
+      (sum, d) => sum + Number(d.diferencia_precio || 0),
+      0
+    );
+
     this.cierreLoading = false;
   }
 
