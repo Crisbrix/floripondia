@@ -1089,7 +1089,7 @@ export class AdminComponent {
   get cierreTotal() {
     if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
     const base = this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
-    return base - this.cierreDevolucionesTotal;
+    return base + this.cierreDevolucionesTotal;
   }
   get cierreCashTotal() {
     return this.cierrePorMetodoArr
