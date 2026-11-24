@@ -828,6 +828,7 @@ export class AdminComponent {
         sucursal: this.sucursal,
       });
       this.devMsg = 'Devolución registrada';
+      this.devErr = '';
       this.cerrarDevModal();
       this.devoluciones = await this.productSvc.fetchDevoluciones(this.sucursal);
       await this.productSvc.fetchInventory(this.sucursal);
@@ -845,7 +846,10 @@ export class AdminComponent {
       await this.productSvc.fetchInventory(this.sucursal);
       await this.productSvc.fetchProducts(this.sucursal);
       this.devMsg = 'Devolución eliminada';
-    } catch { this.devErr = 'Error al eliminar'; }
+      this.devErr = '';
+    } catch (err: any) {
+      this.devErr = err.error?.error || 'Error al eliminar la devolución';
+    }
   }
 
   //Contabilidad — inversiones, gastos y balance del local

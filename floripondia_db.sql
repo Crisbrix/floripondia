@@ -230,7 +230,7 @@ CREATE TABLE IF NOT EXISTS devoluciones (
   id                INT          AUTO_INCREMENT PRIMARY KEY,
   venta_id          INT,
   producto_original VARCHAR(120) NOT NULL,
-  producto_nuevo    VARCHAR(120),
+  producto_nuevo    TEXT,
   cantidad          INT          NOT NULL DEFAULT 1,
   diferencia_precio DECIMAL(12,0) NOT NULL DEFAULT 0,
   motivo            TEXT,

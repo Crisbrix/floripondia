@@ -662,6 +662,8 @@
                 <span class="dev-step-dot" [class.active]="devStep === 3">3</span>
               </div>
 
+              @if (devErr) { <div class="admin-error">{{ devErr }}</div> }
+
               @if (devStep === 1) {
                 <h2>¿Qué prenda devolvieron?</h2>
                 <p class="dev-hint">Selecciona la prenda que el cliente está devolviendo</p>
