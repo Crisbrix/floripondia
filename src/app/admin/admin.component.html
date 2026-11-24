@@ -1475,6 +1475,48 @@
             </div>
           }
 
+          @if (devoluciones.length) {
+            <div class="cierre-lista">
+              <h3>Devoluciones del día</h3>
+              <div class="cierre-tabla-wrap">
+                <table class="cierre-tabla">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Venta</th>
+                      <th>Producto original</th>
+                      <th>Cantidad</th>
+                      <th>Diferencia</th>
+                      <th>Motivo</th>
+                      <th>Vendedor</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (d of devoluciones; track d.id) {
+                      <tr>
+                        <td>{{ d.id }}</td>
+                        <td>{{ d.ventaId || '—' }}</td>
+                        <td>{{ d.producto_original }}</td>
+                        <td>{{ d.cantidad || 1 }}</td>
+                        <td>${{ (+d.diferencia_precio).toLocaleString() }}</td>
+                        <td>{{ d.motivo || '—' }}</td>
+                        <td>{{ d.vendedor_id || '—' }}</td>
+                        <td class="cierre-acciones">
+                          @if (isAdmin) {
+                            <button class="cierre-btn cierre-btn-del" (click)="eliminarDevolucion(d.id)" title="Eliminar devolución">
+                              <i class="fa-solid fa-trash"></i>
+                            </button>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
           @if (cierreApartadosHoy.length) {
             <div class="cierre-lista">
               <h3>Apartados creados hoy</h3>
