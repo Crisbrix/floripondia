@@ -1087,7 +1087,7 @@ export class AdminComponent {
   verCierreDetalle: any[] = [];
   cajaAbierta = false;
   get cierreTotal() {
-    if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total);
+    if (this.cierreResumen?.total != null) return Number(this.cierreResumen.total) + this.cierreDevolucionesTotal;
     const base = this.cierreSales.reduce((s, v) => s + Number(v.total), 0);
     return base + this.cierreDevolucionesTotal;
   }
