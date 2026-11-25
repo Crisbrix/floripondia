@@ -139,6 +139,55 @@
   background: #fafafa;
   overflow-y: auto;
 }
+
+/* ===== Topbar (perfil + cerrar sesión) ===== */
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  border: 1px solid #f0f0f0;
+}
+.admin-topbar-left {
+  flex: 1;
+}
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.admin-topbar-user {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #555;
+  white-space: nowrap;
+}
+.admin-topbar-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #f5f5f5;
+  color: #888;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+.admin-topbar-btn:hover {
+  background: #E1BEE7;
+  color: #555;
+}
+.admin-topbar-logout:hover {
+  background: #FCE4EC;
+  color: #c44;
+}
 .admin-main h1 {
   font-family: 'Pacifico', cursive;
   font-size: 1.8rem;
@@ -1752,6 +1801,22 @@
     margin-left: 0;
     padding: 60px 12px 24px;
     width: 100%;
+  }
+
+  .admin-topbar {
+    margin-bottom: 16px;
+    padding: 10px 12px;
+  }
+  .admin-topbar-user {
+    font-size: 0.8rem;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .admin-topbar-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
   }
 
   /* En móvil el sidebar se comporta igual que en desktop: fila con ícono + etiqueta */

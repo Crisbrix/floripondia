@@ -68,21 +68,23 @@
         <span class="nav-icon"><i class="fa-solid fa-lock"></i></span>
         @if (sidebarOpen) { <span>Cierre</span> }
       </button>
-      <button [class.active]="tab === 'perfil'" (click)="abrirPerfil()">
-        <span class="nav-icon"><i class="fa-solid fa-user"></i></span>
-        @if (sidebarOpen) { <span>Perfil</span> }
-      </button>
     </nav>
 
-    <div class="sidebar-footer">
-      @if (sidebarOpen) {
-        <div class="sidebar-user">{{ user?.nombre }}</div>
-        <button class="sidebar-logout" (click)="cerrarSesion()">Cerrar sesión</button>
-      }
-    </div>
   </aside>
 
   <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="admin-topbar-left"></div>
+      <div class="admin-topbar-right">
+        <span class="admin-topbar-user">{{ user?.nombre }}</span>
+        <button class="admin-topbar-btn" (click)="abrirPerfil()" title="Perfil">
+          <i class="fa-solid fa-user"></i>
+        </button>
+        <button class="admin-topbar-btn admin-topbar-logout" (click)="cerrarSesion()" title="Cerrar sesión">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
     @if (tab === 'productos') {
       <section>
         <div class="prod-header">
