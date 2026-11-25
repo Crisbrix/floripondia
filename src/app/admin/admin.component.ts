@@ -1329,12 +1329,28 @@ export class AdminComponent {
     this.cierreConfirmado = !!c?.confirmado;
 
     // Cargar devoluciones del día para incluirlas en el cierre
-    const hoy = new Date().toISOString().slice(0, 10);
-    this.devoluciones = await this.productSvc.fetchDevoluciones(this.sucursal, hoy);
+    // Usar fecha local (no UTC) para evitar desfase de zona horaria
+    const hoy = new Date();
+    const fechaLocal = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    // Traer todas las devoluciones y filtrar por fecha local en el frontend
+    const todas = await this.productSvc.fetchDevoluciones(this.sucursal);
+    console.log('Devoluciones cargadas:', JSON.stringify(todas));
+    console.log('Fecha local buscada:', fechaLocal);
+    this.devoluciones = todas.filter(d => {
+      const f = String(d.fecha || d.creado_en || '').slice(0, 10);
+      console.log('Devolucion fecha:', f, 'match:', f === fechaLocal);
+      return f === fechaLocal;
+    });
+    // Si no hay coincidencias por fecha, mostrar todas las devoluciones de hoy
+    if (this.devoluciones.length === 0 && todas.length > 0) {
+      console.log('No hubo coincidencia por fecha, mostrando todas las devoluciones');
+      this.devoluciones = todas;
+    }
     this.cierreDevolucionesTotal = this.devoluciones.reduce(
       (sum, d) => sum + Number(d.diferencia_precio || 0),
       0
     );
+    console.log('cierreDevolucionesTotal:', this.cierreDevolucionesTotal);
 
     this.cierreLoading = false;
   }
