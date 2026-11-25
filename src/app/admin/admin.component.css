@@ -1727,14 +1727,14 @@
     left: 0;
     bottom: 0;
     z-index: 999;
-    width: 220px;
+    width: 200px;
     transform: translateX(0);
     transition: transform 0.25s ease, width 0.25s ease;
     box-shadow: 4px 0 24px rgba(0,0,0,0.1);
   }
   .sidebar.closed {
-    transform: translateX(-100%);
-    width: 220px;
+    width: 60px;
+    transform: translateX(0);
   }
   .sidebar-header .sidebar-toggle { display: none; }
 
@@ -1743,6 +1743,35 @@
     padding: 60px 12px 24px;
     width: 100%;
   }
+
+  /* Mejoras para elementos del sidebar en móvil */
+  .sidebar-nav button {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+  }
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .nav-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .sidebar-user {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .sidebar-logout {
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+  .melsus-label {
+    display: none;
+  }
+}
 
   /* POS */
   .pv-layout { flex-direction: column; }
