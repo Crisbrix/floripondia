@@ -1328,20 +1328,32 @@ export class AdminComponent {
     this.cierreApartadosHoy = c?.apartadosHoy || [];
     this.cierreConfirmado = !!c?.confirmado;
 
-    // Cargar devoluciones del día para incluirlas en el cierre
-    // Usar fecha local (no UTC) para evitar desfase de zona horaria
+    // Cargar devoluciones DEL DÍA para incluirlas en el cierre
+    // SÓLO devoluciones registradas hoy, ninguna de días anteriores
     const hoy = new Date();
-    const fechaLocal = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
-    // Traer todas las devoluciones y filtrar por fecha local en el frontend
+    const fechaHoy = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}-${String(hoy.getDate()).padStart(2, '0')}`;
+    
+    // Traer todas las devoluciones del día (trae todas y filtramos frontend por seguridad)
     const todas = await this.productSvc.fetchDevoluciones(this.sucursal);
+    
+    // Filtrar SÓLO las de hoy por la fecha de la devolución
     this.devoluciones = todas.filter(d => {
-      const f = String(d.fecha || d.creado_en || '').slice(0, 10);
-      return f === fechaLocal;
+      // Intentamos obtener la fecha de múltiples campos posibles
+      const fechaDevolucion = d.fecha || d.creado_en || null;
+      if (!fechaDevolucion) return false;
+      // Tomar solo la parte de fecha (primeros 10 chars como "YYYY-MM-DD")
+      const fechaStr = String(fechaDevolucion).slice(0, 10);
+      // Comparar exact con la fecha de hoy (sin hora)
+      return fechaStr === fechaHoy;
     });
-    // Si no hay coincidencias por fecha, mostrar todas las devoluciones
-    if (this.devoluciones.length === 0 && todas.length > 0) {
-      this.devoluciones = todas;
+    
+    // IMPORTANTE: Si por alguna razón no hay devoluciones de hoy, no tomes de días anteriores
+    // Esto evita que devoluciones antiguas aparezcan en el cierre actual
+    if (this.devoluciones.length === 0) {
+      // No cargamos nada de días pasados - el cierre estará limpio
+      this.devoluciones = [];
     }
+    
     this.cierreDevolucionesTotal = this.devoluciones.reduce(
       (sum, d) => sum + Number(d.diferencia_precio || 0),
       0
